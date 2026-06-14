@@ -1,0 +1,223 @@
+using Microsoft.EntityFrameworkCore;
+using University_Timetable_and_Classroom_Management_System.Models;
+
+namespace Data_Access_Layer
+{
+    public class AppDbContext : DbContext
+    {
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<StudyYear> StudyYears { get; set; }
+        public DbSet<Section> Sections { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<FacultyMember> FacultyMembers { get; set; }
+        public DbSet<FacultyMemberSubject> FacultyMemberSubjects { get; set; }
+        public DbSet<Classroom> Classrooms { get; set; }
+        public DbSet<TimeSlot> TimeSlots { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(
+                "Server=.;Database=UniversityTimetableDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Branch>(entity =>
+            {
+                entity.ToTable("Branches");
+                entity.HasKey(e => e.BranchID);
+                entity.HasIndex(e => e.BranchName).IsUnique();
+
+                entity.Property(e => e.BranchName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<StudyYear>(entity =>
+            {
+                entity.ToTable("StudyYears");
+                entity.HasKey(e => e.StudyYearID);
+                entity.HasIndex(e => e.YearName).IsUnique();
+
+                entity.Property(e => e.YearName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Section>(entity =>
+            {
+                entity.ToTable("Sections");
+                entity.HasKey(e => e.SectionID);
+                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionName }).IsUnique();
+
+                entity.Property(e => e.SectionName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.StudentCount)
+                    .IsRequired();
+
+                entity.HasOne(e => e.StudyYear)
+                    .WithMany(sy => sy.Sections)
+                    .HasForeignKey(e => e.StudyYearID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Branch)
+                    .WithMany(b => b.Sections)
+                    .HasForeignKey(e => e.BranchID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Subject>(entity =>
+            {
+                entity.ToTable("Subjects");
+                entity.HasKey(e => e.SubjectID);
+                entity.HasIndex(e => new { e.SubjectName, e.StudyYearID, e.SemesterNumber }).IsUnique();
+
+                entity.Property(e => e.SubjectName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(e => e.SemesterNumber)
+                    .IsRequired();
+
+                entity.Property(e => e.TheoreticalHours)
+                    .IsRequired();
+
+                entity.Property(e => e.PracticalHours)
+                    .IsRequired();
+
+                entity.Property(e => e.CreditUnits)
+                    .IsRequired();
+
+                entity.Property(e => e.RequirementType)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.HasOne(e => e.StudyYear)
+                    .WithMany(sy => sy.Subjects)
+                    .HasForeignKey(e => e.StudyYearID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Branch)
+                    .WithMany(b => b.Subjects)
+                    .HasForeignKey(e => e.BranchID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<FacultyMember>(entity =>
+            {
+                entity.ToTable("FacultyMembers");
+                entity.HasKey(e => e.FacultyMemberID);
+                entity.HasIndex(e => e.FullName).IsUnique();
+
+                entity.Property(e => e.FullName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(e => e.AcademicTitle)
+                    .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<FacultyMemberSubject>(entity =>
+            {
+                entity.ToTable("FacultyMemberSubjects");
+                entity.HasKey(e => new { e.FacultyMemberID, e.SubjectID });
+
+                entity.HasOne(e => e.FacultyMember)
+                    .WithMany(f => f.FacultyMemberSubjects)
+                    .HasForeignKey(e => e.FacultyMemberID)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Subject)
+                    .WithMany(s => s.FacultyMemberSubjects)
+                    .HasForeignKey(e => e.SubjectID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Classroom>(entity =>
+            {
+                entity.ToTable("Classrooms");
+                entity.HasKey(e => e.ClassroomID);
+                entity.HasIndex(e => e.ClassroomNumber).IsUnique();
+
+                entity.Property(e => e.ClassroomNumber)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.Capacity)
+                    .IsRequired();
+
+                entity.Property(e => e.RoomType)
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<TimeSlot>(entity =>
+            {
+                entity.ToTable("TimeSlots");
+                entity.HasKey(e => e.TimeSlotID);
+                entity.HasIndex(e => new { e.StartTime, e.EndTime, e.IsBreak }).IsUnique();
+
+                entity.Property(e => e.StartTime)
+                    .IsRequired();
+
+                entity.Property(e => e.EndTime)
+                    .IsRequired();
+
+                entity.Property(e => e.IsBreak)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.ToTable("Schedules");
+                entity.HasKey(e => e.ScheduleID);
+                entity.HasIndex(e => new { e.ClassroomID, e.TimeSlotID }).IsUnique();
+                entity.HasIndex(e => new { e.FacultyMemberID, e.TimeSlotID }).IsUnique();
+                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.TimeSlotID }).IsUnique();
+
+                entity.Property(e => e.DayOfWeek)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.HasOne(e => e.Subject)
+                    .WithMany(s => s.Schedules)
+                    .HasForeignKey(e => e.SubjectID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.FacultyMember)
+                    .WithMany(f => f.Schedules)
+                    .HasForeignKey(e => e.FacultyMemberID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Classroom)
+                    .WithMany(c => c.Schedules)
+                    .HasForeignKey(e => e.ClassroomID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.TimeSlot)
+                    .WithMany(t => t.Schedules)
+                    .HasForeignKey(e => e.TimeSlotID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.StudyYear)
+                    .WithMany(sy => sy.Schedules)
+                    .HasForeignKey(e => e.StudyYearID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Branch)
+                    .WithMany(b => b.Schedules)
+                    .HasForeignKey(e => e.BranchID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Section)
+                    .WithMany(s => s.Schedules)
+                    .HasForeignKey(e => e.SectionID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
+    }
+}

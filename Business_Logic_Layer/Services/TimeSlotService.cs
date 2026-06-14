@@ -1,0 +1,68 @@
+using Microsoft.EntityFrameworkCore;
+using Data_Access_Layer;
+using University_Timetable_and_Classroom_Management_System.Models;
+
+namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
+{
+    internal class TimeSlotService
+    {
+        public async Task<List<TimeSlot>> GetAllAsync()
+        {
+            await using var context = new AppDbContext();
+            return await context.TimeSlots.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<TimeSlot?> GetByIdAsync(int id)
+        {
+            await using var context = new AppDbContext();
+            return await context.TimeSlots.AsNoTracking().FirstOrDefaultAsync(t => t.TimeSlotID == id);
+        }
+
+        public async Task<TimeSlot> AddAsync(TimeSlot timeSlot)
+        {
+            await using var context = new AppDbContext();
+            await ValidateAsync(context, timeSlot, false);
+            await context.TimeSlots.AddAsync(timeSlot);
+            await context.SaveChangesAsync();
+            return timeSlot;
+        }
+
+        public async Task<TimeSlot> UpdateAsync(TimeSlot timeSlot)
+        {
+            await using var context = new AppDbContext();
+            await ValidateAsync(context, timeSlot, true);
+            context.TimeSlots.Update(timeSlot);
+            await context.SaveChangesAsync();
+            return timeSlot;
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            await using var context = new AppDbContext();
+            var timeSlot = await context.TimeSlots.FindAsync(id)
+                ?? throw new KeyNotFoundException("Time slot not found.");
+
+            context.TimeSlots.Remove(timeSlot);
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task ValidateAsync(AppDbContext context, TimeSlot timeSlot, bool isUpdate)
+        {
+            if (timeSlot.EndTime <= timeSlot.StartTime)
+            {
+                throw new ArgumentException("End time must be after start time.");
+            }
+
+            var exists = await context.TimeSlots.AnyAsync(t =>
+                t.StartTime == timeSlot.StartTime &&
+                t.EndTime == timeSlot.EndTime &&
+                t.IsBreak == timeSlot.IsBreak &&
+                (!isUpdate || t.TimeSlotID != timeSlot.TimeSlotID));
+
+            if (exists)
+            {
+                throw new ArgumentException("Time slot already exists.");
+            }
+        }
+    }
+}
