@@ -29,6 +29,12 @@ namespace University_Timetable_and_Classroom_Management_System
             lblDatabaseStatusValue.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
 
             var health = await _databaseHealthService.CheckConnectionAsync();
+
+            if (IsDisposed)
+            {
+                return;
+            }
+
             lblDatabaseStatusValue.Text = health.CanConnect ? "Connected" : "Not Connected";
             lblDatabaseStatusValue.ForeColor = health.CanConnect
                 ? System.Drawing.Color.FromArgb(22, 163, 74)
@@ -42,6 +48,12 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             var counts = await _databaseHealthService.GetEntityCountsAsync();
+
+            if (IsDisposed)
+            {
+                return;
+            }
+
             lblSubjectsMetricValue.Text = counts["Subjects"].ToString();
             lblFacultyMetricValue.Text = counts["Faculty"].ToString();
             lblClassroomsMetricValue.Text = counts["Classrooms"].ToString();

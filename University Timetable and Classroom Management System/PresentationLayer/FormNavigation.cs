@@ -38,7 +38,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            nextForm.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            if (NavigationApplicationContext.Current is not null)
+            {
+                NavigationApplicationContext.Current.Navigate(currentForm, nextForm);
+                return;
+            }
+
+            ApplyWindowState(currentForm, nextForm);
             nextForm.Show();
             currentForm.Hide();
             nextForm.FormClosed += (_, _) => currentForm.Close();
@@ -68,11 +74,28 @@ namespace University_Timetable_and_Classroom_Management_System
                 }
                 else
                 {
-                    button.Click += (_, _) => Open(currentForm, CreateForm(item.Page.Value));
+                    button.Click += (_, _) =>
+                    {
+                        button.Enabled = false;
+                        Open(currentForm, CreateForm(item.Page.Value));
+                    };
                 }
 
                 top += 56;
             }
+        }
+
+        internal static void ApplyWindowState(
+            System.Windows.Forms.Form currentForm,
+            System.Windows.Forms.Form nextForm)
+        {
+            nextForm.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            nextForm.Bounds = currentForm.WindowState == System.Windows.Forms.FormWindowState.Normal
+                ? currentForm.Bounds
+                : currentForm.RestoreBounds;
+            nextForm.WindowState = currentForm.WindowState == System.Windows.Forms.FormWindowState.Minimized
+                ? System.Windows.Forms.FormWindowState.Normal
+                : currentForm.WindowState;
         }
 
         public static void Configure(
