@@ -38,6 +38,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSchedules = new Guna.UI2.WinForms.Guna2Button();
             btnNavigationFaculty = new Guna.UI2.WinForms.Guna2Button();
             btnNavigationClassrooms = new Guna.UI2.WinForms.Guna2Button();
+            btnNavigationStudyYears = new Guna.UI2.WinForms.Guna2Button();
             btnNavigationBranches = new Guna.UI2.WinForms.Guna2Button();
             btnNavigationDashboard = new Guna.UI2.WinForms.Guna2Button();
             separatorSidebar = new Guna.UI2.WinForms.Guna2Separator();
@@ -84,6 +85,7 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.Controls.Add(btnNavigationSchedules);
             pnlSidebar.Controls.Add(btnNavigationFaculty);
             pnlSidebar.Controls.Add(btnNavigationClassrooms);
+            pnlSidebar.Controls.Add(btnNavigationStudyYears);
             pnlSidebar.Controls.Add(btnNavigationBranches);
             pnlSidebar.Controls.Add(btnNavigationDashboard);
             pnlSidebar.Controls.Add(separatorSidebar);
@@ -105,7 +107,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarFooter.Location = new System.Drawing.Point(24, 671);
             lblSidebarFooter.Name = "lblSidebarFooter";
             lblSidebarFooter.Size = new System.Drawing.Size(146, 17);
-            lblSidebarFooter.TabIndex = 8;
+            lblSidebarFooter.TabIndex = 9;
             lblSidebarFooter.Text = "Academic Scheduling Suite";
             // 
             // btnNavigationSchedules
@@ -116,10 +118,10 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSchedules.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnNavigationSchedules.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
             btnNavigationSchedules.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationSchedules.Location = new System.Drawing.Point(24, 322);
+            btnNavigationSchedules.Location = new System.Drawing.Point(24, 378);
             btnNavigationSchedules.Name = "btnNavigationSchedules";
             btnNavigationSchedules.Size = new System.Drawing.Size(192, 44);
-            btnNavigationSchedules.TabIndex = 7;
+            btnNavigationSchedules.TabIndex = 8;
             btnNavigationSchedules.Text = "Schedules";
             btnNavigationSchedules.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationSchedules.TextOffset = new System.Drawing.Point(14, 0);
@@ -133,10 +135,10 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationFaculty.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnNavigationFaculty.ForeColor = System.Drawing.Color.White;
             btnNavigationFaculty.HoverState.FillColor = System.Drawing.Color.FromArgb(29, 78, 216);
-            btnNavigationFaculty.Location = new System.Drawing.Point(24, 266);
+            btnNavigationFaculty.Location = new System.Drawing.Point(24, 322);
             btnNavigationFaculty.Name = "btnNavigationFaculty";
             btnNavigationFaculty.Size = new System.Drawing.Size(192, 44);
-            btnNavigationFaculty.TabIndex = 6;
+            btnNavigationFaculty.TabIndex = 7;
             btnNavigationFaculty.Text = "Faculty Members";
             btnNavigationFaculty.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationFaculty.TextOffset = new System.Drawing.Point(14, 0);
@@ -149,13 +151,29 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationClassrooms.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnNavigationClassrooms.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
             btnNavigationClassrooms.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationClassrooms.Location = new System.Drawing.Point(24, 210);
+            btnNavigationClassrooms.Location = new System.Drawing.Point(24, 266);
             btnNavigationClassrooms.Name = "btnNavigationClassrooms";
             btnNavigationClassrooms.Size = new System.Drawing.Size(192, 44);
-            btnNavigationClassrooms.TabIndex = 5;
+            btnNavigationClassrooms.TabIndex = 6;
             btnNavigationClassrooms.Text = "Classrooms";
             btnNavigationClassrooms.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationClassrooms.TextOffset = new System.Drawing.Point(14, 0);
+            // 
+            // btnNavigationStudyYears
+            // 
+            btnNavigationStudyYears.BorderRadius = 8;
+            btnNavigationStudyYears.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnNavigationStudyYears.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
+            btnNavigationStudyYears.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            btnNavigationStudyYears.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
+            btnNavigationStudyYears.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
+            btnNavigationStudyYears.Location = new System.Drawing.Point(24, 210);
+            btnNavigationStudyYears.Name = "btnNavigationStudyYears";
+            btnNavigationStudyYears.Size = new System.Drawing.Size(192, 44);
+            btnNavigationStudyYears.TabIndex = 5;
+            btnNavigationStudyYears.Text = "Study Years";
+            btnNavigationStudyYears.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            btnNavigationStudyYears.TextOffset = new System.Drawing.Point(14, 0);
             // 
             // btnNavigationBranches
             // 
@@ -627,6 +645,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
         private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
         private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
         private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
         private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
         private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;

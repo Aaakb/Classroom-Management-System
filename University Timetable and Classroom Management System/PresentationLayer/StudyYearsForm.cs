@@ -1,8 +1,8 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class BranchesForm
+    public partial class StudyYearsForm
     {
-        public BranchesForm()
+        public StudyYearsForm()
         {
             InitializeComponent();
             ConfigureNavigation();
@@ -10,13 +10,9 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureNavigation()
         {
-            btnNavigationBranches.Enabled = false;
-            btnNavigationStudyYears.Click += (_, _) => FormNavigation.Open(this, new StudyYearsForm());
+            btnNavigationStudyYears.Enabled = false;
+            btnNavigationBranches.Click += (_, _) => FormNavigation.Open(this, new BranchesForm());
             btnNavigationFaculty.Click += (_, _) => FormNavigation.Open(this, new FacultyMembersForm());
-        }
-
-        private void lblApplicationName_Click(object sender, EventArgs e)
-        {
         }
     }
 }
