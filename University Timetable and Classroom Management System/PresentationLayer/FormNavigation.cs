@@ -76,8 +76,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 {
                     button.Click += (_, _) =>
                     {
-                        button.Enabled = false;
-                        Open(currentForm, CreateForm(item.Page.Value));
+                        OpenFromNavigationButton(currentForm, button, item);
                     };
                 }
 
@@ -150,6 +149,34 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 sidebar.Controls.Remove(button);
                 button.Dispose();
+            }
+        }
+
+        private static void OpenFromNavigationButton(
+            System.Windows.Forms.Form currentForm,
+            Guna.UI2.WinForms.Guna2Button button,
+            NavigationItem item)
+        {
+            if (item.Page is null || !button.Enabled)
+            {
+                return;
+            }
+
+            try
+            {
+                button.Enabled = false;
+                Open(currentForm, CreateForm(item.Page.Value));
+            }
+            catch (Exception ex)
+            {
+                button.Enabled = true;
+
+                System.Windows.Forms.MessageBox.Show(
+                    currentForm,
+                    $"Unable to open {item.Text}.\n\n{ex.Message}",
+                    "Navigation Error",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Error);
             }
         }
 

@@ -2,7 +2,7 @@ namespace University_Timetable_and_Classroom_Management_System
 {
     internal sealed class NavigationApplicationContext : System.Windows.Forms.ApplicationContext
     {
-        private bool isSwitchingForm;
+        private bool isNavigating;
 
         public static NavigationApplicationContext? Current { get; private set; }
 
@@ -18,15 +18,24 @@ namespace University_Timetable_and_Classroom_Management_System
             System.Windows.Forms.Form currentForm,
             System.Windows.Forms.Form nextForm)
         {
+            if (isNavigating)
+            {
+                nextForm.Dispose();
+                return;
+            }
+
             if (currentForm.GetType() == nextForm.GetType())
             {
                 nextForm.Dispose();
                 return;
             }
 
-            FormNavigation.ApplyWindowState(currentForm, nextForm);
+            if (MainForm is not null && !ReferenceEquals(MainForm, currentForm))
+            {
+                currentForm = MainForm;
+            }
 
-            isSwitchingForm = true;
+            isNavigating = true;
             try
             {
                 var previousMainForm = MainForm;
@@ -36,28 +45,49 @@ namespace University_Timetable_and_Classroom_Management_System
                     previousMainForm.FormClosed -= HandleActiveFormClosed;
                 }
 
+                FormNavigation.ApplyWindowState(currentForm, nextForm);
+
                 MainForm = nextForm;
                 MainForm.FormClosed += HandleActiveFormClosed;
-                MainForm.Show();
 
                 if (!currentForm.IsDisposed)
                 {
-                    currentForm.Close();
+                    currentForm.Hide();
                 }
+
+                MainForm.Show();
+
+                MainForm.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (!currentForm.IsDisposed)
+                        {
+                            currentForm.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        isNavigating = false;
+                    }
+                }));
             }
-            finally
+            catch
             {
-                isSwitchingForm = false;
+                isNavigating = false;
+                nextForm.Dispose();
+
+                if (!currentForm.IsDisposed)
+                {
+                    currentForm.Show();
+                }
+
+                throw;
             }
         }
 
         private void HandleActiveFormClosed(object? sender, System.Windows.Forms.FormClosedEventArgs e)
         {
-            if (isSwitchingForm)
-            {
-                return;
-            }
-
             if (sender is System.Windows.Forms.Form closedForm)
             {
                 closedForm.FormClosed -= HandleActiveFormClosed;
