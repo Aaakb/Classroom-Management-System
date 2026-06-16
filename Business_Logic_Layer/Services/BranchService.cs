@@ -4,7 +4,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 {
-    internal class BranchService
+    public class BranchService
     {
         public async Task<List<Branch>> GetAllAsync()
         {
