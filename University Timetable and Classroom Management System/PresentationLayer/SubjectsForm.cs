@@ -6,5 +6,10 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             InitializeComponent();
         }
+
+        private void btnNavigationSchedules_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
