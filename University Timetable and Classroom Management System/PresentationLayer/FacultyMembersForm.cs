@@ -10,9 +10,15 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureNavigation()
         {
-            btnNavigationFaculty.Enabled = false;
-            btnNavigationBranches.Click += (_, _) => FormNavigation.Open(this, new BranchesForm());
-            btnNavigationStudyYears.Click += (_, _) => FormNavigation.Open(this, new StudyYearsForm());
+            FormNavigation.Configure(
+                this,
+                currentButton: btnNavigationFaculty,
+                dashboard: btnNavigationDashboard,
+                branches: btnNavigationBranches,
+                studyYears: btnNavigationStudyYears,
+                classrooms: btnNavigationClassrooms,
+                facultyMembers: btnNavigationFaculty,
+                schedules: btnNavigationSchedules);
         }
     }
 }

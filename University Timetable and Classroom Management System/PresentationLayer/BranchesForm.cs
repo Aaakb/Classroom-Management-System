@@ -10,9 +10,15 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureNavigation()
         {
-            btnNavigationBranches.Enabled = false;
-            btnNavigationStudyYears.Click += (_, _) => FormNavigation.Open(this, new StudyYearsForm());
-            btnNavigationFaculty.Click += (_, _) => FormNavigation.Open(this, new FacultyMembersForm());
+            FormNavigation.Configure(
+                this,
+                currentButton: btnNavigationBranches,
+                dashboard: btnNavigationDashboard,
+                branches: btnNavigationBranches,
+                studyYears: btnNavigationStudyYears,
+                classrooms: btnNavigationClassrooms,
+                facultyMembers: btnNavigationFaculty,
+                schedules: btnNavigationSchedules);
         }
 
         private void lblApplicationName_Click(object sender, EventArgs e)

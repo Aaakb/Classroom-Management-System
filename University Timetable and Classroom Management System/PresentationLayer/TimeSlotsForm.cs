@@ -5,6 +5,22 @@ namespace University_Timetable_and_Classroom_Management_System
         public TimeSlotsForm()
         {
             InitializeComponent();
+            ConfigureNavigation();
+        }
+
+        private void ConfigureNavigation()
+        {
+            FormNavigation.Configure(
+                this,
+                currentButton: btnNavigationTimeSlots,
+                dashboard: btnNavigationDashboard,
+                branches: btnNavigationBranches,
+                studyYears: btnNavigationStudyYears,
+                subjects: btnNavigationSubjects,
+                classrooms: btnNavigationClassrooms,
+                timeSlots: btnNavigationTimeSlots,
+                facultyMembers: btnNavigationFaculty,
+                schedules: btnNavigationSchedules);
         }
     }
 }
