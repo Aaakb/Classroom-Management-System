@@ -2,6 +2,7 @@ namespace University_Timetable_and_Classroom_Management_System
 {
     internal sealed class NavigationApplicationContext : System.Windows.Forms.ApplicationContext
     {
+        private readonly Dictionary<Type, System.Windows.Forms.Form> cachedForms = [];
         private bool isNavigating;
 
         public static NavigationApplicationContext? Current { get; private set; }
@@ -9,6 +10,7 @@ namespace University_Timetable_and_Classroom_Management_System
         public NavigationApplicationContext(System.Windows.Forms.Form initialForm)
         {
             Current = this;
+            cachedForms[initialForm.GetType()] = initialForm;
             MainForm = initialForm;
             MainForm.FormClosed += HandleActiveFormClosed;
             MainForm.Show();
@@ -24,7 +26,9 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            if (currentForm.GetType() == nextForm.GetType())
+            Type requestedFormType = nextForm.GetType();
+
+            if (currentForm.GetType() == requestedFormType)
             {
                 nextForm.Dispose();
                 return;
@@ -35,11 +39,24 @@ namespace University_Timetable_and_Classroom_Management_System
                 currentForm = MainForm;
             }
 
+            bool isNewCachedForm = false;
+
+            if (cachedForms.TryGetValue(requestedFormType, out var cachedForm) && !cachedForm.IsDisposed)
+            {
+                nextForm.Dispose();
+                nextForm = cachedForm;
+            }
+            else
+            {
+                cachedForms[requestedFormType] = nextForm;
+                isNewCachedForm = true;
+            }
+
             isNavigating = true;
+            var previousMainForm = MainForm;
+
             try
             {
-                var previousMainForm = MainForm;
-
                 if (previousMainForm is not null)
                 {
                     previousMainForm.FormClosed -= HandleActiveFormClosed;
@@ -56,26 +73,29 @@ namespace University_Timetable_and_Classroom_Management_System
                 }
 
                 MainForm.Show();
-
-                MainForm.BeginInvoke(new Action(() =>
-                {
-                    try
-                    {
-                        if (!currentForm.IsDisposed)
-                        {
-                            currentForm.Dispose();
-                        }
-                    }
-                    finally
-                    {
-                        isNavigating = false;
-                    }
-                }));
+                isNavigating = false;
             }
             catch
             {
                 isNavigating = false;
-                nextForm.Dispose();
+
+                if (MainForm is not null)
+                {
+                    MainForm.FormClosed -= HandleActiveFormClosed;
+                }
+
+                MainForm = previousMainForm;
+
+                if (MainForm is not null)
+                {
+                    MainForm.FormClosed += HandleActiveFormClosed;
+                }
+
+                if (isNewCachedForm)
+                {
+                    cachedForms.Remove(requestedFormType);
+                    nextForm.Dispose();
+                }
 
                 if (!currentForm.IsDisposed)
                 {
@@ -102,6 +122,17 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 Current = null;
             }
+
+            foreach (var form in cachedForms.Values.ToList())
+            {
+                if (!form.IsDisposed)
+                {
+                    form.FormClosed -= HandleActiveFormClosed;
+                    form.Dispose();
+                }
+            }
+
+            cachedForms.Clear();
 
             base.ExitThreadCore();
         }

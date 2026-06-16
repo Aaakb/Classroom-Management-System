@@ -164,13 +164,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
             try
             {
-                button.Enabled = false;
                 Open(currentForm, CreateForm(item.Page.Value));
             }
             catch (Exception ex)
             {
-                button.Enabled = true;
-
                 System.Windows.Forms.MessageBox.Show(
                     currentForm,
                     $"Unable to open {item.Text}.\n\n{ex.Message}",
