@@ -10,15 +10,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureNavigation()
         {
-            FormNavigation.Configure(
-                this,
-                currentButton: btnNavigationFaculty,
-                dashboard: btnNavigationDashboard,
-                branches: btnNavigationBranches,
-                studyYears: btnNavigationStudyYears,
-                classrooms: btnNavigationClassrooms,
-                facultyMembers: btnNavigationFaculty,
-                schedules: btnNavigationSchedules);
+            FormNavigation.ConfigureSidebar(this, pnlSidebar, NavigationPage.FacultyMembers);
         }
     }
 }

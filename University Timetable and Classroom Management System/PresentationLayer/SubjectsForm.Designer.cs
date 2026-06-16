@@ -200,7 +200,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSchedules.Text = "Schedules";
             btnNavigationSchedules.TextAlign = HorizontalAlignment.Left;
             btnNavigationSchedules.TextOffset = new Point(14, 0);
-            btnNavigationSchedules.Click += btnNavigationSchedules_Click;
             // 
             // btnNavigationFaculty
             // 
