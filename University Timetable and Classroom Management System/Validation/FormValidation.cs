@@ -122,7 +122,9 @@ namespace University_Timetable_and_Classroom_Management_System.PresentationLayer
                 return false;
             }
 
-            if (!int.TryParse(comboBox.SelectedValue.ToString(), out id) || id <= 0)
+            object? selectedValue = comboBox.SelectedValue;
+
+            if (selectedValue == null || !int.TryParse(selectedValue.ToString(), out id) || id <= 0)
             {
                 return ShowError(comboBox, $"Please select a valid {fieldName}.", errorProvider);
             }
