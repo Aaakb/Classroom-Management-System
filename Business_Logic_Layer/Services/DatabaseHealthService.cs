@@ -12,9 +12,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 await using var context = new AppDbContext();
                 await context.Database.EnsureCreatedAsync();
                 await context.Database.OpenConnectionAsync();
+                string dataSource = context.Database.GetDbConnection().DataSource;
                 await context.Database.CloseConnectionAsync();
 
-                return new DatabaseHealthResult(true, "Connected to UniversityTimetableDB. Database schema is ready.");
+                return new DatabaseHealthResult(
+                    true,
+                    $"Connected to UniversityTimetableDB on {dataSource}. Database schema is ready.");
             }
             catch (Exception ex)
             {

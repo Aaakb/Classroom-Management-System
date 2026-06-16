@@ -6,9 +6,15 @@ namespace University_Timetable_and_Classroom_Management_System
     internal abstract class EntityManagementPage<TEntity> : System.Windows.Forms.UserControl
         where TEntity : class
     {
+        private const int PageMargin = 28;
+        private const int MinimumContentWidth = 900;
+        private const int PanelInnerMargin = 24;
+
         private readonly List<GridColumn<TEntity>> _gridColumns = new();
         private readonly int _fieldColumns;
         private readonly int _editorHeight;
+        private readonly Guna2Panel _rootPanel;
+        private readonly Guna2Panel _tablePanel;
         private int _fieldIndex;
         private TEntity? _selectedEntity;
 
@@ -37,11 +43,12 @@ namespace University_Timetable_and_Classroom_Management_System
             BackColor = Color.FromArgb(245, 247, 250);
             ErrorProvider = new ErrorProvider { BlinkStyle = ErrorBlinkStyle.NeverBlink };
 
-            var rootPanel = new Guna2Panel
+            _rootPanel = new Guna2Panel
             {
+                AutoScroll = true,
                 Dock = DockStyle.Fill,
                 FillColor = Color.FromArgb(245, 247, 250),
-                Padding = new Padding(28)
+                Padding = new Padding(PageMargin)
             };
 
             var lblPageTitle = new Guna2HtmlLabel
@@ -112,7 +119,7 @@ namespace University_Timetable_and_Classroom_Management_System
             EditorPanel.Controls.Add(_btnClear);
             EditorPanel.Controls.Add(_btnRefresh);
 
-            var tablePanel = new Guna2Panel
+            _tablePanel = new Guna2Panel
             {
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
@@ -139,16 +146,17 @@ namespace University_Timetable_and_Classroom_Management_System
             DataGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DataGrid.CellClick += (_, e) => SelectGridRow(e.RowIndex);
 
-            tablePanel.Controls.Add(lblTableTitle);
-            tablePanel.Controls.Add(DataGrid);
+            _tablePanel.Controls.Add(lblTableTitle);
+            _tablePanel.Controls.Add(DataGrid);
 
-            rootPanel.Controls.Add(lblPageTitle);
-            rootPanel.Controls.Add(lblPageSubtitle);
-            rootPanel.Controls.Add(EditorPanel);
-            rootPanel.Controls.Add(tablePanel);
-            Controls.Add(rootPanel);
+            _rootPanel.Controls.Add(lblPageTitle);
+            _rootPanel.Controls.Add(lblPageSubtitle);
+            _rootPanel.Controls.Add(EditorPanel);
+            _rootPanel.Controls.Add(_tablePanel);
+            Controls.Add(_rootPanel);
 
             SetSelectionState(false);
+            ApplyResponsiveLayout();
         }
 
         protected virtual bool SupportsUpdate => true;
@@ -182,6 +190,12 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             await InitializeAsync();
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            ApplyResponsiveLayout();
         }
 
         protected void AddGridColumn(string headerText, Func<TEntity, object?> valueSelector, float fillWeight = 100F)
@@ -534,6 +548,25 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             _btnUpdate.Enabled = SupportsUpdate && hasSelection;
             _btnDelete.Enabled = hasSelection;
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            if (_rootPanel is null || _tablePanel is null || DataGrid is null)
+            {
+                return;
+            }
+
+            int contentWidth = Math.Max(MinimumContentWidth, Width - (PageMargin * 2));
+            int tableTop = 116 + _editorHeight;
+            int tableHeight = Math.Max(300, Height - tableTop - PageMargin);
+
+            EditorPanel.Width = contentWidth;
+            EditorPanel.Height = _editorHeight;
+            _tablePanel.Location = new Point(PageMargin, tableTop);
+            _tablePanel.Size = new Size(contentWidth, tableHeight);
+            DataGrid.Size = new Size(contentWidth - (PanelInnerMargin * 2), Math.Max(220, tableHeight - 88));
+            _rootPanel.AutoScrollMinSize = new Size(contentWidth + (PageMargin * 2), tableTop + tableHeight + PageMargin);
         }
 
         private Guna2DataGridView CreateGrid()

@@ -18,7 +18,8 @@ namespace Data_Access_Layer
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                "Server=.;Database=UniversityTimetableDB;Trusted_Connection=True;TrustServerCertificate=True;");
+                DatabaseConnection.ConnectionString,
+                sqlOptions => sqlOptions.EnableRetryOnFailure());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

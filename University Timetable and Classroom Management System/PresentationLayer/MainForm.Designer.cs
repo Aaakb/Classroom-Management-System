@@ -263,11 +263,11 @@ namespace University_Timetable_and_Classroom_Management_System
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(245, 247, 250);
-            ClientSize = new Size(1240, 760);
+            ClientSize = new Size(1280, 780);
             Controls.Add(pnlContent);
             Controls.Add(pnlSidebar);
             Font = new Font("Segoe UI", 9F);
-            MinimumSize = new Size(1100, 680);
+            MinimumSize = new Size(1180, 720);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Automated University Timetable and Classroom Management System";

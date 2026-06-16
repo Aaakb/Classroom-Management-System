@@ -5,7 +5,16 @@ namespace University_Timetable_and_Classroom_Management_System
 {
     internal sealed class DashboardPage : UserControl
     {
+        private const int PageMargin = 28;
+        private const int MinimumContentWidth = 900;
+        private const int CardWidth = 190;
+        private const int CardHeight = 92;
+        private const int CardGap = 16;
+
         private readonly DatabaseHealthService _databaseHealthService = new();
+        private readonly Guna2Panel _rootPanel;
+        private readonly Guna2Panel _healthPanel;
+        private readonly Guna2Panel _metricsContainer;
         private readonly Guna2HtmlLabel _lblConnectionStatus;
         private readonly Guna2HtmlLabel _lblConnectionMessage;
         private readonly Guna2Panel _metricsPanel;
@@ -16,11 +25,12 @@ namespace University_Timetable_and_Classroom_Management_System
             Dock = DockStyle.Fill;
             BackColor = Color.FromArgb(245, 247, 250);
 
-            var rootPanel = new Guna2Panel
+            _rootPanel = new Guna2Panel
             {
+                AutoScroll = true,
                 Dock = DockStyle.Fill,
                 FillColor = Color.FromArgb(245, 247, 250),
-                Padding = new Padding(28)
+                Padding = new Padding(PageMargin)
             };
 
             var lblTitle = new Guna2HtmlLabel
@@ -41,7 +51,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 Text = "Review database status and available academic records."
             };
 
-            var healthPanel = new Guna2Panel
+            _healthPanel = new Guna2Panel
             {
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
@@ -96,12 +106,12 @@ namespace University_Timetable_and_Classroom_Management_System
             };
             _btnRefresh.Click += async (_, _) => await RefreshHealthAsync();
 
-            healthPanel.Controls.Add(lblHealthTitle);
-            healthPanel.Controls.Add(_lblConnectionStatus);
-            healthPanel.Controls.Add(_lblConnectionMessage);
-            healthPanel.Controls.Add(_btnRefresh);
+            _healthPanel.Controls.Add(lblHealthTitle);
+            _healthPanel.Controls.Add(_lblConnectionStatus);
+            _healthPanel.Controls.Add(_lblConnectionMessage);
+            _healthPanel.Controls.Add(_btnRefresh);
 
-            var metricsContainer = new Guna2Panel
+            _metricsContainer = new Guna2Panel
             {
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
@@ -124,6 +134,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             _metricsPanel = new Guna2Panel
             {
+                AutoScroll = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
                 FillColor = Color.White,
@@ -131,14 +142,16 @@ namespace University_Timetable_and_Classroom_Management_System
                 Size = new Size(852, 300)
             };
 
-            metricsContainer.Controls.Add(lblMetricsTitle);
-            metricsContainer.Controls.Add(_metricsPanel);
+            _metricsContainer.Controls.Add(lblMetricsTitle);
+            _metricsContainer.Controls.Add(_metricsPanel);
 
-            rootPanel.Controls.Add(lblTitle);
-            rootPanel.Controls.Add(lblSubtitle);
-            rootPanel.Controls.Add(healthPanel);
-            rootPanel.Controls.Add(metricsContainer);
-            Controls.Add(rootPanel);
+            _rootPanel.Controls.Add(lblTitle);
+            _rootPanel.Controls.Add(lblSubtitle);
+            _rootPanel.Controls.Add(_healthPanel);
+            _rootPanel.Controls.Add(_metricsContainer);
+            Controls.Add(_rootPanel);
+
+            ApplyResponsiveLayout();
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -149,6 +162,12 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 await RefreshHealthAsync();
             }
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            ApplyResponsiveLayout();
         }
 
         private async Task RefreshHealthAsync()
@@ -176,14 +195,13 @@ namespace University_Timetable_and_Classroom_Management_System
 
                 var counts = await _databaseHealthService.GetEntityCountsAsync();
 
-                int index = 0;
                 foreach (var item in counts)
                 {
                     var card = CreateMetricCard(item.Key, item.Value);
-                    card.Location = new Point((index % 4) * 206, (index / 4) * 108);
                     _metricsPanel.Controls.Add(card);
-                    index++;
                 }
+
+                ArrangeMetricCards();
             }
             catch (Exception ex)
             {
@@ -230,6 +248,50 @@ namespace University_Timetable_and_Classroom_Management_System
             card.Controls.Add(lblCount);
             card.Controls.Add(lblTitle);
             return card;
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            if (_rootPanel is null || _healthPanel is null || _metricsContainer is null || _metricsPanel is null)
+            {
+                return;
+            }
+
+            int contentWidth = Math.Max(MinimumContentWidth, Width - (PageMargin * 2));
+            _healthPanel.Size = new Size(contentWidth, 140);
+            _btnRefresh.Location = new Point(contentWidth - 132, 52);
+            _lblConnectionMessage.Size = new Size(Math.Max(320, contentWidth - 190), 42);
+
+            int metricsTop = 256;
+            int metricsHeight = Math.Max(360, Height - metricsTop - PageMargin);
+            _metricsContainer.Location = new Point(PageMargin, metricsTop);
+            _metricsContainer.Size = new Size(contentWidth, metricsHeight);
+            _metricsPanel.Size = new Size(contentWidth - 48, Math.Max(240, metricsHeight - 90));
+            _rootPanel.AutoScrollMinSize = new Size(contentWidth + (PageMargin * 2), metricsTop + metricsHeight + PageMargin);
+
+            ArrangeMetricCards();
+        }
+
+        private void ArrangeMetricCards()
+        {
+            if (_metricsPanel is null || _metricsPanel.Controls.Count == 0)
+            {
+                return;
+            }
+
+            int columns = Math.Max(1, (_metricsPanel.ClientSize.Width + CardGap) / (CardWidth + CardGap));
+            int index = 0;
+
+            foreach (Control control in _metricsPanel.Controls)
+            {
+                int row = index / columns;
+                int column = index % columns;
+                control.Location = new Point(column * (CardWidth + CardGap), row * (CardHeight + CardGap));
+                index++;
+            }
+
+            int rows = (int)Math.Ceiling(_metricsPanel.Controls.Count / (double)columns);
+            _metricsPanel.AutoScrollMinSize = new Size(0, rows * (CardHeight + CardGap));
         }
     }
 }
