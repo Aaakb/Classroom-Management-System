@@ -12,5 +12,15 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             FormNavigation.ConfigureSidebar(this, pnlSidebar, NavigationPage.FacultyAssignments);
         }
+
+        private void dgvFacultyMemberSubjects_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void lblTableTitle_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -29,10 +29,53 @@ namespace University_Timetable_and_Classroom_Management_System
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            components = new System.ComponentModel.Container();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges21 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges22 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges1 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges2 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges3 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges4 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges5 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges6 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges7 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges17 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges18 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges19 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges20 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges43 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges44 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges39 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges40 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges23 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges24 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges37 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges38 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges25 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges26 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges27 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges28 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges29 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges30 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges31 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges32 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges33 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges34 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges35 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges36 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges41 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges42 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             pnlSidebar = new Guna.UI2.WinForms.Guna2Panel();
             lblSidebarFooter = new Guna.UI2.WinForms.Guna2HtmlLabel();
             btnNavigationSchedules = new Guna.UI2.WinForms.Guna2Button();
@@ -52,10 +95,10 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlWorkspace = new Guna.UI2.WinForms.Guna2Panel();
             pnlAssignmentsTable = new Guna.UI2.WinForms.Guna2Panel();
             dgvFacultyMemberSubjects = new Guna.UI2.WinForms.Guna2DataGridView();
-            colFacultyMemberId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            colFacultyMember = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            colSubjectId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            colSubject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            colFacultyMemberId = new DataGridViewTextBoxColumn();
+            colFacultyMember = new DataGridViewTextBoxColumn();
+            colSubjectId = new DataGridViewTextBoxColumn();
+            colSubject = new DataGridViewTextBoxColumn();
             lblTableSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblTableTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlAssignmentEditor = new Guna.UI2.WinForms.Guna2Panel();
@@ -83,7 +126,7 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             // pnlSidebar
             // 
-            pnlSidebar.BackColor = System.Drawing.Color.Transparent;
+            pnlSidebar.BackColor = Color.Transparent;
             pnlSidebar.Controls.Add(lblSidebarFooter);
             pnlSidebar.Controls.Add(btnNavigationSchedules);
             pnlSidebar.Controls.Add(btnNavigationFacultyMembers);
@@ -98,214 +141,236 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.Controls.Add(separatorSidebar);
             pnlSidebar.Controls.Add(lblSidebarSubtitle);
             pnlSidebar.Controls.Add(lblApplicationName);
-            pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
-            pnlSidebar.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            pnlSidebar.Location = new System.Drawing.Point(0, 0);
+            pnlSidebar.CustomizableEdges = customizableEdges21;
+            pnlSidebar.Dock = DockStyle.Left;
+            pnlSidebar.FillColor = Color.FromArgb(24, 38, 62);
+            pnlSidebar.Location = new Point(0, 0);
             pnlSidebar.Name = "pnlSidebar";
-            pnlSidebar.Size = new System.Drawing.Size(240, 720);
+            pnlSidebar.ShadowDecoration.CustomizableEdges = customizableEdges22;
+            pnlSidebar.Size = new Size(240, 720);
             pnlSidebar.TabIndex = 0;
             // 
             // lblSidebarFooter
             // 
-            lblSidebarFooter.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            lblSidebarFooter.BackColor = System.Drawing.Color.Transparent;
-            lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            lblSidebarFooter.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
-            lblSidebarFooter.Location = new System.Drawing.Point(24, 671);
+            lblSidebarFooter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblSidebarFooter.BackColor = Color.Transparent;
+            lblSidebarFooter.Font = new Font("Segoe UI", 9F);
+            lblSidebarFooter.ForeColor = Color.FromArgb(148, 163, 184);
+            lblSidebarFooter.Location = new Point(24, 671);
             lblSidebarFooter.Name = "lblSidebarFooter";
-            lblSidebarFooter.Size = new System.Drawing.Size(146, 17);
+            lblSidebarFooter.Size = new Size(147, 17);
             lblSidebarFooter.TabIndex = 13;
             lblSidebarFooter.Text = "Academic Scheduling Suite";
             // 
             // btnNavigationSchedules
             // 
             btnNavigationSchedules.BorderRadius = 8;
-            btnNavigationSchedules.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationSchedules.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationSchedules.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationSchedules.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationSchedules.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationSchedules.Location = new System.Drawing.Point(24, 602);
+            btnNavigationSchedules.Cursor = Cursors.Hand;
+            btnNavigationSchedules.CustomizableEdges = customizableEdges1;
+            btnNavigationSchedules.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationSchedules.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationSchedules.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationSchedules.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationSchedules.Location = new Point(24, 602);
             btnNavigationSchedules.Name = "btnNavigationSchedules";
-            btnNavigationSchedules.Size = new System.Drawing.Size(192, 44);
+            btnNavigationSchedules.ShadowDecoration.CustomizableEdges = customizableEdges2;
+            btnNavigationSchedules.Size = new Size(192, 44);
             btnNavigationSchedules.TabIndex = 12;
             btnNavigationSchedules.Text = "Schedules";
-            btnNavigationSchedules.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationSchedules.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationSchedules.TextAlign = HorizontalAlignment.Left;
+            btnNavigationSchedules.TextOffset = new Point(14, 0);
             // 
             // btnNavigationFacultyMembers
             // 
             btnNavigationFacultyMembers.BorderRadius = 8;
-            btnNavigationFacultyMembers.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationFacultyMembers.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationFacultyMembers.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationFacultyMembers.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationFacultyMembers.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationFacultyMembers.Location = new System.Drawing.Point(24, 546);
+            btnNavigationFacultyMembers.Cursor = Cursors.Hand;
+            btnNavigationFacultyMembers.CustomizableEdges = customizableEdges3;
+            btnNavigationFacultyMembers.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationFacultyMembers.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationFacultyMembers.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationFacultyMembers.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationFacultyMembers.Location = new Point(24, 546);
             btnNavigationFacultyMembers.Name = "btnNavigationFacultyMembers";
-            btnNavigationFacultyMembers.Size = new System.Drawing.Size(192, 44);
+            btnNavigationFacultyMembers.ShadowDecoration.CustomizableEdges = customizableEdges4;
+            btnNavigationFacultyMembers.Size = new Size(192, 44);
             btnNavigationFacultyMembers.TabIndex = 11;
             btnNavigationFacultyMembers.Text = "Faculty Members";
-            btnNavigationFacultyMembers.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationFacultyMembers.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationFacultyMembers.TextAlign = HorizontalAlignment.Left;
+            btnNavigationFacultyMembers.TextOffset = new Point(14, 0);
             // 
             // btnNavigationFacultyAssignments
             // 
             btnNavigationFacultyAssignments.BorderRadius = 8;
             btnNavigationFacultyAssignments.Checked = true;
-            btnNavigationFacultyAssignments.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnNavigationFacultyAssignments.Cursor = Cursors.Hand;
+            btnNavigationFacultyAssignments.CustomizableEdges = customizableEdges5;
             btnNavigationFacultyAssignments.Enabled = false;
-            btnNavigationFacultyAssignments.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
-            btnNavigationFacultyAssignments.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationFacultyAssignments.ForeColor = System.Drawing.Color.White;
-            btnNavigationFacultyAssignments.HoverState.FillColor = System.Drawing.Color.FromArgb(29, 78, 216);
-            btnNavigationFacultyAssignments.Location = new System.Drawing.Point(24, 490);
+            btnNavigationFacultyAssignments.FillColor = Color.FromArgb(37, 99, 235);
+            btnNavigationFacultyAssignments.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationFacultyAssignments.ForeColor = Color.White;
+            btnNavigationFacultyAssignments.HoverState.FillColor = Color.FromArgb(29, 78, 216);
+            btnNavigationFacultyAssignments.Location = new Point(24, 490);
             btnNavigationFacultyAssignments.Name = "btnNavigationFacultyAssignments";
-            btnNavigationFacultyAssignments.Size = new System.Drawing.Size(192, 44);
+            btnNavigationFacultyAssignments.ShadowDecoration.CustomizableEdges = customizableEdges6;
+            btnNavigationFacultyAssignments.Size = new Size(192, 44);
             btnNavigationFacultyAssignments.TabIndex = 10;
             btnNavigationFacultyAssignments.Text = "Faculty Assignments";
-            btnNavigationFacultyAssignments.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationFacultyAssignments.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationFacultyAssignments.TextAlign = HorizontalAlignment.Left;
+            btnNavigationFacultyAssignments.TextOffset = new Point(14, 0);
             // 
             // btnNavigationTimeSlots
             // 
             btnNavigationTimeSlots.BorderRadius = 8;
-            btnNavigationTimeSlots.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationTimeSlots.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationTimeSlots.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationTimeSlots.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationTimeSlots.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationTimeSlots.Location = new System.Drawing.Point(24, 434);
+            btnNavigationTimeSlots.Cursor = Cursors.Hand;
+            btnNavigationTimeSlots.CustomizableEdges = customizableEdges7;
+            btnNavigationTimeSlots.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationTimeSlots.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationTimeSlots.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationTimeSlots.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationTimeSlots.Location = new Point(24, 434);
             btnNavigationTimeSlots.Name = "btnNavigationTimeSlots";
-            btnNavigationTimeSlots.Size = new System.Drawing.Size(192, 44);
+            btnNavigationTimeSlots.ShadowDecoration.CustomizableEdges = customizableEdges8;
+            btnNavigationTimeSlots.Size = new Size(192, 44);
             btnNavigationTimeSlots.TabIndex = 9;
             btnNavigationTimeSlots.Text = "Time Slots";
-            btnNavigationTimeSlots.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationTimeSlots.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationTimeSlots.TextAlign = HorizontalAlignment.Left;
+            btnNavigationTimeSlots.TextOffset = new Point(14, 0);
             // 
             // btnNavigationClassrooms
             // 
             btnNavigationClassrooms.BorderRadius = 8;
-            btnNavigationClassrooms.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationClassrooms.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationClassrooms.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationClassrooms.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationClassrooms.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationClassrooms.Location = new System.Drawing.Point(24, 378);
+            btnNavigationClassrooms.Cursor = Cursors.Hand;
+            btnNavigationClassrooms.CustomizableEdges = customizableEdges9;
+            btnNavigationClassrooms.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationClassrooms.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationClassrooms.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationClassrooms.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationClassrooms.Location = new Point(24, 378);
             btnNavigationClassrooms.Name = "btnNavigationClassrooms";
-            btnNavigationClassrooms.Size = new System.Drawing.Size(192, 44);
+            btnNavigationClassrooms.ShadowDecoration.CustomizableEdges = customizableEdges10;
+            btnNavigationClassrooms.Size = new Size(192, 44);
             btnNavigationClassrooms.TabIndex = 8;
             btnNavigationClassrooms.Text = "Classrooms";
-            btnNavigationClassrooms.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationClassrooms.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationClassrooms.TextAlign = HorizontalAlignment.Left;
+            btnNavigationClassrooms.TextOffset = new Point(14, 0);
             // 
             // btnNavigationSubjects
             // 
             btnNavigationSubjects.BorderRadius = 8;
-            btnNavigationSubjects.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationSubjects.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationSubjects.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationSubjects.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationSubjects.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationSubjects.Location = new System.Drawing.Point(24, 322);
+            btnNavigationSubjects.Cursor = Cursors.Hand;
+            btnNavigationSubjects.CustomizableEdges = customizableEdges11;
+            btnNavigationSubjects.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationSubjects.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationSubjects.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationSubjects.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationSubjects.Location = new Point(24, 322);
             btnNavigationSubjects.Name = "btnNavigationSubjects";
-            btnNavigationSubjects.Size = new System.Drawing.Size(192, 44);
+            btnNavigationSubjects.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            btnNavigationSubjects.Size = new Size(192, 44);
             btnNavigationSubjects.TabIndex = 7;
             btnNavigationSubjects.Text = "Subjects";
-            btnNavigationSubjects.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationSubjects.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationSubjects.TextAlign = HorizontalAlignment.Left;
+            btnNavigationSubjects.TextOffset = new Point(14, 0);
             // 
             // btnNavigationSections
             // 
             btnNavigationSections.BorderRadius = 8;
-            btnNavigationSections.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationSections.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationSections.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationSections.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationSections.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationSections.Location = new System.Drawing.Point(24, 266);
+            btnNavigationSections.Cursor = Cursors.Hand;
+            btnNavigationSections.CustomizableEdges = customizableEdges13;
+            btnNavigationSections.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationSections.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationSections.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationSections.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationSections.Location = new Point(24, 266);
             btnNavigationSections.Name = "btnNavigationSections";
-            btnNavigationSections.Size = new System.Drawing.Size(192, 44);
+            btnNavigationSections.ShadowDecoration.CustomizableEdges = customizableEdges14;
+            btnNavigationSections.Size = new Size(192, 44);
             btnNavigationSections.TabIndex = 6;
             btnNavigationSections.Text = "Sections";
-            btnNavigationSections.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationSections.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationSections.TextAlign = HorizontalAlignment.Left;
+            btnNavigationSections.TextOffset = new Point(14, 0);
             // 
             // btnNavigationStudyYears
             // 
             btnNavigationStudyYears.BorderRadius = 8;
-            btnNavigationStudyYears.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationStudyYears.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationStudyYears.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationStudyYears.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationStudyYears.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationStudyYears.Location = new System.Drawing.Point(24, 210);
+            btnNavigationStudyYears.Cursor = Cursors.Hand;
+            btnNavigationStudyYears.CustomizableEdges = customizableEdges15;
+            btnNavigationStudyYears.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationStudyYears.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationStudyYears.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationStudyYears.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationStudyYears.Location = new Point(24, 210);
             btnNavigationStudyYears.Name = "btnNavigationStudyYears";
-            btnNavigationStudyYears.Size = new System.Drawing.Size(192, 44);
+            btnNavigationStudyYears.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            btnNavigationStudyYears.Size = new Size(192, 44);
             btnNavigationStudyYears.TabIndex = 5;
             btnNavigationStudyYears.Text = "Study Years";
-            btnNavigationStudyYears.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationStudyYears.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationStudyYears.TextAlign = HorizontalAlignment.Left;
+            btnNavigationStudyYears.TextOffset = new Point(14, 0);
             // 
             // btnNavigationBranches
             // 
             btnNavigationBranches.BorderRadius = 8;
-            btnNavigationBranches.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationBranches.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationBranches.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationBranches.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationBranches.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationBranches.Location = new System.Drawing.Point(24, 154);
+            btnNavigationBranches.Cursor = Cursors.Hand;
+            btnNavigationBranches.CustomizableEdges = customizableEdges17;
+            btnNavigationBranches.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationBranches.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationBranches.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationBranches.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationBranches.Location = new Point(24, 154);
             btnNavigationBranches.Name = "btnNavigationBranches";
-            btnNavigationBranches.Size = new System.Drawing.Size(192, 44);
+            btnNavigationBranches.ShadowDecoration.CustomizableEdges = customizableEdges18;
+            btnNavigationBranches.Size = new Size(192, 44);
             btnNavigationBranches.TabIndex = 4;
             btnNavigationBranches.Text = "Branches";
-            btnNavigationBranches.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationBranches.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationBranches.TextAlign = HorizontalAlignment.Left;
+            btnNavigationBranches.TextOffset = new Point(14, 0);
             // 
             // btnNavigationDashboard
             // 
             btnNavigationDashboard.BorderRadius = 8;
-            btnNavigationDashboard.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationDashboard.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationDashboard.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationDashboard.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationDashboard.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationDashboard.Location = new System.Drawing.Point(24, 98);
+            btnNavigationDashboard.Cursor = Cursors.Hand;
+            btnNavigationDashboard.CustomizableEdges = customizableEdges19;
+            btnNavigationDashboard.FillColor = Color.FromArgb(24, 38, 62);
+            btnNavigationDashboard.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            btnNavigationDashboard.ForeColor = Color.FromArgb(226, 232, 240);
+            btnNavigationDashboard.HoverState.FillColor = Color.FromArgb(36, 55, 86);
+            btnNavigationDashboard.Location = new Point(24, 98);
             btnNavigationDashboard.Name = "btnNavigationDashboard";
-            btnNavigationDashboard.Size = new System.Drawing.Size(192, 44);
+            btnNavigationDashboard.ShadowDecoration.CustomizableEdges = customizableEdges20;
+            btnNavigationDashboard.Size = new Size(192, 44);
             btnNavigationDashboard.TabIndex = 3;
             btnNavigationDashboard.Text = "Dashboard";
-            btnNavigationDashboard.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationDashboard.TextOffset = new System.Drawing.Point(14, 0);
+            btnNavigationDashboard.TextAlign = HorizontalAlignment.Left;
+            btnNavigationDashboard.TextOffset = new Point(14, 0);
             // 
             // separatorSidebar
             // 
-            separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            separatorSidebar.Location = new System.Drawing.Point(24, 78);
+            separatorSidebar.FillColor = Color.FromArgb(51, 65, 85);
+            separatorSidebar.Location = new Point(24, 78);
             separatorSidebar.Name = "separatorSidebar";
-            separatorSidebar.Size = new System.Drawing.Size(192, 10);
+            separatorSidebar.Size = new Size(192, 10);
             separatorSidebar.TabIndex = 2;
             // 
             // lblSidebarSubtitle
             // 
-            lblSidebarSubtitle.BackColor = System.Drawing.Color.Transparent;
-            lblSidebarSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            lblSidebarSubtitle.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
-            lblSidebarSubtitle.Location = new System.Drawing.Point(26, 52);
+            lblSidebarSubtitle.BackColor = Color.Transparent;
+            lblSidebarSubtitle.Font = new Font("Segoe UI", 9F);
+            lblSidebarSubtitle.ForeColor = Color.FromArgb(148, 163, 184);
+            lblSidebarSubtitle.Location = new Point(26, 52);
             lblSidebarSubtitle.Name = "lblSidebarSubtitle";
-            lblSidebarSubtitle.Size = new System.Drawing.Size(130, 17);
+            lblSidebarSubtitle.Size = new Size(133, 17);
             lblSidebarSubtitle.TabIndex = 1;
             lblSidebarSubtitle.Text = "Classroom Management";
             // 
             // lblApplicationName
             // 
-            lblApplicationName.BackColor = System.Drawing.Color.Transparent;
-            lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            lblApplicationName.ForeColor = System.Drawing.Color.White;
-            lblApplicationName.Location = new System.Drawing.Point(24, 20);
+            lblApplicationName.BackColor = Color.Transparent;
+            lblApplicationName.Font = new Font("Segoe UI Semibold", 17F, FontStyle.Bold);
+            lblApplicationName.ForeColor = Color.White;
+            lblApplicationName.Location = new Point(24, 20);
             lblApplicationName.Name = "lblApplicationName";
-            lblApplicationName.Size = new System.Drawing.Size(206, 33);
+            lblApplicationName.Size = new Size(216, 33);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "University Timetable";
             // 
@@ -313,39 +378,45 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             pnlMain.Controls.Add(pnlWorkspace);
             pnlMain.Controls.Add(pnlHeader);
-            pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            pnlMain.FillColor = System.Drawing.Color.FromArgb(245, 247, 250);
-            pnlMain.Location = new System.Drawing.Point(240, 0);
+            pnlMain.CustomizableEdges = customizableEdges43;
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.FillColor = Color.FromArgb(245, 247, 250);
+            pnlMain.Location = new Point(240, 0);
             pnlMain.Name = "pnlMain";
-            pnlMain.Size = new System.Drawing.Size(940, 720);
+            pnlMain.ShadowDecoration.CustomizableEdges = customizableEdges44;
+            pnlMain.Size = new Size(940, 720);
             pnlMain.TabIndex = 1;
             // 
             // pnlWorkspace
             // 
             pnlWorkspace.Controls.Add(pnlAssignmentsTable);
             pnlWorkspace.Controls.Add(pnlAssignmentEditor);
-            pnlWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
-            pnlWorkspace.FillColor = System.Drawing.Color.FromArgb(245, 247, 250);
-            pnlWorkspace.Location = new System.Drawing.Point(0, 88);
+            pnlWorkspace.CustomizableEdges = customizableEdges39;
+            pnlWorkspace.Dock = DockStyle.Fill;
+            pnlWorkspace.FillColor = Color.FromArgb(245, 247, 250);
+            pnlWorkspace.Location = new Point(0, 88);
             pnlWorkspace.Name = "pnlWorkspace";
-            pnlWorkspace.Padding = new System.Windows.Forms.Padding(28, 24, 28, 28);
-            pnlWorkspace.Size = new System.Drawing.Size(940, 632);
+            pnlWorkspace.Padding = new Padding(28, 24, 28, 28);
+            pnlWorkspace.ShadowDecoration.CustomizableEdges = customizableEdges40;
+            pnlWorkspace.Size = new Size(940, 632);
             pnlWorkspace.TabIndex = 1;
             // 
             // pnlAssignmentsTable
             // 
-            pnlAssignmentsTable.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            pnlAssignmentsTable.BackColor = System.Drawing.Color.Transparent;
-            pnlAssignmentsTable.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
+            pnlAssignmentsTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlAssignmentsTable.BackColor = Color.Transparent;
+            pnlAssignmentsTable.BorderColor = Color.FromArgb(226, 232, 240);
             pnlAssignmentsTable.BorderRadius = 8;
             pnlAssignmentsTable.BorderThickness = 1;
             pnlAssignmentsTable.Controls.Add(dgvFacultyMemberSubjects);
             pnlAssignmentsTable.Controls.Add(lblTableSubtitle);
             pnlAssignmentsTable.Controls.Add(lblTableTitle);
-            pnlAssignmentsTable.FillColor = System.Drawing.Color.White;
-            pnlAssignmentsTable.Location = new System.Drawing.Point(28, 248);
+            pnlAssignmentsTable.CustomizableEdges = customizableEdges23;
+            pnlAssignmentsTable.FillColor = Color.White;
+            pnlAssignmentsTable.Location = new Point(28, 248);
             pnlAssignmentsTable.Name = "pnlAssignmentsTable";
-            pnlAssignmentsTable.Size = new System.Drawing.Size(884, 356);
+            pnlAssignmentsTable.ShadowDecoration.CustomizableEdges = customizableEdges24;
+            pnlAssignmentsTable.Size = new Size(884, 356);
             pnlAssignmentsTable.TabIndex = 1;
             // 
             // dgvFacultyMemberSubjects
@@ -353,47 +424,55 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvFacultyMemberSubjects.AllowUserToAddRows = false;
             dgvFacultyMemberSubjects.AllowUserToDeleteRows = false;
             dgvFacultyMemberSubjects.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(30, 64, 175);
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(248, 250, 252);
+            dataGridViewCellStyle1.ForeColor = Color.FromArgb(30, 41, 59);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dataGridViewCellStyle1.SelectionForeColor = Color.FromArgb(30, 64, 175);
             dgvFacultyMemberSubjects.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dgvFacultyMemberSubjects.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            dgvFacultyMemberSubjects.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            dgvFacultyMemberSubjects.BackgroundColor = System.Drawing.Color.White;
-            dgvFacultyMemberSubjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dgvFacultyMemberSubjects.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            dgvFacultyMemberSubjects.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            dgvFacultyMemberSubjects.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(15, 23, 42);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(15, 23, 42);
+            dataGridViewCellStyle2.SelectionForeColor = Color.White;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             dgvFacultyMemberSubjects.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvFacultyMemberSubjects.ColumnHeadersHeight = 44;
-            dgvFacultyMemberSubjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvFacultyMemberSubjects.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { colFacultyMemberId, colFacultyMember, colSubjectId, colSubject });
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(30, 64, 175);
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            dgvFacultyMemberSubjects.Columns.AddRange(new DataGridViewColumn[] { colFacultyMemberId, colFacultyMember, colSubjectId, colSubject });
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle3.ForeColor = Color.FromArgb(30, 41, 59);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(30, 64, 175);
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
             dgvFacultyMemberSubjects.DefaultCellStyle = dataGridViewCellStyle3;
-            dgvFacultyMemberSubjects.EnableHeadersVisualStyles = false;
-            dgvFacultyMemberSubjects.GridColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            dgvFacultyMemberSubjects.Location = new System.Drawing.Point(24, 78);
+            dgvFacultyMemberSubjects.GridColor = Color.FromArgb(226, 232, 240);
+            dgvFacultyMemberSubjects.Location = new Point(24, 78);
             dgvFacultyMemberSubjects.MultiSelect = false;
             dgvFacultyMemberSubjects.Name = "dgvFacultyMemberSubjects";
             dgvFacultyMemberSubjects.ReadOnly = true;
             dgvFacultyMemberSubjects.RowHeadersVisible = false;
             dgvFacultyMemberSubjects.RowTemplate.Height = 42;
-            dgvFacultyMemberSubjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dgvFacultyMemberSubjects.Size = new System.Drawing.Size(836, 254);
+            dgvFacultyMemberSubjects.Size = new Size(836, 255);
             dgvFacultyMemberSubjects.TabIndex = 2;
+            dgvFacultyMemberSubjects.ThemeStyle.AlternatingRowsStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgvFacultyMemberSubjects.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.FromArgb(30, 41, 59);
+            dgvFacultyMemberSubjects.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgvFacultyMemberSubjects.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.FromArgb(30, 64, 175);
+            dgvFacultyMemberSubjects.ThemeStyle.GridColor = Color.FromArgb(226, 232, 240);
+            dgvFacultyMemberSubjects.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(15, 23, 42);
+            dgvFacultyMemberSubjects.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            dgvFacultyMemberSubjects.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvFacultyMemberSubjects.ThemeStyle.HeaderStyle.Height = 44;
+            dgvFacultyMemberSubjects.ThemeStyle.ReadOnly = true;
+            dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 10F);
+            dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(30, 41, 59);
+            dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.Height = 42;
+            dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(30, 64, 175);
+            dgvFacultyMemberSubjects.CellContentClick += dgvFacultyMemberSubjects_CellContentClick;
             // 
             // colFacultyMemberId
             // 
@@ -427,31 +506,32 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             // lblTableSubtitle
             // 
-            lblTableSubtitle.BackColor = System.Drawing.Color.Transparent;
-            lblTableSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            lblTableSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            lblTableSubtitle.Location = new System.Drawing.Point(24, 43);
+            lblTableSubtitle.BackColor = Color.Transparent;
+            lblTableSubtitle.Font = new Font("Segoe UI", 9F);
+            lblTableSubtitle.ForeColor = Color.FromArgb(100, 116, 139);
+            lblTableSubtitle.Location = new Point(24, 43);
             lblTableSubtitle.Name = "lblTableSubtitle";
-            lblTableSubtitle.Size = new System.Drawing.Size(310, 17);
+            lblTableSubtitle.Size = new Size(279, 17);
             lblTableSubtitle.TabIndex = 1;
             lblTableSubtitle.Text = "Review assigned teaching responsibilities by subject.";
             // 
             // lblTableTitle
             // 
-            lblTableTitle.BackColor = System.Drawing.Color.Transparent;
-            lblTableTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            lblTableTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            lblTableTitle.Location = new System.Drawing.Point(24, 18);
+            lblTableTitle.BackColor = Color.Transparent;
+            lblTableTitle.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold);
+            lblTableTitle.ForeColor = Color.FromArgb(15, 23, 42);
+            lblTableTitle.Location = new Point(24, 18);
             lblTableTitle.Name = "lblTableTitle";
-            lblTableTitle.Size = new System.Drawing.Size(205, 25);
+            lblTableTitle.Size = new Size(189, 25);
             lblTableTitle.TabIndex = 0;
             lblTableTitle.Text = "Faculty Assignments List";
+            lblTableTitle.Click += lblTableTitle_Click;
             // 
             // pnlAssignmentEditor
             // 
-            pnlAssignmentEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            pnlAssignmentEditor.BackColor = System.Drawing.Color.Transparent;
-            pnlAssignmentEditor.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
+            pnlAssignmentEditor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlAssignmentEditor.BackColor = Color.Transparent;
+            pnlAssignmentEditor.BorderColor = Color.FromArgb(226, 232, 240);
             pnlAssignmentEditor.BorderRadius = 8;
             pnlAssignmentEditor.BorderThickness = 1;
             pnlAssignmentEditor.Controls.Add(btnClearAssignmentForm);
@@ -464,151 +544,165 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlAssignmentEditor.Controls.Add(lblFacultyMember);
             pnlAssignmentEditor.Controls.Add(lblEditorSubtitle);
             pnlAssignmentEditor.Controls.Add(lblEditorTitle);
-            pnlAssignmentEditor.FillColor = System.Drawing.Color.White;
-            pnlAssignmentEditor.Location = new System.Drawing.Point(28, 24);
+            pnlAssignmentEditor.CustomizableEdges = customizableEdges37;
+            pnlAssignmentEditor.FillColor = Color.White;
+            pnlAssignmentEditor.Location = new Point(28, 24);
             pnlAssignmentEditor.Name = "pnlAssignmentEditor";
-            pnlAssignmentEditor.Size = new System.Drawing.Size(884, 202);
+            pnlAssignmentEditor.ShadowDecoration.CustomizableEdges = customizableEdges38;
+            pnlAssignmentEditor.Size = new Size(884, 202);
             pnlAssignmentEditor.TabIndex = 0;
             // 
             // btnClearAssignmentForm
             // 
-            btnClearAssignmentForm.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnClearAssignmentForm.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            btnClearAssignmentForm.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClearAssignmentForm.BorderColor = Color.FromArgb(203, 213, 225);
             btnClearAssignmentForm.BorderRadius = 8;
             btnClearAssignmentForm.BorderThickness = 1;
-            btnClearAssignmentForm.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnClearAssignmentForm.FillColor = System.Drawing.Color.White;
-            btnClearAssignmentForm.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnClearAssignmentForm.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            btnClearAssignmentForm.HoverState.FillColor = System.Drawing.Color.FromArgb(248, 250, 252);
-            btnClearAssignmentForm.Location = new System.Drawing.Point(752, 142);
+            btnClearAssignmentForm.Cursor = Cursors.Hand;
+            btnClearAssignmentForm.CustomizableEdges = customizableEdges25;
+            btnClearAssignmentForm.FillColor = Color.White;
+            btnClearAssignmentForm.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            btnClearAssignmentForm.ForeColor = Color.FromArgb(51, 65, 85);
+            btnClearAssignmentForm.HoverState.FillColor = Color.FromArgb(248, 250, 252);
+            btnClearAssignmentForm.Location = new Point(752, 142);
             btnClearAssignmentForm.Name = "btnClearAssignmentForm";
-            btnClearAssignmentForm.Size = new System.Drawing.Size(108, 38);
+            btnClearAssignmentForm.ShadowDecoration.CustomizableEdges = customizableEdges26;
+            btnClearAssignmentForm.Size = new Size(108, 38);
             btnClearAssignmentForm.TabIndex = 9;
             btnClearAssignmentForm.Text = "Clear";
             // 
             // btnDeleteAssignment
             // 
-            btnDeleteAssignment.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnDeleteAssignment.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnDeleteAssignment.BorderRadius = 8;
-            btnDeleteAssignment.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnDeleteAssignment.FillColor = System.Drawing.Color.FromArgb(220, 38, 38);
-            btnDeleteAssignment.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnDeleteAssignment.ForeColor = System.Drawing.Color.White;
-            btnDeleteAssignment.HoverState.FillColor = System.Drawing.Color.FromArgb(185, 28, 28);
-            btnDeleteAssignment.Location = new System.Drawing.Point(632, 142);
+            btnDeleteAssignment.Cursor = Cursors.Hand;
+            btnDeleteAssignment.CustomizableEdges = customizableEdges27;
+            btnDeleteAssignment.FillColor = Color.FromArgb(220, 38, 38);
+            btnDeleteAssignment.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            btnDeleteAssignment.ForeColor = Color.White;
+            btnDeleteAssignment.HoverState.FillColor = Color.FromArgb(185, 28, 28);
+            btnDeleteAssignment.Location = new Point(632, 142);
             btnDeleteAssignment.Name = "btnDeleteAssignment";
-            btnDeleteAssignment.Size = new System.Drawing.Size(108, 38);
+            btnDeleteAssignment.ShadowDecoration.CustomizableEdges = customizableEdges28;
+            btnDeleteAssignment.Size = new Size(108, 38);
             btnDeleteAssignment.TabIndex = 8;
             btnDeleteAssignment.Text = "Delete";
             // 
             // btnUpdateAssignment
             // 
-            btnUpdateAssignment.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnUpdateAssignment.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnUpdateAssignment.BorderRadius = 8;
-            btnUpdateAssignment.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnUpdateAssignment.FillColor = System.Drawing.Color.FromArgb(14, 116, 144);
-            btnUpdateAssignment.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnUpdateAssignment.ForeColor = System.Drawing.Color.White;
-            btnUpdateAssignment.HoverState.FillColor = System.Drawing.Color.FromArgb(21, 94, 117);
-            btnUpdateAssignment.Location = new System.Drawing.Point(752, 98);
+            btnUpdateAssignment.Cursor = Cursors.Hand;
+            btnUpdateAssignment.CustomizableEdges = customizableEdges29;
+            btnUpdateAssignment.FillColor = Color.FromArgb(14, 116, 144);
+            btnUpdateAssignment.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            btnUpdateAssignment.ForeColor = Color.White;
+            btnUpdateAssignment.HoverState.FillColor = Color.FromArgb(21, 94, 117);
+            btnUpdateAssignment.Location = new Point(752, 98);
             btnUpdateAssignment.Name = "btnUpdateAssignment";
-            btnUpdateAssignment.Size = new System.Drawing.Size(108, 38);
+            btnUpdateAssignment.ShadowDecoration.CustomizableEdges = customizableEdges30;
+            btnUpdateAssignment.Size = new Size(108, 38);
             btnUpdateAssignment.TabIndex = 7;
             btnUpdateAssignment.Text = "Update";
             // 
             // btnAddAssignment
             // 
-            btnAddAssignment.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnAddAssignment.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnAddAssignment.BorderRadius = 8;
-            btnAddAssignment.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnAddAssignment.FillColor = System.Drawing.Color.FromArgb(22, 163, 74);
-            btnAddAssignment.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnAddAssignment.ForeColor = System.Drawing.Color.White;
-            btnAddAssignment.HoverState.FillColor = System.Drawing.Color.FromArgb(21, 128, 61);
-            btnAddAssignment.Location = new System.Drawing.Point(632, 98);
+            btnAddAssignment.Cursor = Cursors.Hand;
+            btnAddAssignment.CustomizableEdges = customizableEdges31;
+            btnAddAssignment.FillColor = Color.FromArgb(22, 163, 74);
+            btnAddAssignment.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            btnAddAssignment.ForeColor = Color.White;
+            btnAddAssignment.HoverState.FillColor = Color.FromArgb(21, 128, 61);
+            btnAddAssignment.Location = new Point(632, 98);
             btnAddAssignment.Name = "btnAddAssignment";
-            btnAddAssignment.Size = new System.Drawing.Size(108, 38);
+            btnAddAssignment.ShadowDecoration.CustomizableEdges = customizableEdges32;
+            btnAddAssignment.Size = new Size(108, 38);
             btnAddAssignment.TabIndex = 6;
             btnAddAssignment.Text = "Add";
             // 
             // cmbSubject
             // 
-            cmbSubject.BackColor = System.Drawing.Color.Transparent;
-            cmbSubject.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            cmbSubject.BackColor = Color.Transparent;
+            cmbSubject.BorderColor = Color.FromArgb(203, 213, 225);
             cmbSubject.BorderRadius = 8;
-            cmbSubject.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            cmbSubject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cmbSubject.FocusedColor = System.Drawing.Color.FromArgb(37, 99, 235);
-            cmbSubject.FocusedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
-            cmbSubject.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cmbSubject.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            cmbSubject.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
+            cmbSubject.CustomizableEdges = customizableEdges33;
+            cmbSubject.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbSubject.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSubject.FocusedColor = Color.FromArgb(37, 99, 235);
+            cmbSubject.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            cmbSubject.Font = new Font("Segoe UI", 10F);
+            cmbSubject.ForeColor = Color.FromArgb(15, 23, 42);
+            cmbSubject.HoverState.BorderColor = Color.FromArgb(59, 130, 246);
             cmbSubject.ItemHeight = 36;
-            cmbSubject.Location = new System.Drawing.Point(316, 112);
+            cmbSubject.Location = new Point(316, 112);
             cmbSubject.Name = "cmbSubject";
-            cmbSubject.Size = new System.Drawing.Size(276, 42);
+            cmbSubject.ShadowDecoration.CustomizableEdges = customizableEdges34;
+            cmbSubject.Size = new Size(276, 42);
             cmbSubject.TabIndex = 5;
             // 
             // lblSubject
             // 
-            lblSubject.BackColor = System.Drawing.Color.Transparent;
-            lblSubject.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            lblSubject.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblSubject.Location = new System.Drawing.Point(316, 87);
+            lblSubject.BackColor = Color.Transparent;
+            lblSubject.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            lblSubject.ForeColor = Color.FromArgb(51, 65, 85);
+            lblSubject.Location = new Point(316, 87);
             lblSubject.Name = "lblSubject";
-            lblSubject.Size = new System.Drawing.Size(47, 19);
+            lblSubject.Size = new Size(47, 19);
             lblSubject.TabIndex = 4;
             lblSubject.Text = "Subject";
             // 
             // cmbFacultyMember
             // 
-            cmbFacultyMember.BackColor = System.Drawing.Color.Transparent;
-            cmbFacultyMember.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            cmbFacultyMember.BackColor = Color.Transparent;
+            cmbFacultyMember.BorderColor = Color.FromArgb(203, 213, 225);
             cmbFacultyMember.BorderRadius = 8;
-            cmbFacultyMember.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            cmbFacultyMember.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            cmbFacultyMember.FocusedColor = System.Drawing.Color.FromArgb(37, 99, 235);
-            cmbFacultyMember.FocusedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
-            cmbFacultyMember.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cmbFacultyMember.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            cmbFacultyMember.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
+            cmbFacultyMember.CustomizableEdges = customizableEdges35;
+            cmbFacultyMember.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbFacultyMember.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFacultyMember.FocusedColor = Color.FromArgb(37, 99, 235);
+            cmbFacultyMember.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            cmbFacultyMember.Font = new Font("Segoe UI", 10F);
+            cmbFacultyMember.ForeColor = Color.FromArgb(15, 23, 42);
+            cmbFacultyMember.HoverState.BorderColor = Color.FromArgb(59, 130, 246);
             cmbFacultyMember.ItemHeight = 36;
-            cmbFacultyMember.Location = new System.Drawing.Point(24, 112);
+            cmbFacultyMember.Location = new Point(24, 112);
             cmbFacultyMember.Name = "cmbFacultyMember";
-            cmbFacultyMember.Size = new System.Drawing.Size(264, 42);
+            cmbFacultyMember.ShadowDecoration.CustomizableEdges = customizableEdges36;
+            cmbFacultyMember.Size = new Size(264, 42);
             cmbFacultyMember.TabIndex = 3;
             // 
             // lblFacultyMember
             // 
-            lblFacultyMember.BackColor = System.Drawing.Color.Transparent;
-            lblFacultyMember.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            lblFacultyMember.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblFacultyMember.Location = new System.Drawing.Point(24, 87);
+            lblFacultyMember.BackColor = Color.Transparent;
+            lblFacultyMember.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            lblFacultyMember.ForeColor = Color.FromArgb(51, 65, 85);
+            lblFacultyMember.Location = new Point(24, 87);
             lblFacultyMember.Name = "lblFacultyMember";
-            lblFacultyMember.Size = new System.Drawing.Size(101, 19);
+            lblFacultyMember.Size = new Size(101, 19);
             lblFacultyMember.TabIndex = 2;
             lblFacultyMember.Text = "Faculty Member";
             // 
             // lblEditorSubtitle
             // 
-            lblEditorSubtitle.BackColor = System.Drawing.Color.Transparent;
-            lblEditorSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            lblEditorSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            lblEditorSubtitle.Location = new System.Drawing.Point(24, 44);
+            lblEditorSubtitle.BackColor = Color.Transparent;
+            lblEditorSubtitle.Font = new Font("Segoe UI", 9F);
+            lblEditorSubtitle.ForeColor = Color.FromArgb(100, 116, 139);
+            lblEditorSubtitle.Location = new Point(24, 44);
             lblEditorSubtitle.Name = "lblEditorSubtitle";
-            lblEditorSubtitle.Size = new System.Drawing.Size(361, 17);
+            lblEditorSubtitle.Size = new Size(323, 17);
             lblEditorSubtitle.TabIndex = 1;
             lblEditorSubtitle.Text = "Assign teaching responsibilities before generating schedules.";
             // 
             // lblEditorTitle
             // 
-            lblEditorTitle.BackColor = System.Drawing.Color.Transparent;
-            lblEditorTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            lblEditorTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            lblEditorTitle.Location = new System.Drawing.Point(24, 18);
+            lblEditorTitle.BackColor = Color.Transparent;
+            lblEditorTitle.Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold);
+            lblEditorTitle.ForeColor = Color.FromArgb(15, 23, 42);
+            lblEditorTitle.Location = new Point(24, 18);
             lblEditorTitle.Name = "lblEditorTitle";
-            lblEditorTitle.Size = new System.Drawing.Size(224, 25);
+            lblEditorTitle.Size = new Size(208, 25);
             lblEditorTitle.TabIndex = 0;
             lblEditorTitle.Text = "Faculty Assignment Details";
             // 
@@ -616,47 +710,49 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             pnlHeader.Controls.Add(lblPageSubtitle);
             pnlHeader.Controls.Add(lblPageTitle);
-            pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            pnlHeader.FillColor = System.Drawing.Color.White;
-            pnlHeader.Location = new System.Drawing.Point(0, 0);
+            pnlHeader.CustomizableEdges = customizableEdges41;
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.FillColor = Color.White;
+            pnlHeader.Location = new Point(0, 0);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new System.Drawing.Size(940, 88);
+            pnlHeader.ShadowDecoration.CustomizableEdges = customizableEdges42;
+            pnlHeader.Size = new Size(940, 88);
             pnlHeader.TabIndex = 0;
             // 
             // lblPageSubtitle
             // 
-            lblPageSubtitle.BackColor = System.Drawing.Color.Transparent;
-            lblPageSubtitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            lblPageSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            lblPageSubtitle.Location = new System.Drawing.Point(32, 50);
+            lblPageSubtitle.BackColor = Color.Transparent;
+            lblPageSubtitle.Font = new Font("Segoe UI", 10F);
+            lblPageSubtitle.ForeColor = Color.FromArgb(100, 116, 139);
+            lblPageSubtitle.Location = new Point(32, 50);
             lblPageSubtitle.Name = "lblPageSubtitle";
-            lblPageSubtitle.Size = new System.Drawing.Size(419, 19);
+            lblPageSubtitle.Size = new Size(364, 19);
             lblPageSubtitle.TabIndex = 1;
             lblPageSubtitle.Text = "Manage faculty-to-subject assignments used by the timetable.";
             // 
             // lblPageTitle
             // 
-            lblPageTitle.BackColor = System.Drawing.Color.Transparent;
-            lblPageTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            lblPageTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            lblPageTitle.Location = new System.Drawing.Point(32, 16);
+            lblPageTitle.BackColor = Color.Transparent;
+            lblPageTitle.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
+            lblPageTitle.ForeColor = Color.FromArgb(15, 23, 42);
+            lblPageTitle.Location = new Point(32, 16);
             lblPageTitle.Name = "lblPageTitle";
-            lblPageTitle.Size = new System.Drawing.Size(403, 34);
+            lblPageTitle.Size = new Size(377, 34);
             lblPageTitle.TabIndex = 0;
             lblPageTitle.Text = "Faculty Assignments Management";
             // 
             // FacultyMemberSubjectsForm
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
-            ClientSize = new System.Drawing.Size(1180, 720);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(245, 247, 250);
+            ClientSize = new Size(1180, 720);
             Controls.Add(pnlMain);
             Controls.Add(pnlSidebar);
-            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            MinimumSize = new System.Drawing.Size(980, 600);
+            Font = new Font("Segoe UI", 9F);
+            MinimumSize = new Size(980, 600);
             Name = "FacultyMemberSubjectsForm";
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Faculty Assignments Management";
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();
