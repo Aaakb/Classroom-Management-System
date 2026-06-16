@@ -1,10 +1,9 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class SchedulesPage : EntityManagementPage<Schedule>
+    public partial class SchedulesPage : UserControl
     {
         private readonly ScheduleService _service = new();
         private readonly SubjectService _subjectService = new();
@@ -14,48 +13,50 @@ namespace University_Timetable_and_Classroom_Management_System
         private readonly StudyYearService _studyYearService = new();
         private readonly BranchService _branchService = new();
         private readonly SectionService _sectionService = new();
-        private readonly Guna2TextBox _txtScheduleId;
-        private readonly Guna2ComboBox _cmbDayOfWeek;
-        private readonly Guna2ComboBox _cmbSubject;
-        private readonly Guna2ComboBox _cmbFacultyMember;
-        private readonly Guna2ComboBox _cmbClassroom;
-        private readonly Guna2ComboBox _cmbTimeSlot;
-        private readonly Guna2ComboBox _cmbStudyYear;
-        private readonly Guna2ComboBox _cmbBranch;
-        private readonly Guna2ComboBox _cmbSection;
+        private readonly EntityPageController<Schedule> _controller;
 
         public SchedulesPage()
-            : base(
-                "Schedules",
-                "Create timetable entries while respecting classroom, faculty, and cohort conflicts.",
-                "Schedule Details",
-                "Create and maintain timetable records.",
-                340)
         {
-            _txtScheduleId = AddTextField("Schedule ID", "Auto", true);
-            _cmbDayOfWeek = AddComboField("Day Of Week");
-            _cmbSubject = AddComboField("Subject");
-            _cmbFacultyMember = AddComboField("Faculty Member");
-            _cmbClassroom = AddComboField("Classroom");
-            _cmbTimeSlot = AddComboField("Time Slot");
-            _cmbStudyYear = AddComboField("Study Year");
-            _cmbBranch = AddComboField("Branch");
-            _cmbSection = AddComboField("Section");
+            InitializeComponent();
 
-            _cmbDayOfWeek.Items.AddRange(new object[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday" });
+            _controller = new EntityPageController<Schedule>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async schedule => await _service.AddAsync(schedule),
+                async schedule => await _service.UpdateAsync(schedule),
+                async schedule => await _service.DeleteAsync(schedule.ScheduleID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls);
 
-            AddGridColumn("ID", schedule => schedule.ScheduleID, 28F);
-            AddGridColumn("Day", schedule => schedule.DayOfWeek, 55F);
-            AddGridColumn("Subject", schedule => schedule.Subject?.SubjectName ?? schedule.SubjectID.ToString(), 100F);
-            AddGridColumn("Faculty", schedule => schedule.FacultyMember?.FullName ?? schedule.FacultyMemberID.ToString(), 110F);
-            AddGridColumn("Room", schedule => schedule.Classroom?.ClassroomNumber ?? schedule.ClassroomID.ToString(), 55F);
-            AddGridColumn("Time", schedule => FormatTimeSlot(schedule.TimeSlot), 70F);
-            AddGridColumn("Year", schedule => schedule.StudyYear?.YearName ?? "None", 65F);
-            AddGridColumn("Branch", schedule => schedule.Branch?.BranchName ?? "None", 70F);
-            AddGridColumn("Section", schedule => schedule.Section?.SectionName ?? "None", 65F);
+            _controller.RegisterColumn(schedule => schedule.ScheduleID);
+            _controller.RegisterColumn(schedule => schedule.DayOfWeek);
+            _controller.RegisterColumn(schedule => schedule.Subject?.SubjectName ?? schedule.SubjectID.ToString());
+            _controller.RegisterColumn(schedule => schedule.FacultyMember?.FullName ?? schedule.FacultyMemberID.ToString());
+            _controller.RegisterColumn(schedule => schedule.Classroom?.ClassroomNumber ?? schedule.ClassroomID.ToString());
+            _controller.RegisterColumn(schedule => FormatTimeSlot(schedule.TimeSlot));
+            _controller.RegisterColumn(schedule => schedule.StudyYear?.YearName ?? "None");
+            _controller.RegisterColumn(schedule => schedule.Branch?.BranchName ?? "None");
+            _controller.RegisterColumn(schedule => schedule.Section?.SectionName ?? "None");
         }
 
-        protected override async Task LoadLookupDataAsync()
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!DesignMode)
+            {
+                await LoadLookupDataAsync();
+                await _controller.RefreshDataAsync();
+            }
+        }
+
+        private async Task LoadLookupDataAsync()
         {
             var subjects = await _subjectService.GetAllAsync();
             var facultyMembers = await _facultyMemberService.GetAllAsync();
@@ -65,79 +66,59 @@ namespace University_Timetable_and_Classroom_Management_System
             var branches = await _branchService.GetAllAsync();
             var sections = await _sectionService.GetAllAsync();
 
-            BindLookup(_cmbSubject, subjects.Select(item => new LookupItem(item.SubjectID, item.SubjectName)));
-            BindLookup(_cmbFacultyMember, facultyMembers.Select(item => new LookupItem(item.FacultyMemberID, item.FullName)));
-            BindLookup(_cmbClassroom, classrooms.Select(item => new LookupItem(item.ClassroomID, item.ClassroomNumber)));
-            BindLookup(_cmbTimeSlot, timeSlots.Select(item => new LookupItem(item.TimeSlotID, FormatTimeSlot(item))));
-            BindLookup(_cmbStudyYear, studyYears.Select(item => new LookupItem(item.StudyYearID, item.YearName)), true);
-            BindLookup(_cmbBranch, branches.Select(item => new LookupItem(item.BranchID, item.BranchName)), true);
-            BindLookup(_cmbSection, sections.Select(item => new LookupItem(item.SectionID, item.SectionName)), true);
+            PageInput.BindLookup(cmbSubject, subjects.Select(item => new LookupItem(item.SubjectID, item.SubjectName)));
+            PageInput.BindLookup(cmbFacultyMember, facultyMembers.Select(item => new LookupItem(item.FacultyMemberID, item.FullName)));
+            PageInput.BindLookup(cmbClassroom, classrooms.Select(item => new LookupItem(item.ClassroomID, item.ClassroomNumber)));
+            PageInput.BindLookup(cmbTimeSlot, timeSlots.Select(item => new LookupItem(item.TimeSlotID, FormatTimeSlot(item))));
+            PageInput.BindLookup(cmbStudyYear, studyYears.Select(item => new LookupItem(item.StudyYearID, item.YearName)), true);
+            PageInput.BindLookup(cmbBranch, branches.Select(item => new LookupItem(item.BranchID, item.BranchName)), true);
+            PageInput.BindLookup(cmbSection, sections.Select(item => new LookupItem(item.SectionID, item.SectionName)), true);
         }
 
-        protected override async Task<IReadOnlyList<Schedule>> LoadEntitiesAsync()
+        private Schedule CreateEntityFromInputs(Schedule? selectedEntity)
         {
-            return await _service.GetAllAsync();
-        }
-
-        protected override async Task AddEntityAsync(Schedule entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override async Task UpdateEntityAsync(Schedule entity)
-        {
-            await _service.UpdateAsync(entity);
-        }
-
-        protected override async Task DeleteEntityAsync(Schedule entity)
-        {
-            await _service.DeleteAsync(entity.ScheduleID);
-        }
-
-        protected override Schedule CreateEntityFromInputs(Schedule? selectedEntity)
-        {
-            string dayOfWeek = string.IsNullOrWhiteSpace(_cmbDayOfWeek.Text)
+            string dayOfWeek = string.IsNullOrWhiteSpace(cmbDayOfWeek.Text)
                 ? throw new ArgumentException("Day of week is required.")
-                : _cmbDayOfWeek.Text;
+                : cmbDayOfWeek.Text;
 
             return new Schedule
             {
                 ScheduleID = selectedEntity?.ScheduleID ?? 0,
                 DayOfWeek = dayOfWeek,
-                SubjectID = RequiredComboId(_cmbSubject, "subject"),
-                FacultyMemberID = RequiredComboId(_cmbFacultyMember, "faculty member"),
-                ClassroomID = RequiredComboId(_cmbClassroom, "classroom"),
-                TimeSlotID = RequiredComboId(_cmbTimeSlot, "time slot"),
-                StudyYearID = OptionalComboId(_cmbStudyYear),
-                BranchID = OptionalComboId(_cmbBranch),
-                SectionID = OptionalComboId(_cmbSection)
+                SubjectID = PageInput.RequiredComboId(cmbSubject, "subject"),
+                FacultyMemberID = PageInput.RequiredComboId(cmbFacultyMember, "faculty member"),
+                ClassroomID = PageInput.RequiredComboId(cmbClassroom, "classroom"),
+                TimeSlotID = PageInput.RequiredComboId(cmbTimeSlot, "time slot"),
+                StudyYearID = PageInput.OptionalComboId(cmbStudyYear),
+                BranchID = PageInput.OptionalComboId(cmbBranch),
+                SectionID = PageInput.OptionalComboId(cmbSection)
             };
         }
 
-        protected override void WriteEntityToInputs(Schedule entity)
+        private void WriteEntityToInputs(Schedule entity)
         {
-            _txtScheduleId.Text = entity.ScheduleID.ToString();
-            _cmbDayOfWeek.Text = entity.DayOfWeek;
-            SetComboValue(_cmbSubject, entity.SubjectID);
-            SetComboValue(_cmbFacultyMember, entity.FacultyMemberID);
-            SetComboValue(_cmbClassroom, entity.ClassroomID);
-            SetComboValue(_cmbTimeSlot, entity.TimeSlotID);
-            SetComboValue(_cmbStudyYear, entity.StudyYearID);
-            SetComboValue(_cmbBranch, entity.BranchID);
-            SetComboValue(_cmbSection, entity.SectionID);
+            txtScheduleId.Text = entity.ScheduleID.ToString();
+            cmbDayOfWeek.Text = entity.DayOfWeek;
+            PageInput.SetComboValue(cmbSubject, entity.SubjectID);
+            PageInput.SetComboValue(cmbFacultyMember, entity.FacultyMemberID);
+            PageInput.SetComboValue(cmbClassroom, entity.ClassroomID);
+            PageInput.SetComboValue(cmbTimeSlot, entity.TimeSlotID);
+            PageInput.SetComboValue(cmbStudyYear, entity.StudyYearID);
+            PageInput.SetComboValue(cmbBranch, entity.BranchID);
+            PageInput.SetComboValue(cmbSection, entity.SectionID);
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            _txtScheduleId.Clear();
-            if (_cmbDayOfWeek.Items.Count > 0) _cmbDayOfWeek.SelectedIndex = 0;
-            if (_cmbSubject.Items.Count > 0) _cmbSubject.SelectedIndex = 0;
-            if (_cmbFacultyMember.Items.Count > 0) _cmbFacultyMember.SelectedIndex = 0;
-            if (_cmbClassroom.Items.Count > 0) _cmbClassroom.SelectedIndex = 0;
-            if (_cmbTimeSlot.Items.Count > 0) _cmbTimeSlot.SelectedIndex = 0;
-            if (_cmbStudyYear.Items.Count > 0) _cmbStudyYear.SelectedIndex = 0;
-            if (_cmbBranch.Items.Count > 0) _cmbBranch.SelectedIndex = 0;
-            if (_cmbSection.Items.Count > 0) _cmbSection.SelectedIndex = 0;
+            txtScheduleId.Clear();
+            if (cmbDayOfWeek.Items.Count > 0) cmbDayOfWeek.SelectedIndex = 0;
+            if (cmbSubject.Items.Count > 0) cmbSubject.SelectedIndex = 0;
+            if (cmbFacultyMember.Items.Count > 0) cmbFacultyMember.SelectedIndex = 0;
+            if (cmbClassroom.Items.Count > 0) cmbClassroom.SelectedIndex = 0;
+            if (cmbTimeSlot.Items.Count > 0) cmbTimeSlot.SelectedIndex = 0;
+            if (cmbStudyYear.Items.Count > 0) cmbStudyYear.SelectedIndex = 0;
+            if (cmbBranch.Items.Count > 0) cmbBranch.SelectedIndex = 0;
+            if (cmbSection.Items.Count > 0) cmbSection.SelectedIndex = 0;
         }
 
         private static string FormatTimeSlot(TimeSlot? timeSlot)

@@ -1,80 +1,73 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class TimeSlotsPage : EntityManagementPage<TimeSlot>
+    public partial class TimeSlotsPage : UserControl
     {
         private readonly TimeSlotService _service = new();
-        private readonly Guna2TextBox _txtTimeSlotId;
-        private readonly Guna2DateTimePicker _dtpStartTime;
-        private readonly Guna2DateTimePicker _dtpEndTime;
-        private readonly Guna2ToggleSwitch _tglIsBreak;
+        private readonly EntityPageController<TimeSlot> _controller;
 
         public TimeSlotsPage()
-            : base(
-                "Time Slots",
-                "Manage lecture and break time ranges used by schedules.",
-                "Time Slot Details",
-                "Create and maintain time slot records.")
         {
-            _txtTimeSlotId = AddTextField("Time Slot ID", "Auto", true);
-            _dtpStartTime = AddTimeField("Start Time");
-            _dtpEndTime = AddTimeField("End Time");
-            _tglIsBreak = AddToggleField("Is Break");
+            InitializeComponent();
 
-            AddGridColumn("ID", slot => slot.TimeSlotID, 30F);
-            AddGridColumn("Start", slot => slot.StartTime.ToString(@"hh\:mm"), 70F);
-            AddGridColumn("End", slot => slot.EndTime.ToString(@"hh\:mm"), 70F);
-            AddGridColumn("Type", slot => slot.IsBreak ? "Break" : "Lecture", 70F);
+            _controller = new EntityPageController<TimeSlot>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async timeSlot => await _service.AddAsync(timeSlot),
+                async timeSlot => await _service.UpdateAsync(timeSlot),
+                async timeSlot => await _service.DeleteAsync(timeSlot.TimeSlotID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls);
+
+            _controller.RegisterColumn(timeSlot => timeSlot.TimeSlotID);
+            _controller.RegisterColumn(timeSlot => timeSlot.StartTime.ToString(@"hh\:mm"));
+            _controller.RegisterColumn(timeSlot => timeSlot.EndTime.ToString(@"hh\:mm"));
+            _controller.RegisterColumn(timeSlot => timeSlot.IsBreak ? "Break" : "Lecture");
         }
 
-        protected override async Task<IReadOnlyList<TimeSlot>> LoadEntitiesAsync()
+        protected override async void OnLoad(EventArgs e)
         {
-            return await _service.GetAllAsync();
+            base.OnLoad(e);
+
+            if (!DesignMode)
+            {
+                await _controller.RefreshDataAsync();
+            }
         }
 
-        protected override async Task AddEntityAsync(TimeSlot entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override async Task UpdateEntityAsync(TimeSlot entity)
-        {
-            await _service.UpdateAsync(entity);
-        }
-
-        protected override async Task DeleteEntityAsync(TimeSlot entity)
-        {
-            await _service.DeleteAsync(entity.TimeSlotID);
-        }
-
-        protected override TimeSlot CreateEntityFromInputs(TimeSlot? selectedEntity)
+        private TimeSlot CreateEntityFromInputs(TimeSlot? selectedEntity)
         {
             return new TimeSlot
             {
                 TimeSlotID = selectedEntity?.TimeSlotID ?? 0,
-                StartTime = PickerToTime(_dtpStartTime),
-                EndTime = PickerToTime(_dtpEndTime),
-                IsBreak = _tglIsBreak.Checked
+                StartTime = PageInput.PickerToTime(dtpStartTime),
+                EndTime = PageInput.PickerToTime(dtpEndTime),
+                IsBreak = tglIsBreak.Checked
             };
         }
 
-        protected override void WriteEntityToInputs(TimeSlot entity)
+        private void WriteEntityToInputs(TimeSlot entity)
         {
-            _txtTimeSlotId.Text = entity.TimeSlotID.ToString();
-            _dtpStartTime.Value = TimeToPickerValue(entity.StartTime);
-            _dtpEndTime.Value = TimeToPickerValue(entity.EndTime);
-            _tglIsBreak.Checked = entity.IsBreak;
+            txtTimeSlotId.Text = entity.TimeSlotID.ToString();
+            dtpStartTime.Value = PageInput.TimeToPickerValue(entity.StartTime);
+            dtpEndTime.Value = PageInput.TimeToPickerValue(entity.EndTime);
+            tglIsBreak.Checked = entity.IsBreak;
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            _txtTimeSlotId.Clear();
-            _dtpStartTime.Value = DateTime.Today.AddHours(8);
-            _dtpEndTime.Value = DateTime.Today.AddHours(9);
-            _tglIsBreak.Checked = false;
+            txtTimeSlotId.Clear();
+            dtpStartTime.Value = DateTime.Today.AddHours(8);
+            dtpEndTime.Value = DateTime.Today.AddHours(9);
+            tglIsBreak.Checked = false;
         }
     }
 }

@@ -1,98 +1,89 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class SectionsPage : EntityManagementPage<Section>
+    public partial class SectionsPage : UserControl
     {
         private readonly SectionService _service = new();
         private readonly StudyYearService _studyYearService = new();
         private readonly BranchService _branchService = new();
-        private readonly Guna2TextBox _txtSectionId;
-        private readonly Guna2TextBox _txtSectionName;
-        private readonly Guna2TextBox _txtStudentCount;
-        private readonly Guna2ComboBox _cmbStudyYear;
-        private readonly Guna2ComboBox _cmbBranch;
+        private readonly EntityPageController<Section> _controller;
 
         public SectionsPage()
-            : base(
-                "Sections",
-                "Manage student sections by study year and branch.",
-                "Section Details",
-                "Create and maintain section records.",
-                260)
         {
-            _txtSectionId = AddTextField("Section ID", "Auto", true);
-            _txtSectionName = AddTextField("Section Name", "Enter section name");
-            _txtStudentCount = AddTextField("Student Count", "Enter count");
-            _cmbStudyYear = AddComboField("Study Year");
-            _cmbBranch = AddComboField("Branch");
+            InitializeComponent();
 
-            AddGridColumn("ID", section => section.SectionID, 30F);
-            AddGridColumn("Section", section => section.SectionName, 80F);
-            AddGridColumn("Students", section => section.StudentCount, 60F);
-            AddGridColumn("Study Year", section => section.StudyYear?.YearName ?? "None", 90F);
-            AddGridColumn("Branch", section => section.Branch?.BranchName ?? "None", 90F);
+            _controller = new EntityPageController<Section>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async section => await _service.AddAsync(section),
+                async section => await _service.UpdateAsync(section),
+                async section => await _service.DeleteAsync(section.SectionID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls);
+
+            _controller.RegisterColumn(section => section.SectionID);
+            _controller.RegisterColumn(section => section.SectionName);
+            _controller.RegisterColumn(section => section.StudentCount);
+            _controller.RegisterColumn(section => section.StudyYear?.YearName ?? "None");
+            _controller.RegisterColumn(section => section.Branch?.BranchName ?? "None");
         }
 
-        protected override async Task LoadLookupDataAsync()
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!DesignMode)
+            {
+                await LoadLookupDataAsync();
+                await _controller.RefreshDataAsync();
+            }
+        }
+
+        private async Task LoadLookupDataAsync()
         {
             var studyYears = await _studyYearService.GetAllAsync();
             var branches = await _branchService.GetAllAsync();
 
-            BindLookup(_cmbStudyYear, studyYears.Select(item => new LookupItem(item.StudyYearID, item.YearName)));
-            BindLookup(_cmbBranch, branches.Select(item => new LookupItem(item.BranchID, item.BranchName)), true);
+            PageInput.BindLookup(cmbStudyYear, studyYears.Select(item => new LookupItem(item.StudyYearID, item.YearName)));
+            PageInput.BindLookup(cmbBranch, branches.Select(item => new LookupItem(item.BranchID, item.BranchName)), true);
         }
 
-        protected override async Task<IReadOnlyList<Section>> LoadEntitiesAsync()
-        {
-            return await _service.GetAllAsync();
-        }
-
-        protected override async Task AddEntityAsync(Section entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override async Task UpdateEntityAsync(Section entity)
-        {
-            await _service.UpdateAsync(entity);
-        }
-
-        protected override async Task DeleteEntityAsync(Section entity)
-        {
-            await _service.DeleteAsync(entity.SectionID);
-        }
-
-        protected override Section CreateEntityFromInputs(Section? selectedEntity)
+        private Section CreateEntityFromInputs(Section? selectedEntity)
         {
             return new Section
             {
                 SectionID = selectedEntity?.SectionID ?? 0,
-                SectionName = RequiredText(_txtSectionName, "Section name"),
-                StudentCount = NonNegativeInt(_txtStudentCount, "Student count"),
-                StudyYearID = RequiredComboId(_cmbStudyYear, "study year"),
-                BranchID = OptionalComboId(_cmbBranch)
+                SectionName = PageInput.RequiredText(txtSectionName, "Section name"),
+                StudentCount = PageInput.NonNegativeInt(txtStudentCount, "Student count"),
+                StudyYearID = PageInput.RequiredComboId(cmbStudyYear, "study year"),
+                BranchID = PageInput.OptionalComboId(cmbBranch)
             };
         }
 
-        protected override void WriteEntityToInputs(Section entity)
+        private void WriteEntityToInputs(Section entity)
         {
-            _txtSectionId.Text = entity.SectionID.ToString();
-            _txtSectionName.Text = entity.SectionName;
-            _txtStudentCount.Text = entity.StudentCount.ToString();
-            SetComboValue(_cmbStudyYear, entity.StudyYearID);
-            SetComboValue(_cmbBranch, entity.BranchID);
+            txtSectionId.Text = entity.SectionID.ToString();
+            txtSectionName.Text = entity.SectionName;
+            txtStudentCount.Text = entity.StudentCount.ToString();
+            PageInput.SetComboValue(cmbStudyYear, entity.StudyYearID);
+            PageInput.SetComboValue(cmbBranch, entity.BranchID);
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            _txtSectionId.Clear();
-            _txtSectionName.Clear();
-            _txtStudentCount.Clear();
-            if (_cmbStudyYear.Items.Count > 0) _cmbStudyYear.SelectedIndex = 0;
-            if (_cmbBranch.Items.Count > 0) _cmbBranch.SelectedIndex = 0;
+            txtSectionId.Clear();
+            txtSectionName.Clear();
+            txtStudentCount.Clear();
+            if (cmbStudyYear.Items.Count > 0) cmbStudyYear.SelectedIndex = 0;
+            if (cmbBranch.Items.Count > 0) cmbBranch.SelectedIndex = 0;
         }
     }
 }

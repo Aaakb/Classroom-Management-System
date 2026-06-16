@@ -1,68 +1,65 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class StudyYearsPage : EntityManagementPage<StudyYear>
+    public partial class StudyYearsPage : UserControl
     {
         private readonly StudyYearService _service = new();
-        private readonly Guna2TextBox _txtStudyYearId;
-        private readonly Guna2TextBox _txtYearName;
+        private readonly EntityPageController<StudyYear> _controller;
 
         public StudyYearsPage()
-            : base(
-                "Study Years",
-                "Manage academic year records used across the timetable.",
-                "Study Year Details",
-                "Create and maintain study year records.")
         {
-            _txtStudyYearId = AddTextField("Study Year ID", "Auto", true);
-            _txtYearName = AddTextField("Year Name", "Enter year name");
+            InitializeComponent();
 
-            AddGridColumn("ID", studyYear => studyYear.StudyYearID, 30F);
-            AddGridColumn("Year Name", studyYear => studyYear.YearName, 170F);
+            _controller = new EntityPageController<StudyYear>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async studyYear => await _service.AddAsync(studyYear),
+                async studyYear => await _service.UpdateAsync(studyYear),
+                async studyYear => await _service.DeleteAsync(studyYear.StudyYearID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls);
+
+            _controller.RegisterColumn(studyYear => studyYear.StudyYearID);
+            _controller.RegisterColumn(studyYear => studyYear.YearName);
         }
 
-        protected override async Task<IReadOnlyList<StudyYear>> LoadEntitiesAsync()
+        protected override async void OnLoad(EventArgs e)
         {
-            return await _service.GetAllAsync();
+            base.OnLoad(e);
+
+            if (!DesignMode)
+            {
+                await _controller.RefreshDataAsync();
+            }
         }
 
-        protected override async Task AddEntityAsync(StudyYear entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override async Task UpdateEntityAsync(StudyYear entity)
-        {
-            await _service.UpdateAsync(entity);
-        }
-
-        protected override async Task DeleteEntityAsync(StudyYear entity)
-        {
-            await _service.DeleteAsync(entity.StudyYearID);
-        }
-
-        protected override StudyYear CreateEntityFromInputs(StudyYear? selectedEntity)
+        private StudyYear CreateEntityFromInputs(StudyYear? selectedEntity)
         {
             return new StudyYear
             {
                 StudyYearID = selectedEntity?.StudyYearID ?? 0,
-                YearName = RequiredText(_txtYearName, "Year name")
+                YearName = PageInput.RequiredText(txtYearName, "Year name")
             };
         }
 
-        protected override void WriteEntityToInputs(StudyYear entity)
+        private void WriteEntityToInputs(StudyYear entity)
         {
-            _txtStudyYearId.Text = entity.StudyYearID.ToString();
-            _txtYearName.Text = entity.YearName;
+            txtStudyYearId.Text = entity.StudyYearID.ToString();
+            txtYearName.Text = entity.YearName;
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            _txtStudyYearId.Clear();
-            _txtYearName.Clear();
+            txtStudyYearId.Clear();
+            txtYearName.Clear();
         }
     }
 }

@@ -1,81 +1,78 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class FacultyAssignmentsPage : EntityManagementPage<FacultyMemberSubject>
+    public partial class FacultyAssignmentsPage : UserControl
     {
         private readonly FacultyMemberSubjectService _service = new();
         private readonly FacultyMemberService _facultyMemberService = new();
         private readonly SubjectService _subjectService = new();
-        private readonly Guna2ComboBox _cmbFacultyMember;
-        private readonly Guna2ComboBox _cmbSubject;
+        private readonly EntityPageController<FacultyMemberSubject> _controller;
 
         public FacultyAssignmentsPage()
-            : base(
-                "Faculty Assignments",
-                "Assign faculty members to subjects before scheduling.",
-                "Assignment Details",
-                "Create and remove faculty-subject assignments.")
         {
-            _cmbFacultyMember = AddComboField("Faculty Member");
-            _cmbSubject = AddComboField("Subject");
+            InitializeComponent();
 
-            AddGridColumn("Faculty Member", item => item.FacultyMember?.FullName ?? item.FacultyMemberID.ToString(), 130F);
-            AddGridColumn("Subject", item => item.Subject?.SubjectName ?? item.SubjectID.ToString(), 130F);
+            _controller = new EntityPageController<FacultyMemberSubject>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async assignment => await _service.AddAsync(assignment),
+                _ => Task.CompletedTask,
+                async assignment => await _service.DeleteAsync(assignment.FacultyMemberID, assignment.SubjectID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls,
+                supportsUpdate: false);
+
+            _controller.RegisterColumn(assignment => assignment.FacultyMember?.FullName ?? assignment.FacultyMemberID.ToString());
+            _controller.RegisterColumn(assignment => assignment.Subject?.SubjectName ?? assignment.SubjectID.ToString());
         }
 
-        protected override bool SupportsUpdate => false;
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
 
-        protected override async Task LoadLookupDataAsync()
+            if (!DesignMode)
+            {
+                await LoadLookupDataAsync();
+                await _controller.RefreshDataAsync();
+            }
+        }
+
+        private async Task LoadLookupDataAsync()
         {
             var facultyMembers = await _facultyMemberService.GetAllAsync();
             var subjects = await _subjectService.GetAllAsync();
 
-            BindLookup(_cmbFacultyMember, facultyMembers.Select(item => new LookupItem(item.FacultyMemberID, item.FullName)));
-            BindLookup(_cmbSubject, subjects.Select(item => new LookupItem(item.SubjectID, item.SubjectName)));
+            PageInput.BindLookup(cmbFacultyMember, facultyMembers.Select(item => new LookupItem(item.FacultyMemberID, item.FullName)));
+            PageInput.BindLookup(cmbSubject, subjects.Select(item => new LookupItem(item.SubjectID, item.SubjectName)));
         }
 
-        protected override async Task<IReadOnlyList<FacultyMemberSubject>> LoadEntitiesAsync()
-        {
-            return await _service.GetAllAsync();
-        }
-
-        protected override async Task AddEntityAsync(FacultyMemberSubject entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override Task UpdateEntityAsync(FacultyMemberSubject entity)
-        {
-            return Task.CompletedTask;
-        }
-
-        protected override async Task DeleteEntityAsync(FacultyMemberSubject entity)
-        {
-            await _service.DeleteAsync(entity.FacultyMemberID, entity.SubjectID);
-        }
-
-        protected override FacultyMemberSubject CreateEntityFromInputs(FacultyMemberSubject? selectedEntity)
+        private FacultyMemberSubject CreateEntityFromInputs(FacultyMemberSubject? selectedEntity)
         {
             return new FacultyMemberSubject
             {
-                FacultyMemberID = RequiredComboId(_cmbFacultyMember, "faculty member"),
-                SubjectID = RequiredComboId(_cmbSubject, "subject")
+                FacultyMemberID = PageInput.RequiredComboId(cmbFacultyMember, "faculty member"),
+                SubjectID = PageInput.RequiredComboId(cmbSubject, "subject")
             };
         }
 
-        protected override void WriteEntityToInputs(FacultyMemberSubject entity)
+        private void WriteEntityToInputs(FacultyMemberSubject entity)
         {
-            SetComboValue(_cmbFacultyMember, entity.FacultyMemberID);
-            SetComboValue(_cmbSubject, entity.SubjectID);
+            PageInput.SetComboValue(cmbFacultyMember, entity.FacultyMemberID);
+            PageInput.SetComboValue(cmbSubject, entity.SubjectID);
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            if (_cmbFacultyMember.Items.Count > 0) _cmbFacultyMember.SelectedIndex = 0;
-            if (_cmbSubject.Items.Count > 0) _cmbSubject.SelectedIndex = 0;
+            if (cmbFacultyMember.Items.Count > 0) cmbFacultyMember.SelectedIndex = 0;
+            if (cmbSubject.Items.Count > 0) cmbSubject.SelectedIndex = 0;
         }
     }
 }

@@ -1,138 +1,112 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class SubjectsPage : EntityManagementPage<Subject>
+    public partial class SubjectsPage : UserControl
     {
         private readonly SubjectService _service = new();
         private readonly StudyYearService _studyYearService = new();
         private readonly BranchService _branchService = new();
-        private readonly Guna2TextBox _txtSubjectId;
-        private readonly Guna2TextBox _txtSubjectName;
-        private readonly Guna2ComboBox _cmbStudyYear;
-        private readonly Guna2ComboBox _cmbBranch;
-        private readonly Guna2ComboBox _cmbSemester;
-        private readonly Guna2TextBox _txtTheoreticalHours;
-        private readonly Guna2TextBox _txtPracticalHours;
-        private readonly Guna2TextBox _txtCreditUnits;
-        private readonly Guna2ComboBox _cmbRequirementType;
+        private readonly EntityPageController<Subject> _controller;
 
         public SubjectsPage()
-            : base(
-                "Subjects",
-                "Manage subjects, credit units, semester, and academic ownership.",
-                "Subject Details",
-                "Create and maintain subject records.",
-                340)
         {
-            _txtSubjectId = AddTextField("Subject ID", "Auto", true);
-            _txtSubjectName = AddTextField("Subject Name", "Enter subject name");
-            _cmbStudyYear = AddComboField("Study Year");
-            _cmbBranch = AddComboField("Branch");
-            _cmbSemester = AddComboField("Semester");
-            _txtTheoreticalHours = AddTextField("Theoretical Hours", "0");
-            _txtPracticalHours = AddTextField("Practical Hours", "0");
-            _txtCreditUnits = AddTextField("Credit Units", "0");
-            _cmbRequirementType = AddComboField("Requirement Type");
+            InitializeComponent();
 
-            BindLookup(_cmbSemester, new[]
-            {
-                new LookupItem(1, "Semester 1"),
-                new LookupItem(2, "Semester 2")
-            });
+            _controller = new EntityPageController<Subject>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async subject => await _service.AddAsync(subject),
+                async subject => await _service.UpdateAsync(subject),
+                async subject => await _service.DeleteAsync(subject.SubjectID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls);
 
-            _cmbRequirementType.Items.AddRange(new object[]
-            {
-                "Core",
-                "Elective",
-                "University Requirement",
-                "College Requirement"
-            });
-
-            AddGridColumn("ID", subject => subject.SubjectID, 28F);
-            AddGridColumn("Subject", subject => subject.SubjectName, 115F);
-            AddGridColumn("Study Year", subject => subject.StudyYear?.YearName ?? "None", 70F);
-            AddGridColumn("Semester", subject => subject.SemesterNumber, 45F);
-            AddGridColumn("Branch", subject => subject.Branch?.BranchName ?? "None", 70F);
-            AddGridColumn("Units", subject => subject.CreditUnits, 45F);
-            AddGridColumn("Requirement", subject => subject.RequirementType, 80F);
+            _controller.RegisterColumn(subject => subject.SubjectID);
+            _controller.RegisterColumn(subject => subject.SubjectName);
+            _controller.RegisterColumn(subject => subject.StudyYear?.YearName ?? "None");
+            _controller.RegisterColumn(subject => subject.SemesterNumber);
+            _controller.RegisterColumn(subject => subject.Branch?.BranchName ?? "None");
+            _controller.RegisterColumn(subject => subject.CreditUnits);
+            _controller.RegisterColumn(subject => subject.RequirementType);
         }
 
-        protected override async Task LoadLookupDataAsync()
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!DesignMode)
+            {
+                await LoadLookupDataAsync();
+                await _controller.RefreshDataAsync();
+            }
+        }
+
+        private async Task LoadLookupDataAsync()
         {
             var studyYears = await _studyYearService.GetAllAsync();
             var branches = await _branchService.GetAllAsync();
 
-            BindLookup(_cmbStudyYear, studyYears.Select(item => new LookupItem(item.StudyYearID, item.YearName)));
-            BindLookup(_cmbBranch, branches.Select(item => new LookupItem(item.BranchID, item.BranchName)), true);
+            PageInput.BindLookup(cmbStudyYear, studyYears.Select(item => new LookupItem(item.StudyYearID, item.YearName)));
+            PageInput.BindLookup(cmbBranch, branches.Select(item => new LookupItem(item.BranchID, item.BranchName)), true);
+            PageInput.BindLookup(cmbSemester, new[]
+            {
+                new LookupItem(1, "Semester 1"),
+                new LookupItem(2, "Semester 2")
+            });
         }
 
-        protected override async Task<IReadOnlyList<Subject>> LoadEntitiesAsync()
+        private Subject CreateEntityFromInputs(Subject? selectedEntity)
         {
-            return await _service.GetAllAsync();
-        }
-
-        protected override async Task AddEntityAsync(Subject entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override async Task UpdateEntityAsync(Subject entity)
-        {
-            await _service.UpdateAsync(entity);
-        }
-
-        protected override async Task DeleteEntityAsync(Subject entity)
-        {
-            await _service.DeleteAsync(entity.SubjectID);
-        }
-
-        protected override Subject CreateEntityFromInputs(Subject? selectedEntity)
-        {
-            string requirementType = string.IsNullOrWhiteSpace(_cmbRequirementType.Text)
+            string requirementType = string.IsNullOrWhiteSpace(cmbRequirementType.Text)
                 ? throw new ArgumentException("Requirement type is required.")
-                : _cmbRequirementType.Text;
+                : cmbRequirementType.Text;
 
             return new Subject
             {
                 SubjectID = selectedEntity?.SubjectID ?? 0,
-                SubjectName = RequiredText(_txtSubjectName, "Subject name"),
-                StudyYearID = RequiredComboId(_cmbStudyYear, "study year"),
-                BranchID = OptionalComboId(_cmbBranch),
-                SemesterNumber = RequiredComboId(_cmbSemester, "semester"),
-                TheoreticalHours = NonNegativeDouble(_txtTheoreticalHours, "Theoretical hours"),
-                PracticalHours = NonNegativeDouble(_txtPracticalHours, "Practical hours"),
-                CreditUnits = NonNegativeDouble(_txtCreditUnits, "Credit units"),
+                SubjectName = PageInput.RequiredText(txtSubjectName, "Subject name"),
+                StudyYearID = PageInput.RequiredComboId(cmbStudyYear, "study year"),
+                BranchID = PageInput.OptionalComboId(cmbBranch),
+                SemesterNumber = PageInput.RequiredComboId(cmbSemester, "semester"),
+                TheoreticalHours = PageInput.NonNegativeDouble(txtTheoreticalHours, "Theoretical hours"),
+                PracticalHours = PageInput.NonNegativeDouble(txtPracticalHours, "Practical hours"),
+                CreditUnits = PageInput.NonNegativeDouble(txtCreditUnits, "Credit units"),
                 RequirementType = requirementType
             };
         }
 
-        protected override void WriteEntityToInputs(Subject entity)
+        private void WriteEntityToInputs(Subject entity)
         {
-            _txtSubjectId.Text = entity.SubjectID.ToString();
-            _txtSubjectName.Text = entity.SubjectName;
-            SetComboValue(_cmbStudyYear, entity.StudyYearID);
-            SetComboValue(_cmbBranch, entity.BranchID);
-            SetComboValue(_cmbSemester, entity.SemesterNumber);
-            _txtTheoreticalHours.Text = entity.TheoreticalHours.ToString();
-            _txtPracticalHours.Text = entity.PracticalHours.ToString();
-            _txtCreditUnits.Text = entity.CreditUnits.ToString();
-            _cmbRequirementType.Text = entity.RequirementType;
+            txtSubjectId.Text = entity.SubjectID.ToString();
+            txtSubjectName.Text = entity.SubjectName;
+            PageInput.SetComboValue(cmbStudyYear, entity.StudyYearID);
+            PageInput.SetComboValue(cmbBranch, entity.BranchID);
+            PageInput.SetComboValue(cmbSemester, entity.SemesterNumber);
+            txtTheoreticalHours.Text = entity.TheoreticalHours.ToString();
+            txtPracticalHours.Text = entity.PracticalHours.ToString();
+            txtCreditUnits.Text = entity.CreditUnits.ToString();
+            cmbRequirementType.Text = entity.RequirementType;
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            _txtSubjectId.Clear();
-            _txtSubjectName.Clear();
-            _txtTheoreticalHours.Text = "0";
-            _txtPracticalHours.Text = "0";
-            _txtCreditUnits.Text = "0";
-            if (_cmbStudyYear.Items.Count > 0) _cmbStudyYear.SelectedIndex = 0;
-            if (_cmbBranch.Items.Count > 0) _cmbBranch.SelectedIndex = 0;
-            if (_cmbSemester.Items.Count > 0) _cmbSemester.SelectedIndex = 0;
-            _cmbRequirementType.SelectedIndex = -1;
+            txtSubjectId.Clear();
+            txtSubjectName.Clear();
+            txtTheoreticalHours.Text = "0";
+            txtPracticalHours.Text = "0";
+            txtCreditUnits.Text = "0";
+            if (cmbStudyYear.Items.Count > 0) cmbStudyYear.SelectedIndex = 0;
+            if (cmbBranch.Items.Count > 0) cmbBranch.SelectedIndex = 0;
+            if (cmbSemester.Items.Count > 0) cmbSemester.SelectedIndex = 0;
+            cmbRequirementType.SelectedIndex = -1;
         }
     }
 }

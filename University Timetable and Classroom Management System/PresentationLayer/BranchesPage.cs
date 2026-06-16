@@ -1,68 +1,65 @@
-using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    internal sealed class BranchesPage : EntityManagementPage<Branch>
+    public partial class BranchesPage : UserControl
     {
         private readonly BranchService _service = new();
-        private readonly Guna2TextBox _txtBranchId;
-        private readonly Guna2TextBox _txtBranchName;
+        private readonly EntityPageController<Branch> _controller;
 
         public BranchesPage()
-            : base(
-                "Branches",
-                "Manage academic branches used by subjects, sections, and schedules.",
-                "Branch Details",
-                "Create and maintain branch records.")
         {
-            _txtBranchId = AddTextField("Branch ID", "Auto", true);
-            _txtBranchName = AddTextField("Branch Name", "Enter branch name");
+            InitializeComponent();
 
-            AddGridColumn("ID", branch => branch.BranchID, 30F);
-            AddGridColumn("Branch Name", branch => branch.BranchName, 170F);
+            _controller = new EntityPageController<Branch>(
+                dgvRecords,
+                btnAdd,
+                btnUpdate,
+                btnDelete,
+                btnClear,
+                btnRefresh,
+                async () => await _service.GetAllAsync(),
+                async branch => await _service.AddAsync(branch),
+                async branch => await _service.UpdateAsync(branch),
+                async branch => await _service.DeleteAsync(branch.BranchID),
+                CreateEntityFromInputs,
+                WriteEntityToInputs,
+                ClearInputControls);
+
+            _controller.RegisterColumn(branch => branch.BranchID);
+            _controller.RegisterColumn(branch => branch.BranchName);
         }
 
-        protected override async Task<IReadOnlyList<Branch>> LoadEntitiesAsync()
+        protected override async void OnLoad(EventArgs e)
         {
-            return await _service.GetAllAsync();
+            base.OnLoad(e);
+
+            if (!DesignMode)
+            {
+                await _controller.RefreshDataAsync();
+            }
         }
 
-        protected override async Task AddEntityAsync(Branch entity)
-        {
-            await _service.AddAsync(entity);
-        }
-
-        protected override async Task UpdateEntityAsync(Branch entity)
-        {
-            await _service.UpdateAsync(entity);
-        }
-
-        protected override async Task DeleteEntityAsync(Branch entity)
-        {
-            await _service.DeleteAsync(entity.BranchID);
-        }
-
-        protected override Branch CreateEntityFromInputs(Branch? selectedEntity)
+        private Branch CreateEntityFromInputs(Branch? selectedEntity)
         {
             return new Branch
             {
                 BranchID = selectedEntity?.BranchID ?? 0,
-                BranchName = RequiredText(_txtBranchName, "Branch name")
+                BranchName = PageInput.RequiredText(txtBranchName, "Branch name")
             };
         }
 
-        protected override void WriteEntityToInputs(Branch entity)
+        private void WriteEntityToInputs(Branch entity)
         {
-            _txtBranchId.Text = entity.BranchID.ToString();
-            _txtBranchName.Text = entity.BranchName;
+            txtBranchId.Text = entity.BranchID.ToString();
+            txtBranchName.Text = entity.BranchName;
         }
 
-        protected override void ClearInputControls()
+        private void ClearInputControls()
         {
-            _txtBranchId.Clear();
-            _txtBranchName.Clear();
+            txtBranchId.Clear();
+            txtBranchName.Clear();
         }
     }
 }
