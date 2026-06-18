@@ -48,6 +48,15 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlMain = new Guna.UI2.WinForms.Guna2Panel();
             pnlWorkspace = new Guna.UI2.WinForms.Guna2Panel();
+            pnlScheduleFilters = new Guna.UI2.WinForms.Guna2Panel();
+            cmbDayFilter = new Guna.UI2.WinForms.Guna2ComboBox();
+            lblDayFilter = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            cmbStudyYearFilter = new Guna.UI2.WinForms.Guna2ComboBox();
+            lblStudyYearFilter = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            cmbSectionFilter = new Guna.UI2.WinForms.Guna2ComboBox();
+            lblSectionFilter = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            cmbFacultyFilter = new Guna.UI2.WinForms.Guna2ComboBox();
+            lblFacultyFilter = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlSchedulesTable = new Guna.UI2.WinForms.Guna2Panel();
             dgvSchedules = new Guna.UI2.WinForms.Guna2DataGridView();
             colScheduleId = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,6 +71,8 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblTableTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlScheduleEditor = new Guna.UI2.WinForms.Guna2Panel();
+            btnExportSchedulePdf = new Guna.UI2.WinForms.Guna2Button();
+            btnGenerateSchedule = new Guna.UI2.WinForms.Guna2Button();
             btnClearScheduleForm = new Guna.UI2.WinForms.Guna2Button();
             btnDeleteSchedule = new Guna.UI2.WinForms.Guna2Button();
             btnUpdateSchedule = new Guna.UI2.WinForms.Guna2Button();
@@ -87,11 +98,13 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEditorSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblEditorTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
+            btnRefreshSchedule = new Guna.UI2.WinForms.Guna2Button();
             lblPageSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblPageTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlSidebar.SuspendLayout();
             pnlMain.SuspendLayout();
             pnlWorkspace.SuspendLayout();
+            pnlScheduleFilters.SuspendLayout();
             pnlSchedulesTable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSchedules).BeginInit();
             pnlScheduleEditor.SuspendLayout();
@@ -306,14 +319,146 @@ namespace University_Timetable_and_Classroom_Management_System
             // pnlWorkspace
             // 
             pnlWorkspace.Controls.Add(pnlSchedulesTable);
+            pnlWorkspace.Controls.Add(pnlScheduleFilters);
             pnlWorkspace.Controls.Add(pnlScheduleEditor);
             pnlWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
             pnlWorkspace.FillColor = System.Drawing.Color.FromArgb(245, 247, 250);
             pnlWorkspace.Location = new System.Drawing.Point(0, 88);
             pnlWorkspace.Name = "pnlWorkspace";
             pnlWorkspace.Padding = new System.Windows.Forms.Padding(28, 24, 28, 28);
-            pnlWorkspace.Size = new System.Drawing.Size(940, 632);
+            pnlWorkspace.Size = new System.Drawing.Size(1260, 732);
             pnlWorkspace.TabIndex = 1;
+            // 
+            // pnlScheduleFilters
+            // 
+            pnlScheduleFilters.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pnlScheduleFilters.BackColor = System.Drawing.Color.Transparent;
+            pnlScheduleFilters.BorderRadius = 10;
+            pnlScheduleFilters.Controls.Add(cmbDayFilter);
+            pnlScheduleFilters.Controls.Add(lblDayFilter);
+            pnlScheduleFilters.Controls.Add(cmbStudyYearFilter);
+            pnlScheduleFilters.Controls.Add(lblStudyYearFilter);
+            pnlScheduleFilters.Controls.Add(cmbSectionFilter);
+            pnlScheduleFilters.Controls.Add(lblSectionFilter);
+            pnlScheduleFilters.Controls.Add(cmbFacultyFilter);
+            pnlScheduleFilters.Controls.Add(lblFacultyFilter);
+            pnlScheduleFilters.FillColor = System.Drawing.Color.White;
+            pnlScheduleFilters.Location = new System.Drawing.Point(28, 306);
+            pnlScheduleFilters.Name = "pnlScheduleFilters";
+            pnlScheduleFilters.Size = new System.Drawing.Size(1204, 84);
+            pnlScheduleFilters.TabIndex = 2;
+            // 
+            // cmbDayFilter
+            // 
+            cmbDayFilter.BackColor = System.Drawing.Color.Transparent;
+            cmbDayFilter.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            cmbDayFilter.BorderRadius = 8;
+            cmbDayFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            cmbDayFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbDayFilter.FocusedColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbDayFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbDayFilter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            cmbDayFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            cmbDayFilter.ItemHeight = 30;
+            cmbDayFilter.Location = new System.Drawing.Point(664, 36);
+            cmbDayFilter.Name = "cmbDayFilter";
+            cmbDayFilter.Size = new System.Drawing.Size(220, 36);
+            cmbDayFilter.TabIndex = 7;
+            // 
+            // lblDayFilter
+            // 
+            lblDayFilter.BackColor = System.Drawing.Color.Transparent;
+            lblDayFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblDayFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            lblDayFilter.Location = new System.Drawing.Point(664, 14);
+            lblDayFilter.Name = "lblDayFilter";
+            lblDayFilter.Size = new System.Drawing.Size(52, 17);
+            lblDayFilter.TabIndex = 6;
+            lblDayFilter.Text = "Day filter";
+            // 
+            // cmbStudyYearFilter
+            // 
+            cmbStudyYearFilter.BackColor = System.Drawing.Color.Transparent;
+            cmbStudyYearFilter.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            cmbStudyYearFilter.BorderRadius = 8;
+            cmbStudyYearFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            cmbStudyYearFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbStudyYearFilter.FocusedColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbStudyYearFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbStudyYearFilter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            cmbStudyYearFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            cmbStudyYearFilter.ItemHeight = 30;
+            cmbStudyYearFilter.Location = new System.Drawing.Point(456, 36);
+            cmbStudyYearFilter.Name = "cmbStudyYearFilter";
+            cmbStudyYearFilter.Size = new System.Drawing.Size(180, 36);
+            cmbStudyYearFilter.TabIndex = 5;
+            // 
+            // lblStudyYearFilter
+            // 
+            lblStudyYearFilter.BackColor = System.Drawing.Color.Transparent;
+            lblStudyYearFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblStudyYearFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            lblStudyYearFilter.Location = new System.Drawing.Point(456, 14);
+            lblStudyYearFilter.Name = "lblStudyYearFilter";
+            lblStudyYearFilter.Size = new System.Drawing.Size(86, 17);
+            lblStudyYearFilter.TabIndex = 4;
+            lblStudyYearFilter.Text = "Study year filter";
+            // 
+            // cmbSectionFilter
+            // 
+            cmbSectionFilter.BackColor = System.Drawing.Color.Transparent;
+            cmbSectionFilter.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            cmbSectionFilter.BorderRadius = 8;
+            cmbSectionFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            cmbSectionFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbSectionFilter.FocusedColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbSectionFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbSectionFilter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            cmbSectionFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            cmbSectionFilter.ItemHeight = 30;
+            cmbSectionFilter.Location = new System.Drawing.Point(208, 36);
+            cmbSectionFilter.Name = "cmbSectionFilter";
+            cmbSectionFilter.Size = new System.Drawing.Size(220, 36);
+            cmbSectionFilter.TabIndex = 3;
+            // 
+            // lblSectionFilter
+            // 
+            lblSectionFilter.BackColor = System.Drawing.Color.Transparent;
+            lblSectionFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblSectionFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            lblSectionFilter.Location = new System.Drawing.Point(208, 14);
+            lblSectionFilter.Name = "lblSectionFilter";
+            lblSectionFilter.Size = new System.Drawing.Size(70, 17);
+            lblSectionFilter.TabIndex = 2;
+            lblSectionFilter.Text = "Section filter";
+            // 
+            // cmbFacultyFilter
+            // 
+            cmbFacultyFilter.BackColor = System.Drawing.Color.Transparent;
+            cmbFacultyFilter.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            cmbFacultyFilter.BorderRadius = 8;
+            cmbFacultyFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            cmbFacultyFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbFacultyFilter.FocusedColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbFacultyFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            cmbFacultyFilter.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            cmbFacultyFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            cmbFacultyFilter.ItemHeight = 30;
+            cmbFacultyFilter.Location = new System.Drawing.Point(24, 36);
+            cmbFacultyFilter.Name = "cmbFacultyFilter";
+            cmbFacultyFilter.Size = new System.Drawing.Size(156, 36);
+            cmbFacultyFilter.TabIndex = 1;
+            // 
+            // lblFacultyFilter
+            // 
+            lblFacultyFilter.BackColor = System.Drawing.Color.Transparent;
+            lblFacultyFilter.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblFacultyFilter.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            lblFacultyFilter.Location = new System.Drawing.Point(24, 14);
+            lblFacultyFilter.Name = "lblFacultyFilter";
+            lblFacultyFilter.Size = new System.Drawing.Size(68, 17);
+            lblFacultyFilter.TabIndex = 0;
+            lblFacultyFilter.Text = "Faculty filter";
             // 
             // pnlSchedulesTable
             // 
@@ -326,9 +471,9 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSchedulesTable.Controls.Add(lblTableSubtitle);
             pnlSchedulesTable.Controls.Add(lblTableTitle);
             pnlSchedulesTable.FillColor = System.Drawing.Color.White;
-            pnlSchedulesTable.Location = new System.Drawing.Point(28, 336);
+            pnlSchedulesTable.Location = new System.Drawing.Point(28, 416);
             pnlSchedulesTable.Name = "pnlSchedulesTable";
-            pnlSchedulesTable.Size = new System.Drawing.Size(884, 268);
+            pnlSchedulesTable.Size = new System.Drawing.Size(1204, 288);
             pnlSchedulesTable.TabIndex = 1;
             // 
             // dgvSchedules
@@ -375,7 +520,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.RowHeadersVisible = false;
             dgvSchedules.RowTemplate.Height = 42;
             dgvSchedules.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dgvSchedules.Size = new System.Drawing.Size(836, 166);
+            dgvSchedules.Size = new System.Drawing.Size(1156, 186);
             dgvSchedules.TabIndex = 2;
             // 
             // colScheduleId
@@ -480,6 +625,8 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlScheduleEditor.BorderRadius = 8;
             pnlScheduleEditor.BorderThickness = 1;
             pnlScheduleEditor.Controls.Add(btnClearScheduleForm);
+            pnlScheduleEditor.Controls.Add(btnExportSchedulePdf);
+            pnlScheduleEditor.Controls.Add(btnGenerateSchedule);
             pnlScheduleEditor.Controls.Add(btnDeleteSchedule);
             pnlScheduleEditor.Controls.Add(btnUpdateSchedule);
             pnlScheduleEditor.Controls.Add(btnAddSchedule);
@@ -506,12 +653,39 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlScheduleEditor.FillColor = System.Drawing.Color.White;
             pnlScheduleEditor.Location = new System.Drawing.Point(28, 24);
             pnlScheduleEditor.Name = "pnlScheduleEditor";
-            pnlScheduleEditor.Size = new System.Drawing.Size(884, 290);
+            pnlScheduleEditor.Size = new System.Drawing.Size(1204, 260);
             pnlScheduleEditor.TabIndex = 0;
+            // 
+            // btnExportSchedulePdf
+            // 
+            btnExportSchedulePdf.BorderRadius = 8;
+            btnExportSchedulePdf.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnExportSchedulePdf.FillColor = System.Drawing.Color.FromArgb(16, 185, 129);
+            btnExportSchedulePdf.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            btnExportSchedulePdf.ForeColor = System.Drawing.Color.White;
+            btnExportSchedulePdf.HoverState.FillColor = System.Drawing.Color.FromArgb(5, 150, 105);
+            btnExportSchedulePdf.Location = new System.Drawing.Point(640, 204);
+            btnExportSchedulePdf.Name = "btnExportSchedulePdf";
+            btnExportSchedulePdf.Size = new System.Drawing.Size(130, 38);
+            btnExportSchedulePdf.TabIndex = 25;
+            btnExportSchedulePdf.Text = "Export PDF";
+            // 
+            // btnGenerateSchedule
+            // 
+            btnGenerateSchedule.BorderRadius = 8;
+            btnGenerateSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnGenerateSchedule.FillColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            btnGenerateSchedule.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            btnGenerateSchedule.ForeColor = System.Drawing.Color.White;
+            btnGenerateSchedule.HoverState.FillColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            btnGenerateSchedule.Location = new System.Drawing.Point(24, 204);
+            btnGenerateSchedule.Name = "btnGenerateSchedule";
+            btnGenerateSchedule.Size = new System.Drawing.Size(130, 38);
+            btnGenerateSchedule.TabIndex = 24;
+            btnGenerateSchedule.Text = "Generate";
             // 
             // btnClearScheduleForm
             // 
-            btnClearScheduleForm.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnClearScheduleForm.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
             btnClearScheduleForm.BorderRadius = 8;
             btnClearScheduleForm.BorderThickness = 1;
@@ -520,7 +694,9 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearScheduleForm.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnClearScheduleForm.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
             btnClearScheduleForm.HoverState.FillColor = System.Drawing.Color.FromArgb(248, 250, 252);
-            btnClearScheduleForm.Location = new System.Drawing.Point(752, 142);
+            btnClearScheduleForm.FillColor = System.Drawing.Color.FromArgb(100, 116, 139);
+            btnClearScheduleForm.ForeColor = System.Drawing.Color.White;
+            btnClearScheduleForm.Location = new System.Drawing.Point(512, 204);
             btnClearScheduleForm.Name = "btnClearScheduleForm";
             btnClearScheduleForm.Size = new System.Drawing.Size(108, 38);
             btnClearScheduleForm.TabIndex = 23;
@@ -528,14 +704,13 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             // btnDeleteSchedule
             // 
-            btnDeleteSchedule.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnDeleteSchedule.BorderRadius = 8;
             btnDeleteSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
             btnDeleteSchedule.FillColor = System.Drawing.Color.FromArgb(220, 38, 38);
             btnDeleteSchedule.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnDeleteSchedule.ForeColor = System.Drawing.Color.White;
             btnDeleteSchedule.HoverState.FillColor = System.Drawing.Color.FromArgb(185, 28, 28);
-            btnDeleteSchedule.Location = new System.Drawing.Point(632, 142);
+            btnDeleteSchedule.Location = new System.Drawing.Point(392, 204);
             btnDeleteSchedule.Name = "btnDeleteSchedule";
             btnDeleteSchedule.Size = new System.Drawing.Size(108, 38);
             btnDeleteSchedule.TabIndex = 22;
@@ -543,14 +718,13 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             // btnUpdateSchedule
             // 
-            btnUpdateSchedule.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnUpdateSchedule.BorderRadius = 8;
             btnUpdateSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnUpdateSchedule.FillColor = System.Drawing.Color.FromArgb(14, 116, 144);
+            btnUpdateSchedule.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
             btnUpdateSchedule.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnUpdateSchedule.ForeColor = System.Drawing.Color.White;
             btnUpdateSchedule.HoverState.FillColor = System.Drawing.Color.FromArgb(21, 94, 117);
-            btnUpdateSchedule.Location = new System.Drawing.Point(752, 98);
+            btnUpdateSchedule.Location = new System.Drawing.Point(272, 204);
             btnUpdateSchedule.Name = "btnUpdateSchedule";
             btnUpdateSchedule.Size = new System.Drawing.Size(108, 38);
             btnUpdateSchedule.TabIndex = 21;
@@ -558,14 +732,13 @@ namespace University_Timetable_and_Classroom_Management_System
             // 
             // btnAddSchedule
             // 
-            btnAddSchedule.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnAddSchedule.BorderRadius = 8;
             btnAddSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
             btnAddSchedule.FillColor = System.Drawing.Color.FromArgb(22, 163, 74);
             btnAddSchedule.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             btnAddSchedule.ForeColor = System.Drawing.Color.White;
             btnAddSchedule.HoverState.FillColor = System.Drawing.Color.FromArgb(21, 128, 61);
-            btnAddSchedule.Location = new System.Drawing.Point(632, 98);
+            btnAddSchedule.Location = new System.Drawing.Point(160, 204);
             btnAddSchedule.Name = "btnAddSchedule";
             btnAddSchedule.Size = new System.Drawing.Size(108, 38);
             btnAddSchedule.TabIndex = 20;
@@ -584,9 +757,9 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbSection.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbSection.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbSection.ItemHeight = 36;
-            cmbSection.Location = new System.Drawing.Point(402, 224);
+            cmbSection.Location = new System.Drawing.Point(24, 144);
             cmbSection.Name = "cmbSection";
-            cmbSection.Size = new System.Drawing.Size(190, 42);
+            cmbSection.Size = new System.Drawing.Size(160, 42);
             cmbSection.TabIndex = 19;
             // 
             // lblSection
@@ -594,7 +767,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSection.BackColor = System.Drawing.Color.Transparent;
             lblSection.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblSection.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblSection.Location = new System.Drawing.Point(402, 199);
+            lblSection.Location = new System.Drawing.Point(24, 119);
             lblSection.Name = "lblSection";
             lblSection.Size = new System.Drawing.Size(46, 19);
             lblSection.TabIndex = 18;
@@ -613,9 +786,9 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbBranch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbBranch.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbBranch.ItemHeight = 36;
-            cmbBranch.Location = new System.Drawing.Point(214, 224);
+            cmbBranch.Location = new System.Drawing.Point(1080, 74);
             cmbBranch.Name = "cmbBranch";
-            cmbBranch.Size = new System.Drawing.Size(160, 42);
+            cmbBranch.Size = new System.Drawing.Size(100, 42);
             cmbBranch.TabIndex = 17;
             // 
             // lblBranch
@@ -623,7 +796,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblBranch.BackColor = System.Drawing.Color.Transparent;
             lblBranch.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblBranch.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblBranch.Location = new System.Drawing.Point(214, 199);
+            lblBranch.Location = new System.Drawing.Point(1080, 49);
             lblBranch.Name = "lblBranch";
             lblBranch.Size = new System.Drawing.Size(45, 19);
             lblBranch.TabIndex = 16;
@@ -642,7 +815,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbStudyYear.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbStudyYear.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbStudyYear.ItemHeight = 36;
-            cmbStudyYear.Location = new System.Drawing.Point(24, 224);
+            cmbStudyYear.Location = new System.Drawing.Point(904, 74);
             cmbStudyYear.Name = "cmbStudyYear";
             cmbStudyYear.Size = new System.Drawing.Size(160, 42);
             cmbStudyYear.TabIndex = 15;
@@ -652,7 +825,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblStudyYear.BackColor = System.Drawing.Color.Transparent;
             lblStudyYear.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblStudyYear.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblStudyYear.Location = new System.Drawing.Point(24, 199);
+            lblStudyYear.Location = new System.Drawing.Point(904, 49);
             lblStudyYear.Name = "lblStudyYear";
             lblStudyYear.Size = new System.Drawing.Size(69, 19);
             lblStudyYear.TabIndex = 14;
@@ -671,9 +844,9 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbTimeSlot.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbTimeSlot.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbTimeSlot.ItemHeight = 36;
-            cmbTimeSlot.Location = new System.Drawing.Point(402, 154);
+            cmbTimeSlot.Location = new System.Drawing.Point(552, 74);
             cmbTimeSlot.Name = "cmbTimeSlot";
-            cmbTimeSlot.Size = new System.Drawing.Size(190, 42);
+            cmbTimeSlot.Size = new System.Drawing.Size(160, 42);
             cmbTimeSlot.TabIndex = 13;
             // 
             // lblTimeSlot
@@ -681,7 +854,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTimeSlot.BackColor = System.Drawing.Color.Transparent;
             lblTimeSlot.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblTimeSlot.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblTimeSlot.Location = new System.Drawing.Point(402, 129);
+            lblTimeSlot.Location = new System.Drawing.Point(552, 49);
             lblTimeSlot.Name = "lblTimeSlot";
             lblTimeSlot.Size = new System.Drawing.Size(57, 19);
             lblTimeSlot.TabIndex = 12;
@@ -700,7 +873,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbClassroom.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbClassroom.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbClassroom.ItemHeight = 36;
-            cmbClassroom.Location = new System.Drawing.Point(214, 154);
+            cmbClassroom.Location = new System.Drawing.Point(376, 74);
             cmbClassroom.Name = "cmbClassroom";
             cmbClassroom.Size = new System.Drawing.Size(160, 42);
             cmbClassroom.TabIndex = 11;
@@ -710,7 +883,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblClassroom.BackColor = System.Drawing.Color.Transparent;
             lblClassroom.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblClassroom.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblClassroom.Location = new System.Drawing.Point(214, 129);
+            lblClassroom.Location = new System.Drawing.Point(376, 49);
             lblClassroom.Name = "lblClassroom";
             lblClassroom.Size = new System.Drawing.Size(67, 19);
             lblClassroom.TabIndex = 10;
@@ -729,7 +902,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbFacultyMember.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbFacultyMember.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbFacultyMember.ItemHeight = 36;
-            cmbFacultyMember.Location = new System.Drawing.Point(24, 154);
+            cmbFacultyMember.Location = new System.Drawing.Point(200, 74);
             cmbFacultyMember.Name = "cmbFacultyMember";
             cmbFacultyMember.Size = new System.Drawing.Size(160, 42);
             cmbFacultyMember.TabIndex = 9;
@@ -739,7 +912,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblFacultyMember.BackColor = System.Drawing.Color.Transparent;
             lblFacultyMember.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblFacultyMember.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblFacultyMember.Location = new System.Drawing.Point(24, 129);
+            lblFacultyMember.Location = new System.Drawing.Point(200, 49);
             lblFacultyMember.Name = "lblFacultyMember";
             lblFacultyMember.Size = new System.Drawing.Size(101, 19);
             lblFacultyMember.TabIndex = 8;
@@ -758,9 +931,9 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbSubject.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             cmbSubject.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbSubject.ItemHeight = 36;
-            cmbSubject.Location = new System.Drawing.Point(402, 84);
+            cmbSubject.Location = new System.Drawing.Point(24, 74);
             cmbSubject.Name = "cmbSubject";
-            cmbSubject.Size = new System.Drawing.Size(190, 42);
+            cmbSubject.Size = new System.Drawing.Size(160, 42);
             cmbSubject.TabIndex = 7;
             // 
             // lblSubject
@@ -768,7 +941,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSubject.BackColor = System.Drawing.Color.Transparent;
             lblSubject.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblSubject.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblSubject.Location = new System.Drawing.Point(402, 59);
+            lblSubject.Location = new System.Drawing.Point(24, 49);
             lblSubject.Name = "lblSubject";
             lblSubject.Size = new System.Drawing.Size(47, 19);
             lblSubject.TabIndex = 6;
@@ -788,9 +961,9 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbDayOfWeek.HoverState.BorderColor = System.Drawing.Color.FromArgb(59, 130, 246);
             cmbDayOfWeek.ItemHeight = 36;
             cmbDayOfWeek.Items.AddRange(new object[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday" });
-            cmbDayOfWeek.Location = new System.Drawing.Point(184, 84);
+            cmbDayOfWeek.Location = new System.Drawing.Point(728, 74);
             cmbDayOfWeek.Name = "cmbDayOfWeek";
-            cmbDayOfWeek.Size = new System.Drawing.Size(190, 42);
+            cmbDayOfWeek.Size = new System.Drawing.Size(160, 42);
             cmbDayOfWeek.TabIndex = 5;
             // 
             // lblDayOfWeek
@@ -798,7 +971,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblDayOfWeek.BackColor = System.Drawing.Color.Transparent;
             lblDayOfWeek.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblDayOfWeek.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            lblDayOfWeek.Location = new System.Drawing.Point(184, 59);
+            lblDayOfWeek.Location = new System.Drawing.Point(728, 49);
             lblDayOfWeek.Name = "lblDayOfWeek";
             lblDayOfWeek.Size = new System.Drawing.Size(78, 19);
             lblDayOfWeek.TabIndex = 4;
@@ -826,6 +999,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtScheduleId.SelectedText = "";
             txtScheduleId.Size = new System.Drawing.Size(132, 42);
             txtScheduleId.TabIndex = 3;
+            txtScheduleId.Visible = false;
             // 
             // lblScheduleId
             // 
@@ -837,6 +1011,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblScheduleId.Size = new System.Drawing.Size(74, 19);
             lblScheduleId.TabIndex = 2;
             lblScheduleId.Text = "Schedule ID";
+            lblScheduleId.Visible = false;
             // 
             // lblEditorSubtitle
             // 
@@ -863,13 +1038,29 @@ namespace University_Timetable_and_Classroom_Management_System
             // pnlHeader
             // 
             pnlHeader.Controls.Add(lblPageSubtitle);
+            pnlHeader.Controls.Add(btnRefreshSchedule);
             pnlHeader.Controls.Add(lblPageTitle);
             pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             pnlHeader.FillColor = System.Drawing.Color.White;
             pnlHeader.Location = new System.Drawing.Point(0, 0);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new System.Drawing.Size(940, 88);
+            pnlHeader.Size = new System.Drawing.Size(1260, 88);
             pnlHeader.TabIndex = 0;
+            // 
+            // btnRefreshSchedule
+            // 
+            btnRefreshSchedule.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            btnRefreshSchedule.BorderRadius = 8;
+            btnRefreshSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnRefreshSchedule.FillColor = System.Drawing.Color.FromArgb(74, 115, 217);
+            btnRefreshSchedule.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            btnRefreshSchedule.ForeColor = System.Drawing.Color.White;
+            btnRefreshSchedule.HoverState.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            btnRefreshSchedule.Location = new System.Drawing.Point(1106, 26);
+            btnRefreshSchedule.Name = "btnRefreshSchedule";
+            btnRefreshSchedule.Size = new System.Drawing.Size(112, 38);
+            btnRefreshSchedule.TabIndex = 2;
+            btnRefreshSchedule.Text = "Refresh";
             // 
             // lblPageSubtitle
             // 
@@ -898,11 +1089,11 @@ namespace University_Timetable_and_Classroom_Management_System
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
-            ClientSize = new System.Drawing.Size(1180, 720);
+            ClientSize = new System.Drawing.Size(1500, 820);
             Controls.Add(pnlMain);
             Controls.Add(pnlSidebar);
             Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            MinimumSize = new System.Drawing.Size(980, 600);
+            MinimumSize = new System.Drawing.Size(1180, 720);
             Name = "SchedulesForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Schedules Management";
@@ -910,6 +1101,8 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.PerformLayout();
             pnlMain.ResumeLayout(false);
             pnlWorkspace.ResumeLayout(false);
+            pnlScheduleFilters.ResumeLayout(false);
+            pnlScheduleFilters.PerformLayout();
             pnlSchedulesTable.ResumeLayout(false);
             pnlSchedulesTable.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSchedules).EndInit();
@@ -939,7 +1132,17 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2Panel pnlHeader;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
+        private Guna.UI2.WinForms.Guna2Button btnRefreshSchedule;
         private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
+        private Guna.UI2.WinForms.Guna2Panel pnlScheduleFilters;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbFacultyFilter;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyFilter;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbSectionFilter;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionFilter;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYearFilter;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYearFilter;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbDayFilter;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblDayFilter;
         private Guna.UI2.WinForms.Guna2Panel pnlScheduleEditor;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
@@ -961,10 +1164,12 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2ComboBox cmbBranch;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSection;
         private Guna.UI2.WinForms.Guna2ComboBox cmbSection;
+        private Guna.UI2.WinForms.Guna2Button btnGenerateSchedule;
         private Guna.UI2.WinForms.Guna2Button btnAddSchedule;
         private Guna.UI2.WinForms.Guna2Button btnUpdateSchedule;
         private Guna.UI2.WinForms.Guna2Button btnDeleteSchedule;
         private Guna.UI2.WinForms.Guna2Button btnClearScheduleForm;
+        private Guna.UI2.WinForms.Guna2Button btnExportSchedulePdf;
         private Guna.UI2.WinForms.Guna2Panel pnlSchedulesTable;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;

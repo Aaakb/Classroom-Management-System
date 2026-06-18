@@ -64,6 +64,129 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await context.SaveChangesAsync();
         }
 
+        public async Task<ScheduleGenerationResult> GenerateAsync()
+        {
+            await using var context = new AppDbContext();
+
+            var assignments = await context.FacultyMemberSubjects
+                .Include(fms => fms.Subject)
+                .OrderBy(fms => fms.Subject.StudyYearID)
+                .ThenBy(fms => fms.Subject.SubjectName)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var sections = await context.Sections
+                .AsNoTracking()
+                .OrderBy(section => section.StudyYearID)
+                .ThenBy(section => section.BranchID)
+                .ThenBy(section => section.SectionName)
+                .ToListAsync();
+
+            var classrooms = await context.Classrooms
+                .AsNoTracking()
+                .OrderBy(classroom => classroom.Capacity)
+                .ThenBy(classroom => classroom.ClassroomNumber)
+                .ToListAsync();
+
+            var timeSlots = await context.TimeSlots
+                .AsNoTracking()
+                .Where(slot => !slot.IsBreak)
+                .OrderBy(slot => slot.StartTime)
+                .ToListAsync();
+
+            var existingSchedules = await context.Schedules.ToListAsync();
+            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+            int createdCount = 0;
+            int skippedCount = 0;
+
+            foreach (var assignment in assignments)
+            {
+                var subject = assignment.Subject;
+                var matchingSections = sections
+                    .Where(section =>
+                        section.StudyYearID == subject.StudyYearID &&
+                        (!subject.BranchID.HasValue || section.BranchID == subject.BranchID))
+                    .ToList();
+
+                if (matchingSections.Count == 0)
+                {
+                    skippedCount++;
+                    continue;
+                }
+
+                foreach (var section in matchingSections)
+                {
+                    bool alreadyScheduled = existingSchedules.Any(schedule =>
+                        schedule.SubjectID == subject.SubjectID &&
+                        schedule.SectionID == section.SectionID);
+
+                    if (alreadyScheduled)
+                    {
+                        continue;
+                    }
+
+                    var targetClassrooms = classrooms
+                        .Where(classroom => classroom.Capacity >= section.StudentCount)
+                        .DefaultIfEmpty(classrooms.FirstOrDefault())
+                        .Where(classroom => classroom is not null)
+                        .Cast<Classroom>()
+                        .ToList();
+
+                    bool created = false;
+
+                    foreach (string day in days)
+                    {
+                        foreach (var timeSlot in timeSlots)
+                        {
+                            foreach (var classroom in targetClassrooms)
+                            {
+                                var candidate = new Schedule
+                                {
+                                    SubjectID = subject.SubjectID,
+                                    FacultyMemberID = assignment.FacultyMemberID,
+                                    ClassroomID = classroom.ClassroomID,
+                                    TimeSlotID = timeSlot.TimeSlotID,
+                                    DayOfWeek = day,
+                                    StudyYearID = subject.StudyYearID,
+                                    BranchID = subject.BranchID ?? section.BranchID,
+                                    SectionID = section.SectionID
+                                };
+
+                                if (HasScheduleConflict(existingSchedules, candidate))
+                                {
+                                    continue;
+                                }
+
+                                await context.Schedules.AddAsync(candidate);
+                                existingSchedules.Add(candidate);
+                                createdCount++;
+                                created = true;
+                                break;
+                            }
+
+                            if (created)
+                            {
+                                break;
+                            }
+                        }
+
+                        if (created)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (!created)
+                    {
+                        skippedCount++;
+                    }
+                }
+            }
+
+            await context.SaveChangesAsync();
+            return new ScheduleGenerationResult(createdCount, skippedCount);
+        }
+
         private static async Task ValidateAsync(AppDbContext context, Schedule schedule, bool isUpdate)
         {
             if (string.IsNullOrWhiteSpace(schedule.DayOfWeek))
@@ -151,5 +274,19 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("This study year, branch, or section already has a schedule in the selected slot.");
             }
         }
+
+        private static bool HasScheduleConflict(IEnumerable<Schedule> schedules, Schedule candidate)
+        {
+            return schedules.Any(schedule =>
+                schedule.TimeSlotID == candidate.TimeSlotID &&
+                schedule.DayOfWeek == candidate.DayOfWeek &&
+                (schedule.ClassroomID == candidate.ClassroomID ||
+                 schedule.FacultyMemberID == candidate.FacultyMemberID ||
+                 (schedule.StudyYearID == candidate.StudyYearID &&
+                  schedule.BranchID == candidate.BranchID &&
+                  schedule.SectionID == candidate.SectionID)));
+        }
     }
+
+    public sealed record ScheduleGenerationResult(int CreatedCount, int SkippedCount);
 }

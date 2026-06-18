@@ -1,16 +1,518 @@
+using University_Timetable_and_Classroom_Management_System.BusinessLayer;
+using University_Timetable_and_Classroom_Management_System.Models;
+
 namespace University_Timetable_and_Classroom_Management_System
 {
     public partial class SchedulesForm : System.Windows.Forms.Form
     {
+        private readonly ScheduleService scheduleService = new();
+        private readonly SchedulePdfExportService schedulePdfExportService = new();
+        private readonly SubjectService subjectService = new();
+        private readonly FacultyMemberService facultyMemberService = new();
+        private readonly ClassroomService classroomService = new();
+        private readonly TimeSlotService timeSlotService = new();
+        private readonly StudyYearService studyYearService = new();
+        private readonly BranchService branchService = new();
+        private readonly SectionService sectionService = new();
+
+        private List<ScheduleRow> scheduleRows = [];
+
         public SchedulesForm()
         {
             InitializeComponent();
             ConfigureNavigation();
+            ConfigureScheduleGrid();
+            ConfigureScheduleEvents();
+        }
+
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            await RefreshSchedulesAsync();
         }
 
         private void ConfigureNavigation()
         {
             FormNavigation.ConfigureSidebar(this, pnlSidebar, NavigationPage.Schedules);
+        }
+
+        private void ConfigureScheduleGrid()
+        {
+            dgvSchedules.AutoGenerateColumns = false;
+            dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            colScheduleId.DataPropertyName = nameof(ScheduleRow.ScheduleID);
+            colDayOfWeek.DataPropertyName = nameof(ScheduleRow.DayOfWeek);
+            colSubject.DataPropertyName = nameof(ScheduleRow.SubjectName);
+            colFacultyMember.DataPropertyName = nameof(ScheduleRow.FacultyMemberName);
+            colClassroom.DataPropertyName = nameof(ScheduleRow.ClassroomName);
+            colTimeSlot.DataPropertyName = nameof(ScheduleRow.TimeSlotName);
+            colStudyYear.DataPropertyName = nameof(ScheduleRow.StudyYearName);
+            colBranch.DataPropertyName = nameof(ScheduleRow.BranchName);
+            colSection.DataPropertyName = nameof(ScheduleRow.SectionName);
+        }
+
+        private void ConfigureScheduleEvents()
+        {
+            btnRefreshSchedule.Click += async (_, _) => await RefreshSchedulesAsync();
+            btnGenerateSchedule.Click += async (_, _) => await GenerateScheduleAsync();
+            btnAddSchedule.Click += async (_, _) => await AddScheduleAsync();
+            btnUpdateSchedule.Click += async (_, _) => await UpdateScheduleAsync();
+            btnDeleteSchedule.Click += async (_, _) => await DeleteScheduleAsync();
+            btnClearScheduleForm.Click += (_, _) => ClearScheduleForm();
+            btnExportSchedulePdf.Click += async (_, _) => await ExportSchedulePdfAsync();
+
+            dgvSchedules.SelectionChanged += (_, _) => PopulateScheduleEditorFromSelection();
+            cmbFacultyFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbSectionFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbDayFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+        }
+
+        private async Task RefreshSchedulesAsync()
+        {
+            SetScheduleActionsEnabled(false);
+
+            try
+            {
+                await LoadLookupsAsync();
+                await LoadSchedulesAsync();
+                ClearScheduleForm();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to refresh schedule data.", ex);
+            }
+            finally
+            {
+                SetScheduleActionsEnabled(true);
+            }
+        }
+
+        private async Task LoadLookupsAsync()
+        {
+            var subjects = await subjectService.GetAllAsync();
+            var facultyMembers = await facultyMemberService.GetAllAsync();
+            var classrooms = await classroomService.GetAllAsync();
+            var timeSlots = await timeSlotService.GetAllAsync();
+            var studyYears = await studyYearService.GetAllAsync();
+            var branches = await branchService.GetAllAsync();
+            var sections = await sectionService.GetAllAsync();
+
+            BindCombo(cmbSubject, subjects.Select(subject => new ComboOption(subject.SubjectID, subject.SubjectName)));
+            BindCombo(cmbFacultyMember, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)));
+            BindCombo(cmbClassroom, classrooms.Select(classroom => new ComboOption(classroom.ClassroomID, classroom.ClassroomNumber)));
+            BindCombo(cmbTimeSlot, timeSlots.Select(slot => new ComboOption(slot.TimeSlotID, FormatTimeSlot(slot))));
+            BindCombo(cmbStudyYear, studyYears.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
+            BindCombo(cmbBranch, branches.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
+            BindCombo(cmbSection, sections.Select(section => new ComboOption(section.SectionID, FormatSection(section))));
+
+            BindFilterCombo(cmbFacultyFilter, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)), "All faculty");
+            BindFilterCombo(cmbSectionFilter, sections.Select(section => new ComboOption(section.SectionID, FormatSection(section))), "All sections");
+            BindFilterCombo(cmbStudyYearFilter, studyYears.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
+            BindDayCombos();
+        }
+
+        private async Task LoadSchedulesAsync()
+        {
+            var schedules = await scheduleService.GetAllAsync();
+            scheduleRows = schedules
+                .Select(ScheduleRow.FromSchedule)
+                .OrderBy(row => DayOrder(row.DayOfWeek))
+                .ThenBy(row => row.TimeSlotName)
+                .ThenBy(row => row.StudyYearName)
+                .ThenBy(row => row.SectionName)
+                .ToList();
+
+            ApplyScheduleFilters();
+        }
+
+        private async Task GenerateScheduleAsync()
+        {
+            SetScheduleActionsEnabled(false);
+
+            try
+            {
+                var result = await scheduleService.GenerateAsync();
+                await LoadSchedulesAsync();
+                ShowInformation($"Generation completed. Created: {result.CreatedCount}, Skipped: {result.SkippedCount}.");
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to generate schedule.", ex);
+            }
+            finally
+            {
+                SetScheduleActionsEnabled(true);
+            }
+        }
+
+        private async Task AddScheduleAsync()
+        {
+            if (!TryBuildSchedule(out var schedule))
+            {
+                return;
+            }
+
+            await ExecuteScheduleActionAsync(
+                async () => await scheduleService.AddAsync(schedule),
+                "Schedule added successfully.");
+        }
+
+        private async Task UpdateScheduleAsync()
+        {
+            if (!TryGetSelectedScheduleId(out int scheduleId) || !TryBuildSchedule(out var schedule))
+            {
+                ShowInformation("Select a schedule row before updating.");
+                return;
+            }
+
+            schedule.ScheduleID = scheduleId;
+
+            await ExecuteScheduleActionAsync(
+                async () => await scheduleService.UpdateAsync(schedule),
+                "Schedule updated successfully.");
+        }
+
+        private async Task DeleteScheduleAsync()
+        {
+            if (!TryGetSelectedScheduleId(out int scheduleId))
+            {
+                ShowInformation("Select a schedule row before deleting.");
+                return;
+            }
+
+            var confirmation = MessageBox.Show(
+                this,
+                "Are you sure you want to delete the selected schedule?",
+                "Delete Schedule",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirmation != DialogResult.Yes)
+            {
+                return;
+            }
+
+            await ExecuteScheduleActionAsync(
+                async () => await scheduleService.DeleteAsync(scheduleId),
+                "Schedule deleted successfully.");
+        }
+
+        private async Task ExecuteScheduleActionAsync(Func<Task> action, string successMessage)
+        {
+            SetScheduleActionsEnabled(false);
+
+            try
+            {
+                await action();
+                await LoadSchedulesAsync();
+                ClearScheduleForm();
+                ShowInformation(successMessage);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to complete the schedule operation.", ex);
+            }
+            finally
+            {
+                SetScheduleActionsEnabled(true);
+            }
+        }
+
+        private async Task ExportSchedulePdfAsync()
+        {
+            var rows = GetFilteredRows()
+                .Select(row => new SchedulePdfRow(
+                    row.DayOfWeek,
+                    row.TimeSlotName,
+                    row.SubjectName,
+                    row.FacultyMemberName,
+                    row.ClassroomName,
+                    row.StudyYearName,
+                    row.BranchName,
+                    row.SectionName))
+                .ToList();
+
+            using var dialog = new SaveFileDialog
+            {
+                Filter = "PDF files (*.pdf)|*.pdf",
+                FileName = $"Schedule-{DateTime.Now:yyyyMMdd-HHmm}.pdf",
+                Title = "Export schedule to PDF"
+            };
+
+            if (dialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            try
+            {
+                await schedulePdfExportService.ExportAsync(dialog.FileName, rows);
+                ShowInformation("Schedule exported successfully.");
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to export schedule PDF.", ex);
+            }
+        }
+
+        private void ApplyScheduleFilters()
+        {
+            dgvSchedules.DataSource = GetFilteredRows().ToList();
+            dgvSchedules.ClearSelection();
+        }
+
+        private IEnumerable<ScheduleRow> GetFilteredRows()
+        {
+            int? facultyId = GetSelectedOptionalId(cmbFacultyFilter);
+            int? sectionId = GetSelectedOptionalId(cmbSectionFilter);
+            int? studyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
+            string? day = cmbDayFilter.SelectedItem as string;
+
+            return scheduleRows.Where(row =>
+                (!facultyId.HasValue || row.FacultyMemberID == facultyId.Value) &&
+                (!sectionId.HasValue || row.SectionID == sectionId.Value) &&
+                (!studyYearId.HasValue || row.StudyYearID == studyYearId.Value) &&
+                (string.IsNullOrWhiteSpace(day) || day == "All days" || row.DayOfWeek == day));
+        }
+
+        private bool TryBuildSchedule(out Schedule schedule)
+        {
+            schedule = new Schedule
+            {
+                DayOfWeek = cmbDayOfWeek.Text.Trim(),
+                SubjectID = GetSelectedRequiredId(cmbSubject),
+                FacultyMemberID = GetSelectedRequiredId(cmbFacultyMember),
+                ClassroomID = GetSelectedRequiredId(cmbClassroom),
+                TimeSlotID = GetSelectedRequiredId(cmbTimeSlot),
+                StudyYearID = GetSelectedOptionalId(cmbStudyYear),
+                BranchID = GetSelectedOptionalId(cmbBranch),
+                SectionID = GetSelectedOptionalId(cmbSection)
+            };
+
+            if (string.IsNullOrWhiteSpace(schedule.DayOfWeek))
+            {
+                ShowInformation("Select a day.");
+                cmbDayOfWeek.Focus();
+                return false;
+            }
+
+            if (schedule.SubjectID <= 0 || schedule.FacultyMemberID <= 0 ||
+                schedule.ClassroomID <= 0 || schedule.TimeSlotID <= 0)
+            {
+                ShowInformation("Subject, faculty, classroom, and time slot are required.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryGetSelectedScheduleId(out int scheduleId)
+        {
+            if (int.TryParse(txtScheduleId.Text, out scheduleId))
+            {
+                return true;
+            }
+
+            var selectedSchedule = dgvSchedules.CurrentRow?.DataBoundItem as ScheduleRow;
+            scheduleId = selectedSchedule?.ScheduleID ?? 0;
+            return scheduleId > 0;
+        }
+
+        private void PopulateScheduleEditorFromSelection()
+        {
+            if (dgvSchedules.CurrentRow?.DataBoundItem is not ScheduleRow row)
+            {
+                return;
+            }
+
+            txtScheduleId.Text = row.ScheduleID.ToString();
+            cmbDayOfWeek.SelectedItem = row.DayOfWeek;
+            SelectComboValue(cmbSubject, row.SubjectID);
+            SelectComboValue(cmbFacultyMember, row.FacultyMemberID);
+            SelectComboValue(cmbClassroom, row.ClassroomID);
+            SelectComboValue(cmbTimeSlot, row.TimeSlotID);
+            SelectComboValue(cmbStudyYear, row.StudyYearID);
+            SelectComboValue(cmbBranch, row.BranchID);
+            SelectComboValue(cmbSection, row.SectionID);
+        }
+
+        private void ClearScheduleForm()
+        {
+            txtScheduleId.Clear();
+            ClearCombo(cmbSubject);
+            ClearCombo(cmbFacultyMember);
+            ClearCombo(cmbClassroom);
+            ClearCombo(cmbTimeSlot);
+            ClearCombo(cmbDayOfWeek);
+            ClearCombo(cmbStudyYear);
+            ClearCombo(cmbBranch);
+            ClearCombo(cmbSection);
+            dgvSchedules.ClearSelection();
+        }
+
+        private void SetScheduleActionsEnabled(bool enabled)
+        {
+            btnRefreshSchedule.Enabled = enabled;
+            btnGenerateSchedule.Enabled = enabled;
+            btnAddSchedule.Enabled = enabled;
+            btnUpdateSchedule.Enabled = enabled;
+            btnDeleteSchedule.Enabled = enabled;
+            btnClearScheduleForm.Enabled = enabled;
+            btnExportSchedulePdf.Enabled = enabled;
+            dgvSchedules.Enabled = enabled;
+        }
+
+        private static void BindCombo(Guna.UI2.WinForms.Guna2ComboBox combo, IEnumerable<ComboOption> options)
+        {
+            combo.DataSource = options.ToList();
+            combo.DisplayMember = nameof(ComboOption.Text);
+            combo.ValueMember = nameof(ComboOption.Id);
+            combo.SelectedIndex = -1;
+        }
+
+        private static void BindFilterCombo(
+            Guna.UI2.WinForms.Guna2ComboBox combo,
+            IEnumerable<ComboOption> options,
+            string allText)
+        {
+            var items = new List<ComboOption> { new(null, allText) };
+            items.AddRange(options);
+            combo.DataSource = items;
+            combo.DisplayMember = nameof(ComboOption.Text);
+            combo.ValueMember = nameof(ComboOption.Id);
+            combo.SelectedIndex = 0;
+        }
+
+        private void BindDayCombos()
+        {
+            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+
+            cmbDayOfWeek.Items.Clear();
+            cmbDayOfWeek.Items.AddRange(days);
+            cmbDayOfWeek.SelectedIndex = -1;
+
+            cmbDayFilter.Items.Clear();
+            cmbDayFilter.Items.Add("All days");
+            cmbDayFilter.Items.AddRange(days);
+            cmbDayFilter.SelectedIndex = 0;
+        }
+
+        private static int GetSelectedRequiredId(Guna.UI2.WinForms.Guna2ComboBox combo)
+        {
+            return GetSelectedOptionalId(combo) ?? 0;
+        }
+
+        private static int? GetSelectedOptionalId(Guna.UI2.WinForms.Guna2ComboBox combo)
+        {
+            return combo.SelectedItem is ComboOption option ? option.Id : null;
+        }
+
+        private static void SelectComboValue(Guna.UI2.WinForms.Guna2ComboBox combo, int? id)
+        {
+            if (!id.HasValue)
+            {
+                combo.SelectedIndex = -1;
+                return;
+            }
+
+            foreach (var item in combo.Items)
+            {
+                if (item is ComboOption option && option.Id == id.Value)
+                {
+                    combo.SelectedItem = item;
+                    return;
+                }
+            }
+
+            combo.SelectedIndex = -1;
+        }
+
+        private static void ClearCombo(Guna.UI2.WinForms.Guna2ComboBox combo)
+        {
+            combo.SelectedIndex = -1;
+            combo.Text = string.Empty;
+        }
+
+        private static string FormatTimeSlot(TimeSlot timeSlot)
+        {
+            string label = $"{timeSlot.StartTime:hh\\:mm} - {timeSlot.EndTime:hh\\:mm}";
+            return timeSlot.IsBreak ? $"{label} (Break)" : label;
+        }
+
+        private static string FormatSection(Section section)
+        {
+            string branch = section.Branch?.BranchName ?? "General";
+            return $"{section.SectionName} - {section.StudyYear?.YearName ?? "Year"} - {branch}";
+        }
+
+        private static int DayOrder(string day)
+        {
+            return day switch
+            {
+                "Sunday" => 1,
+                "Monday" => 2,
+                "Tuesday" => 3,
+                "Wednesday" => 4,
+                "Thursday" => 5,
+                _ => 99
+            };
+        }
+
+        private void ShowInformation(string message)
+        {
+            MessageBox.Show(this, message, "Schedule", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void ShowError(string message, Exception ex)
+        {
+            MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Schedule", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private sealed record ComboOption(int? Id, string Text);
+
+        private sealed class ScheduleRow
+        {
+            public int ScheduleID { get; init; }
+            public int SubjectID { get; init; }
+            public int FacultyMemberID { get; init; }
+            public int ClassroomID { get; init; }
+            public int TimeSlotID { get; init; }
+            public int? StudyYearID { get; init; }
+            public int? BranchID { get; init; }
+            public int? SectionID { get; init; }
+            public string DayOfWeek { get; init; } = string.Empty;
+            public string SubjectName { get; init; } = string.Empty;
+            public string FacultyMemberName { get; init; } = string.Empty;
+            public string ClassroomName { get; init; } = string.Empty;
+            public string TimeSlotName { get; init; } = string.Empty;
+            public string StudyYearName { get; init; } = string.Empty;
+            public string BranchName { get; init; } = string.Empty;
+            public string SectionName { get; init; } = string.Empty;
+
+            public static ScheduleRow FromSchedule(Schedule schedule)
+            {
+                return new ScheduleRow
+                {
+                    ScheduleID = schedule.ScheduleID,
+                    SubjectID = schedule.SubjectID,
+                    FacultyMemberID = schedule.FacultyMemberID,
+                    ClassroomID = schedule.ClassroomID,
+                    TimeSlotID = schedule.TimeSlotID,
+                    StudyYearID = schedule.StudyYearID,
+                    BranchID = schedule.BranchID,
+                    SectionID = schedule.SectionID,
+                    DayOfWeek = schedule.DayOfWeek,
+                    SubjectName = schedule.Subject?.SubjectName ?? "-",
+                    FacultyMemberName = schedule.FacultyMember?.FullName ?? "-",
+                    ClassroomName = schedule.Classroom?.ClassroomNumber ?? "-",
+                    TimeSlotName = schedule.TimeSlot is null ? "-" : FormatTimeSlot(schedule.TimeSlot),
+                    StudyYearName = schedule.StudyYear?.YearName ?? "-",
+                    BranchName = schedule.Branch?.BranchName ?? "-",
+                    SectionName = schedule.Section?.SectionName ?? "-"
+                };
+            }
         }
     }
 }
