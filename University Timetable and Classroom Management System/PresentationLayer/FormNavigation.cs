@@ -46,6 +46,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
             ApplyWindowState(currentForm, nextForm);
             nextForm.Show();
+            nextForm.BringToFront();
+            nextForm.Activate();
             currentForm.Hide();
             nextForm.FormClosed += (_, _) => currentForm.Close();
         }

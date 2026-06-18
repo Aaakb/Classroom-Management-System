@@ -13,7 +13,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cachedForms[initialForm.GetType()] = initialForm;
             MainForm = initialForm;
             MainForm.FormClosed += HandleActiveFormClosed;
-            MainForm.Show();
+            ShowActiveForm(MainForm);
         }
 
         public void Navigate(
@@ -72,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
                     currentForm.Hide();
                 }
 
-                MainForm.Show();
+                ShowActiveForm(MainForm);
                 isNavigating = false;
             }
             catch
@@ -99,11 +99,24 @@ namespace University_Timetable_and_Classroom_Management_System
 
                 if (!currentForm.IsDisposed)
                 {
-                    currentForm.Show();
+                    ShowActiveForm(currentForm);
                 }
 
                 throw;
             }
+        }
+
+        private static void ShowActiveForm(System.Windows.Forms.Form form)
+        {
+            if (form.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+            {
+                form.WindowState = System.Windows.Forms.FormWindowState.Normal;
+            }
+
+            form.Show();
+            form.BringToFront();
+            form.Activate();
+            form.Focus();
         }
 
         private void HandleActiveFormClosed(object? sender, System.Windows.Forms.FormClosedEventArgs e)
