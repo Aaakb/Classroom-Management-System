@@ -491,6 +491,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearSectionForm.Size = new System.Drawing.Size(108, 38);
             btnClearSectionForm.TabIndex = 15;
             btnClearSectionForm.Text = "Clear";
+            btnClearSectionForm.Visible = false;
             // 
             // btnDeleteSection
             // 

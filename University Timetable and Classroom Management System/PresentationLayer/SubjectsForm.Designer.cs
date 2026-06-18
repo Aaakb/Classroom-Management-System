@@ -591,6 +591,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearSubjectForm.Size = new Size(108, 38);
             btnClearSubjectForm.TabIndex = 23;
             btnClearSubjectForm.Text = "Clear";
+            btnClearSubjectForm.Visible = false;
             // 
             // btnDeleteSubject
             // 

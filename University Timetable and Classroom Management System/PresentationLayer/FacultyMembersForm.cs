@@ -39,7 +39,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddFacultyMember.Click += async (_, _) => await AddFacultyMemberAsync();
             btnUpdateFacultyMember.Click += async (_, _) => await UpdateFacultyMemberAsync();
             btnDeleteFacultyMember.Click += async (_, _) => await DeleteFacultyMemberAsync();
-            btnClearFacultyMemberForm.Click += (_, _) => ClearFacultyMemberForm();
         }
 
         private async Task LoadFacultyMembersAsync()
@@ -196,7 +195,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddFacultyMember.Enabled = enabled;
             btnUpdateFacultyMember.Enabled = enabled;
             btnDeleteFacultyMember.Enabled = enabled;
-            btnClearFacultyMemberForm.Enabled = enabled;
             dgvFacultyMembers.Enabled = enabled;
         }
 

@@ -460,6 +460,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearBranchForm.Size = new Size(108, 38);
             btnClearBranchForm.TabIndex = 9;
             btnClearBranchForm.Text = "Clear";
+            btnClearBranchForm.Visible = false;
             // 
             // btnDeleteBranch
             // 

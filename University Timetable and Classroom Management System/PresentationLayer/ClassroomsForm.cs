@@ -39,7 +39,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddClassroom.Click += async (_, _) => await AddClassroomAsync();
             btnUpdateClassroom.Click += async (_, _) => await UpdateClassroomAsync();
             btnDeleteClassroom.Click += async (_, _) => await DeleteClassroomAsync();
-            btnClearClassroomForm.Click += (_, _) => ClearClassroomForm();
         }
 
         private async Task LoadClassroomsAsync()
@@ -207,7 +206,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddClassroom.Enabled = enabled;
             btnUpdateClassroom.Enabled = enabled;
             btnDeleteClassroom.Enabled = enabled;
-            btnClearClassroomForm.Enabled = enabled;
             dgvClassrooms.Enabled = enabled;
         }
 

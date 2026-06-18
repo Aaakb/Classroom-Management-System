@@ -39,7 +39,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddBranch.Click += async (_, _) => await AddBranchAsync();
             btnUpdateBranch.Click += async (_, _) => await UpdateBranchAsync();
             btnDeleteBranch.Click += async (_, _) => await DeleteBranchAsync();
-            btnClearBranchForm.Click += (_, _) => ClearBranchForm();
         }
 
         private async Task LoadBranchesAsync()
@@ -188,7 +187,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddBranch.Enabled = enabled;
             btnUpdateBranch.Enabled = enabled;
             btnDeleteBranch.Enabled = enabled;
-            btnClearBranchForm.Enabled = enabled;
             dgvBranches.Enabled = enabled;
         }
 

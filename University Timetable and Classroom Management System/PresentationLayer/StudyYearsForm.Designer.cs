@@ -397,6 +397,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearStudyYearForm.Size = new System.Drawing.Size(108, 38);
             btnClearStudyYearForm.TabIndex = 9;
             btnClearStudyYearForm.Text = "Clear";
+            btnClearStudyYearForm.Visible = false;
             // 
             // btnDeleteStudyYear
             // 

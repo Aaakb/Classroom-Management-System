@@ -39,7 +39,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddStudyYear.Click += async (_, _) => await AddStudyYearAsync();
             btnUpdateStudyYear.Click += async (_, _) => await UpdateStudyYearAsync();
             btnDeleteStudyYear.Click += async (_, _) => await DeleteStudyYearAsync();
-            btnClearStudyYearForm.Click += (_, _) => ClearStudyYearForm();
         }
 
         private async Task LoadStudyYearsAsync()
@@ -188,7 +187,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddStudyYear.Enabled = enabled;
             btnUpdateStudyYear.Enabled = enabled;
             btnDeleteStudyYear.Enabled = enabled;
-            btnClearStudyYearForm.Enabled = enabled;
             dgvStudyYears.Enabled = enabled;
         }
 

@@ -460,6 +460,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearTimeSlotForm.Size = new System.Drawing.Size(108, 38);
             btnClearTimeSlotForm.TabIndex = 13;
             btnClearTimeSlotForm.Text = "Clear";
+            btnClearTimeSlotForm.Visible = false;
             // 
             // btnDeleteTimeSlot
             // 

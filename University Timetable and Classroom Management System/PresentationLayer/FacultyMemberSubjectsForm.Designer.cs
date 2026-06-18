@@ -570,6 +570,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearAssignmentForm.Size = new Size(108, 38);
             btnClearAssignmentForm.TabIndex = 9;
             btnClearAssignmentForm.Text = "Clear";
+            btnClearAssignmentForm.Visible = false;
             // 
             // btnDeleteAssignment
             // 

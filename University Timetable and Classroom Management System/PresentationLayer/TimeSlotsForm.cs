@@ -39,7 +39,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddTimeSlot.Click += async (_, _) => await AddTimeSlotAsync();
             btnUpdateTimeSlot.Click += async (_, _) => await UpdateTimeSlotAsync();
             btnDeleteTimeSlot.Click += async (_, _) => await DeleteTimeSlotAsync();
-            btnClearTimeSlotForm.Click += (_, _) => ClearTimeSlotForm();
         }
 
         private async Task LoadTimeSlotsAsync()
@@ -194,7 +193,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddTimeSlot.Enabled = enabled;
             btnUpdateTimeSlot.Enabled = enabled;
             btnDeleteTimeSlot.Enabled = enabled;
-            btnClearTimeSlotForm.Enabled = enabled;
             dgvTimeSlots.Enabled = enabled;
         }
 

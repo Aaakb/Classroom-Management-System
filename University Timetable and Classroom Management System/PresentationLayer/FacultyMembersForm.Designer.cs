@@ -410,6 +410,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearFacultyMemberForm.Size = new System.Drawing.Size(108, 38);
             btnClearFacultyMemberForm.TabIndex = 11;
             btnClearFacultyMemberForm.Text = "Clear";
+            btnClearFacultyMemberForm.Visible = false;
             // 
             // btnDeleteFacultyMember
             // 
