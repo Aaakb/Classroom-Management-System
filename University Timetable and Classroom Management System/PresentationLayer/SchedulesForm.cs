@@ -16,6 +16,11 @@ namespace University_Timetable_and_Classroom_Management_System
         private readonly SectionService sectionService = new();
 
         private List<ScheduleRow> scheduleRows = [];
+        private List<Subject> subjectsLookup = [];
+        private List<StudyYear> studyYearsLookup = [];
+        private List<Branch> branchesLookup = [];
+        private List<Section> sectionsLookup = [];
+        private bool isUpdatingScheduleLookups;
 
         public SchedulesForm()
         {
@@ -63,9 +68,13 @@ namespace University_Timetable_and_Classroom_Management_System
             btnExportSchedulePdf.Click += async (_, _) => await ExportSchedulePdfAsync();
 
             dgvSchedules.SelectionChanged += (_, _) => PopulateScheduleEditorFromSelection();
+            cmbSubject.SelectedIndexChanged += (_, _) => ApplySubjectSelection();
+            cmbStudyYear.SelectedIndexChanged += (_, _) => ApplyStudyYearSelection();
+            cmbBranch.SelectedIndexChanged += (_, _) => ApplyBranchSelection();
+            cmbSection.SelectedIndexChanged += (_, _) => ApplySectionSelection();
             cmbFacultyFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
-            cmbSectionFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
-            cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbSectionFilter.SelectedIndexChanged += (_, _) => ApplySectionFilterSelection();
+            cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyStudyYearFilterSelection();
             cmbDayFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
         }
 
@@ -91,25 +100,25 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task LoadLookupsAsync()
         {
-            var subjects = await subjectService.GetAllAsync();
+            subjectsLookup = await subjectService.GetAllAsync();
             var facultyMembers = await facultyMemberService.GetAllAsync();
             var classrooms = await classroomService.GetAllAsync();
             var timeSlots = await timeSlotService.GetAllAsync();
-            var studyYears = await studyYearService.GetAllAsync();
-            var branches = await branchService.GetAllAsync();
-            var sections = await sectionService.GetAllAsync();
+            studyYearsLookup = await studyYearService.GetAllAsync();
+            branchesLookup = await branchService.GetAllAsync();
+            sectionsLookup = await sectionService.GetAllAsync();
 
-            BindCombo(cmbSubject, subjects.Select(subject => new ComboOption(subject.SubjectID, subject.SubjectName)));
+            BindSubjectsCombo();
             BindCombo(cmbFacultyMember, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)));
             BindCombo(cmbClassroom, classrooms.Select(classroom => new ComboOption(classroom.ClassroomID, classroom.ClassroomNumber)));
             BindCombo(cmbTimeSlot, timeSlots.Select(slot => new ComboOption(slot.TimeSlotID, FormatTimeSlot(slot))));
-            BindCombo(cmbStudyYear, studyYears.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
-            BindCombo(cmbBranch, branches.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
-            BindCombo(cmbSection, sections.Select(section => new ComboOption(section.SectionID, FormatSection(section))));
+            BindCombo(cmbStudyYear, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
+            BindCombo(cmbBranch, branchesLookup.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
+            BindSectionsCombo();
 
             BindFilterCombo(cmbFacultyFilter, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)), "All faculty");
-            BindFilterCombo(cmbSectionFilter, sections.Select(section => new ComboOption(section.SectionID, FormatSection(section))), "All sections");
-            BindFilterCombo(cmbStudyYearFilter, studyYears.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
+            BindFilterCombo(cmbStudyYearFilter, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
+            BindSectionFilterCombo();
             BindDayCombos();
         }
 
@@ -263,6 +272,57 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.ClearSelection();
         }
 
+        private void ApplySectionFilterSelection()
+        {
+            if (isUpdatingScheduleLookups)
+            {
+                return;
+            }
+
+            int? sectionId = GetSelectedOptionalId(cmbSectionFilter);
+
+            if (sectionId.HasValue)
+            {
+                var section = sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId.Value);
+
+                if (section is not null)
+                {
+                    isUpdatingScheduleLookups = true;
+                    SelectComboValue(cmbStudyYearFilter, section.StudyYearID);
+                    isUpdatingScheduleLookups = false;
+                }
+            }
+
+            ApplyScheduleFilters();
+        }
+
+        private void ApplyStudyYearFilterSelection()
+        {
+            if (isUpdatingScheduleLookups)
+            {
+                return;
+            }
+
+            int? selectedStudyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
+            int? selectedSectionId = GetSelectedOptionalId(cmbSectionFilter);
+            var selectedSection = selectedSectionId.HasValue
+                ? sectionsLookup.FirstOrDefault(section => section.SectionID == selectedSectionId.Value)
+                : null;
+
+            if (selectedStudyYearId.HasValue &&
+                selectedSection is not null &&
+                selectedSection.StudyYearID != selectedStudyYearId.Value)
+            {
+                selectedSectionId = null;
+            }
+
+            isUpdatingScheduleLookups = true;
+            BindSectionFilterCombo(selectedStudyYearId, selectedSectionId);
+            isUpdatingScheduleLookups = false;
+
+            ApplyScheduleFilters();
+        }
+
         private IEnumerable<ScheduleRow> GetFilteredRows()
         {
             int? facultyId = GetSelectedOptionalId(cmbFacultyFilter);
@@ -279,6 +339,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private bool TryBuildSchedule(out Schedule schedule)
         {
+            ApplySectionSelection();
+
             schedule = new Schedule
             {
                 DayOfWeek = cmbDayOfWeek.Text.Trim(),
@@ -302,6 +364,35 @@ namespace University_Timetable_and_Classroom_Management_System
                 schedule.ClassroomID <= 0 || schedule.TimeSlotID <= 0)
             {
                 ShowInformation("Subject, faculty, classroom, and time slot are required.");
+                return false;
+            }
+
+            int subjectId = schedule.SubjectID;
+            int? sectionId = schedule.SectionID;
+            var subject = subjectsLookup.FirstOrDefault(item => item.SubjectID == subjectId);
+            var section = sectionId.HasValue
+                ? sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId.Value)
+                : null;
+
+            if (section is not null)
+            {
+                schedule.StudyYearID = section.StudyYearID;
+                schedule.BranchID = section.BranchID;
+            }
+
+            if (subject is not null &&
+                schedule.StudyYearID.HasValue &&
+                subject.StudyYearID != schedule.StudyYearID.Value)
+            {
+                ShowInformation("The selected subject does not belong to the selected section study year.");
+                return false;
+            }
+
+            if (subject?.BranchID.HasValue == true &&
+                schedule.BranchID.HasValue &&
+                subject.BranchID.Value != schedule.BranchID.Value)
+            {
+                ShowInformation("The selected subject does not belong to the selected section branch.");
                 return false;
             }
 
@@ -335,6 +426,8 @@ namespace University_Timetable_and_Classroom_Management_System
             SelectComboValue(cmbTimeSlot, row.TimeSlotID);
             SelectComboValue(cmbStudyYear, row.StudyYearID);
             SelectComboValue(cmbBranch, row.BranchID);
+            BindSectionsCombo(row.StudyYearID, row.BranchID, row.SectionID);
+            BindSubjectsCombo(row.StudyYearID, row.BranchID, row.SubjectID);
             SelectComboValue(cmbSection, row.SectionID);
         }
 
@@ -348,6 +441,8 @@ namespace University_Timetable_and_Classroom_Management_System
             ClearCombo(cmbDayOfWeek);
             ClearCombo(cmbStudyYear);
             ClearCombo(cmbBranch);
+            BindSectionsCombo();
+            BindSubjectsCombo();
             ClearCombo(cmbSection);
             dgvSchedules.ClearSelection();
         }
@@ -383,6 +478,134 @@ namespace University_Timetable_and_Classroom_Management_System
             combo.DisplayMember = nameof(ComboOption.Text);
             combo.ValueMember = nameof(ComboOption.Id);
             combo.SelectedIndex = 0;
+        }
+
+        private void BindSubjectsCombo(int? studyYearId = null, int? branchId = null, int? selectedSubjectId = null)
+        {
+            var subjects = subjectsLookup
+                .Where(subject => !studyYearId.HasValue || subject.StudyYearID == studyYearId.Value)
+                .Where(subject => !branchId.HasValue || !subject.BranchID.HasValue || subject.BranchID == branchId.Value)
+                .OrderBy(subject => subject.StudyYearID)
+                .ThenBy(subject => subject.BranchID ?? 0)
+                .ThenBy(subject => subject.SubjectID)
+                .Select((subject, index) => new ComboOption(subject.SubjectID, $"{index + 1}. {subject.SubjectName}"));
+
+            BindCombo(cmbSubject, subjects);
+            SelectComboValue(cmbSubject, selectedSubjectId);
+        }
+
+        private void BindSectionsCombo(int? studyYearId = null, int? branchId = null, int? selectedSectionId = null)
+        {
+            var sections = sectionsLookup
+                .Where(section => !studyYearId.HasValue || section.StudyYearID == studyYearId.Value)
+                .Where(section => !branchId.HasValue || section.BranchID == branchId.Value)
+                .OrderBy(section => section.StudyYearID)
+                .ThenBy(section => section.BranchID ?? 0)
+                .ThenBy(section => section.SectionName)
+                .Select(section => new ComboOption(section.SectionID, FormatSection(section)));
+
+            BindCombo(cmbSection, sections);
+            SelectComboValue(cmbSection, selectedSectionId);
+        }
+
+        private void BindSectionFilterCombo(int? studyYearId = null, int? selectedSectionId = null)
+        {
+            var sections = sectionsLookup
+                .Where(section => !studyYearId.HasValue || section.StudyYearID == studyYearId.Value)
+                .OrderBy(section => section.StudyYearID)
+                .ThenBy(section => section.BranchID ?? 0)
+                .ThenBy(section => section.SectionName)
+                .Select(section => new ComboOption(section.SectionID, FormatSection(section)));
+
+            BindFilterCombo(cmbSectionFilter, sections, "All sections");
+            SelectComboValue(cmbSectionFilter, selectedSectionId);
+        }
+
+        private void ApplySubjectSelection()
+        {
+            if (isUpdatingScheduleLookups)
+            {
+                return;
+            }
+
+            int? subjectId = GetSelectedOptionalId(cmbSubject);
+            var subject = subjectId.HasValue
+                ? subjectsLookup.FirstOrDefault(item => item.SubjectID == subjectId.Value)
+                : null;
+
+            if (subject is null)
+            {
+                return;
+            }
+
+            isUpdatingScheduleLookups = true;
+            SelectComboValue(cmbStudyYear, subject.StudyYearID);
+
+            if (subject.BranchID.HasValue)
+            {
+                SelectComboValue(cmbBranch, subject.BranchID);
+            }
+
+            BindSectionsCombo(subject.StudyYearID, subject.BranchID);
+            isUpdatingScheduleLookups = false;
+        }
+
+        private void ApplyStudyYearSelection()
+        {
+            if (isUpdatingScheduleLookups)
+            {
+                return;
+            }
+
+            int? studyYearId = GetSelectedOptionalId(cmbStudyYear);
+            int? branchId = GetSelectedOptionalId(cmbBranch);
+
+            isUpdatingScheduleLookups = true;
+            BindSectionsCombo(studyYearId, branchId);
+            BindSubjectsCombo(studyYearId, branchId);
+            isUpdatingScheduleLookups = false;
+        }
+
+        private void ApplyBranchSelection()
+        {
+            if (isUpdatingScheduleLookups)
+            {
+                return;
+            }
+
+            int? studyYearId = GetSelectedOptionalId(cmbStudyYear);
+            int? branchId = GetSelectedOptionalId(cmbBranch);
+
+            isUpdatingScheduleLookups = true;
+            BindSectionsCombo(studyYearId, branchId);
+            BindSubjectsCombo(studyYearId, branchId);
+            isUpdatingScheduleLookups = false;
+        }
+
+        private void ApplySectionSelection()
+        {
+            if (isUpdatingScheduleLookups)
+            {
+                return;
+            }
+
+            int? sectionId = GetSelectedOptionalId(cmbSection);
+            var section = sectionId.HasValue
+                ? sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId.Value)
+                : null;
+
+            if (section is null)
+            {
+                return;
+            }
+
+            int? selectedSubjectId = GetSelectedOptionalId(cmbSubject);
+
+            isUpdatingScheduleLookups = true;
+            SelectComboValue(cmbStudyYear, section.StudyYearID);
+            SelectComboValue(cmbBranch, section.BranchID);
+            BindSubjectsCombo(section.StudyYearID, section.BranchID, selectedSubjectId);
+            isUpdatingScheduleLookups = false;
         }
 
         private void BindDayCombos()
@@ -443,8 +666,11 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private static string FormatSection(Section section)
         {
-            string branch = section.Branch?.BranchName ?? "General";
-            return $"{section.SectionName} - {section.StudyYear?.YearName ?? "Year"} - {branch}";
+            string year = section.StudyYear?.YearName ?? "Year";
+
+            return section.Branch is null
+                ? $"{section.SectionName} - {year}"
+                : $"{section.SectionName} - {year} - {section.Branch.BranchName}";
         }
 
         private static int DayOrder(string day)
@@ -510,9 +736,24 @@ namespace University_Timetable_and_Classroom_Management_System
                     TimeSlotName = schedule.TimeSlot is null ? "-" : FormatTimeSlot(schedule.TimeSlot),
                     StudyYearName = schedule.StudyYear?.YearName ?? "-",
                     BranchName = schedule.Branch?.BranchName ?? "-",
-                    SectionName = schedule.Section?.SectionName ?? "-"
+                    SectionName = FormatScheduleSection(schedule)
                 };
             }
+        }
+
+        private static string FormatScheduleSection(Schedule schedule)
+        {
+            if (schedule.Section is null)
+            {
+                return "-";
+            }
+
+            string year = schedule.StudyYear?.YearName ?? schedule.Section.StudyYear?.YearName ?? "Year";
+            string? branch = schedule.Branch?.BranchName ?? schedule.Section.Branch?.BranchName;
+
+            return string.IsNullOrWhiteSpace(branch)
+                ? $"{schedule.Section.SectionName} - {year}"
+                : $"{schedule.Section.SectionName} - {year} - {branch}";
         }
     }
 }

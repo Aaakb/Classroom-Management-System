@@ -67,12 +67,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 MainForm = nextForm;
                 MainForm.FormClosed += HandleActiveFormClosed;
 
-                if (!currentForm.IsDisposed)
+                ShowActiveForm(MainForm);
+
+                if (!currentForm.IsDisposed && !ReferenceEquals(currentForm, MainForm))
                 {
                     currentForm.Hide();
                 }
 
-                ShowActiveForm(MainForm);
                 isNavigating = false;
             }
             catch
