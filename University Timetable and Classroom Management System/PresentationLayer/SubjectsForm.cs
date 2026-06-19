@@ -1,4 +1,5 @@
 using System.Globalization;
+using Guna.UI2.WinForms;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
@@ -12,12 +13,19 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private List<StudyYear> studyYearsLookup = [];
         private List<Branch> branchesLookup = [];
+        private List<SubjectRow> subjectRows = [];
+        private bool isUpdatingSubjectFilters;
+        private Guna2HtmlLabel lblStudyYearFilter = null!;
+        private Guna2HtmlLabel lblBranchFilter = null!;
+        private Guna2ComboBox cmbStudyYearFilter = null!;
+        private Guna2ComboBox cmbBranchFilter = null!;
 
         public SubjectsForm()
         {
             InitializeComponent();
             ConfigureNavigation();
             ConfigureSubjectsGrid();
+            ConfigureSubjectFilters();
             ConfigureSubjectsEvents();
         }
 
@@ -55,6 +63,54 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddSubject.Click += async (_, _) => await AddSubjectAsync();
             btnUpdateSubject.Click += async (_, _) => await UpdateSubjectAsync();
             btnDeleteSubject.Click += async (_, _) => await DeleteSubjectAsync();
+            cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyStudyYearFilterSelection();
+            cmbBranchFilter.SelectedIndexChanged += (_, _) => ApplySubjectFilters();
+        }
+
+        private void ConfigureSubjectFilters()
+        {
+            lblStudyYearFilter = CreateFilterLabel("Study year filter", new Point(470, 18));
+            cmbStudyYearFilter = CreateFilterCombo(new Point(470, 39), 180);
+            lblBranchFilter = CreateFilterLabel("Branch filter", new Point(666, 18));
+            cmbBranchFilter = CreateFilterCombo(new Point(666, 39), 194);
+
+            pnlSubjectsTable.Controls.Add(lblStudyYearFilter);
+            pnlSubjectsTable.Controls.Add(cmbStudyYearFilter);
+            pnlSubjectsTable.Controls.Add(lblBranchFilter);
+            pnlSubjectsTable.Controls.Add(cmbBranchFilter);
+        }
+
+        private static Guna2HtmlLabel CreateFilterLabel(string text, Point location)
+        {
+            return new Guna2HtmlLabel
+            {
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(51, 65, 85),
+                Location = location,
+                Text = text
+            };
+        }
+
+        private static Guna2ComboBox CreateFilterCombo(Point location, int width)
+        {
+            return new Guna2ComboBox
+            {
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(203, 213, 225),
+                BorderRadius = 6,
+                DrawMode = DrawMode.OwnerDrawFixed,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FocusedColor = Color.FromArgb(37, 99, 235),
+                Font = new Font("Segoe UI", 9.5F),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                HoverState = { BorderColor = Color.FromArgb(148, 163, 184) },
+                ItemHeight = 28,
+                Location = location,
+                Size = new Size(width, 34)
+            };
         }
 
         private async Task RefreshSubjectsAsync()
@@ -84,17 +140,53 @@ namespace University_Timetable_and_Classroom_Management_System
 
             BindCombo(cmbStudyYear, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
             BindBranchCombo();
+            BindSubjectFilterLookups();
         }
 
         private async Task LoadSubjectsAsync()
         {
             var subjects = await subjectService.GetAllAsync();
-            dgvSubjects.DataSource = subjects
+            subjectRows = subjects
                 .Select(SubjectRow.FromSubject)
                 .OrderBy(row => row.StudyYearID)
                 .ThenBy(row => row.BranchID ?? 0)
                 .ThenBy(row => row.SemesterNumber)
                 .ThenBy(row => row.SubjectName)
+                .ToList();
+
+            ApplySubjectFilters();
+        }
+
+        private void ApplyStudyYearFilterSelection()
+        {
+            if (isUpdatingSubjectFilters)
+            {
+                return;
+            }
+
+            var selectedStudyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
+            var selectedBranchId = GetSelectedOptionalId(cmbBranchFilter);
+
+            isUpdatingSubjectFilters = true;
+            BindBranchFilterCombo(selectedStudyYearId, selectedBranchId);
+            isUpdatingSubjectFilters = false;
+
+            ApplySubjectFilters();
+        }
+
+        private void ApplySubjectFilters()
+        {
+            if (isUpdatingSubjectFilters)
+            {
+                return;
+            }
+
+            var selectedStudyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
+            var selectedBranchId = GetSelectedOptionalId(cmbBranchFilter);
+
+            dgvSubjects.DataSource = subjectRows
+                .Where(row => !selectedStudyYearId.HasValue || row.StudyYearID == selectedStudyYearId.Value)
+                .Where(row => !selectedBranchId.HasValue || row.BranchID == selectedBranchId.Value)
                 .ToList();
             dgvSubjects.ClearSelection();
         }
@@ -338,6 +430,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtPracticalHours.Clear();
             txtCreditUnits.Clear();
             dgvSubjects.ClearSelection();
+            txtSubjectId.Text = GetNextAvailableSubjectId().ToString();
             txtSubjectId.Focus();
         }
 
@@ -354,6 +447,57 @@ namespace University_Timetable_and_Classroom_Management_System
             var branches = new List<ComboOption> { new(null, "General / all branches") };
             branches.AddRange(branchesLookup.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
             BindCombo(cmbBranch, branches);
+        }
+
+        private void BindSubjectFilterLookups()
+        {
+            isUpdatingSubjectFilters = true;
+
+            var studyYears = new List<ComboOption> { new(null, "All study years") };
+            studyYears.AddRange(studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
+            BindCombo(cmbStudyYearFilter, studyYears);
+            cmbStudyYearFilter.SelectedIndex = 0;
+
+            BindBranchFilterCombo(null, null);
+
+            isUpdatingSubjectFilters = false;
+        }
+
+        private void BindBranchFilterCombo(int? studyYearId, int? selectedBranchId)
+        {
+            var availableBranchIds = subjectRows
+                .Where(row => !studyYearId.HasValue || row.StudyYearID == studyYearId.Value)
+                .Select(row => row.BranchID)
+                .ToHashSet();
+
+            var branches = new List<ComboOption> { new(null, "All branches") };
+            branches.AddRange(branchesLookup
+                .Where(branch => availableBranchIds.Count == 0 || availableBranchIds.Contains(branch.BranchID))
+                .Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
+
+            BindCombo(cmbBranchFilter, branches);
+
+            if (selectedBranchId.HasValue && branches.Any(branch => branch.Id == selectedBranchId.Value))
+            {
+                SelectComboValue(cmbBranchFilter, selectedBranchId);
+            }
+            else
+            {
+                cmbBranchFilter.SelectedIndex = 0;
+            }
+        }
+
+        private int GetNextAvailableSubjectId()
+        {
+            var usedIds = subjectRows.Select(row => row.SubjectID).ToHashSet();
+            var nextId = 1;
+
+            while (usedIds.Contains(nextId))
+            {
+                nextId++;
+            }
+
+            return nextId;
         }
 
         private static void BindCombo(Guna.UI2.WinForms.Guna2ComboBox combo, IEnumerable<ComboOption> options)
