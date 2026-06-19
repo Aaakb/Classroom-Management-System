@@ -56,6 +56,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarFooter.Size = new System.Drawing.Size(104, 17);
             lblSidebarFooter.TabIndex = 3;
             lblSidebarFooter.Text = "Academic system";
+            lblSidebarFooter.Visible = false;
             //
             // separatorSidebar
             //
@@ -75,15 +76,16 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarSubtitle.Size = new System.Drawing.Size(145, 17);
             lblSidebarSubtitle.TabIndex = 1;
             lblSidebarSubtitle.Text = "Classroom management";
+            lblSidebarSubtitle.Visible = false;
             //
             // lblApplicationName
             //
             lblApplicationName.BackColor = System.Drawing.Color.Transparent;
-            lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblApplicationName.ForeColor = System.Drawing.Color.White;
             lblApplicationName.Location = new System.Drawing.Point(24, 20);
             lblApplicationName.Name = "lblApplicationName";
-            lblApplicationName.Size = new System.Drawing.Size(192, 33);
+            lblApplicationName.Size = new System.Drawing.Size(188, 32);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "Timetable Studio";
             //
