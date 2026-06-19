@@ -1,6 +1,6 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class SubjectsForm : System.Windows.Forms.Form
+    public partial class SubjectsForm : System.Windows.Forms.UserControl
     {
         /// <summary>
         /// Required designer variable.
@@ -1013,7 +1013,6 @@ namespace University_Timetable_and_Classroom_Management_System
             Font = new Font("Segoe UI", 9F);
             MinimumSize = new Size(980, 600);
             Name = "SubjectsForm";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "Subjects Management";
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();

@@ -1,6 +1,6 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class StudyYearsForm : System.Windows.Forms.Form
+    public partial class StudyYearsForm : System.Windows.Forms.UserControl
     {
         /// <summary>
         /// Required designer variable.
@@ -579,7 +579,6 @@ namespace University_Timetable_and_Classroom_Management_System
             Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             MinimumSize = new System.Drawing.Size(980, 600);
             Name = "StudyYearsForm";
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Study Years Management";
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();

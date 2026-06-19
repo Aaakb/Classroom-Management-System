@@ -3,7 +3,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class SchedulesForm : System.Windows.Forms.Form
+    public partial class SchedulesForm : System.Windows.Forms.UserControl
     {
         private readonly ScheduleService scheduleService = new();
         private readonly SchedulePdfExportService schedulePdfExportService = new();

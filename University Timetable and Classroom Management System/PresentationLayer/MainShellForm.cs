@@ -2,7 +2,7 @@ namespace University_Timetable_and_Classroom_Management_System
 {
     public partial class MainShellForm : System.Windows.Forms.Form
     {
-        private FormPageHostControl? activePageHost;
+        private System.Windows.Forms.UserControl? activePage;
 
         internal static MainShellForm? Current { get; private set; }
 
@@ -10,21 +10,24 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             InitializeComponent();
             Current = this;
-            ShowPage(new DashboardForm());
+            ShowPage(NavigationPage.Dashboard);
         }
 
-        internal void ShowPage(System.Windows.Forms.Form pageForm)
+        internal void ShowPage(NavigationPage page)
         {
-            var nextPageHost = new FormPageHostControl(pageForm);
+            var nextPage = FormNavigation.CreatePage(page);
+            nextPage.Dock = System.Windows.Forms.DockStyle.Fill;
 
             pnlPageHost.SuspendLayout();
             pnlPageHost.Controls.Clear();
 
-            activePageHost?.Dispose();
-            activePageHost = nextPageHost;
+            activePage?.Dispose();
+            activePage = nextPage;
 
-            pnlPageHost.Controls.Add(activePageHost);
+            pnlPageHost.Controls.Add(activePage);
             pnlPageHost.ResumeLayout();
+
+            FormNavigation.ConfigureShellSidebar(this, pnlSidebar, page);
         }
 
         protected override void OnFormClosed(System.Windows.Forms.FormClosedEventArgs e)

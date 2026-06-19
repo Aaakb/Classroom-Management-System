@@ -1,6 +1,6 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class DashboardForm : System.Windows.Forms.Form
+    public partial class DashboardForm : System.Windows.Forms.UserControl
     {
         /// <summary>
         /// Required designer variable.
@@ -418,7 +418,6 @@ namespace University_Timetable_and_Classroom_Management_System
             Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             MinimumSize = new System.Drawing.Size(980, 600);
             Name = "DashboardForm";
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Dashboard";
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();

@@ -25,41 +25,21 @@ namespace University_Timetable_and_Classroom_Management_System
             new("btnNavigationSubjects", "Subjects", NavigationPage.Subjects),
             new("btnNavigationClassrooms", "Classrooms", NavigationPage.Classrooms),
             new("btnNavigationTimeSlots", "Time Slots", NavigationPage.TimeSlots),
-            new("btnNavigationFacultyAssignments", "Faculty Assignments", NavigationPage.FacultyAssignments),
-            new("btnNavigationFacultyMembers", "Faculty Members", NavigationPage.FacultyMembers),
-            new("btnNavigationSchedules", "Schedules", NavigationPage.Schedules)
+            new("btnNavigationFacultyAssignments", "Teaching", NavigationPage.FacultyAssignments),
+            new("btnNavigationFacultyMembers", "Faculty", NavigationPage.FacultyMembers),
+            new("btnNavigationSchedules", "Schedule", NavigationPage.Schedules)
         ];
 
-        public static void Open(System.Windows.Forms.Form currentForm, System.Windows.Forms.Form nextForm)
+        public static void ConfigureSidebar(
+            System.Windows.Forms.Control currentPage,
+            Guna.UI2.WinForms.Guna2Panel sidebar,
+            NavigationPage currentPageKey)
         {
-            if (currentForm.GetType() == nextForm.GetType())
-            {
-                nextForm.Dispose();
-                return;
-            }
-
-            if (MainShellForm.Current is not null)
-            {
-                MainShellForm.Current.ShowPage(nextForm);
-                return;
-            }
-
-            if (NavigationApplicationContext.Current is not null)
-            {
-                NavigationApplicationContext.Current.Navigate(currentForm, nextForm);
-                return;
-            }
-
-            ApplyWindowState(currentForm, nextForm);
-            nextForm.Show();
-            nextForm.BringToFront();
-            nextForm.Activate();
-            currentForm.Hide();
-            nextForm.FormClosed += (_, _) => currentForm.Close();
+            PrepareContentPage(currentPage);
         }
 
-        public static void ConfigureSidebar(
-            System.Windows.Forms.Form currentForm,
+        public static void ConfigureShellSidebar(
+            MainShellForm shell,
             Guna.UI2.WinForms.Guna2Panel sidebar,
             NavigationPage currentPage)
         {
@@ -76,74 +56,78 @@ namespace University_Timetable_and_Classroom_Management_System
                 sidebar.Controls.Add(button);
                 sidebar.Controls.SetChildIndex(button, 0);
 
-                if (item.Page is null || item.Page == currentPage)
+                if (item.Page == currentPage)
                 {
-                    SetActiveOrDisabled(button, item.Page == currentPage);
+                    SetActive(button);
                 }
                 else
                 {
-                    button.Click += (_, _) =>
-                    {
-                        OpenFromNavigationButton(currentForm, button, item);
-                    };
+                    button.Click += (_, _) => shell.ShowPage(item.Page);
                 }
 
                 top += 56;
             }
         }
 
-        internal static void ApplyWindowState(
-            System.Windows.Forms.Form currentForm,
-            System.Windows.Forms.Form nextForm)
+        public static System.Windows.Forms.UserControl CreatePage(NavigationPage page)
         {
-            nextForm.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            nextForm.Bounds = currentForm.WindowState == System.Windows.Forms.FormWindowState.Normal
-                ? currentForm.Bounds
-                : currentForm.RestoreBounds;
-            nextForm.WindowState = currentForm.WindowState == System.Windows.Forms.FormWindowState.Minimized
-                ? System.Windows.Forms.FormWindowState.Normal
-                : currentForm.WindowState;
-        }
-
-        public static void Configure(
-            System.Windows.Forms.Form currentForm,
-            Guna.UI2.WinForms.Guna2Button? currentButton = null,
-            Guna.UI2.WinForms.Guna2Button? dashboard = null,
-            Guna.UI2.WinForms.Guna2Button? branches = null,
-            Guna.UI2.WinForms.Guna2Button? studyYears = null,
-            Guna.UI2.WinForms.Guna2Button? sections = null,
-            Guna.UI2.WinForms.Guna2Button? subjects = null,
-            Guna.UI2.WinForms.Guna2Button? classrooms = null,
-            Guna.UI2.WinForms.Guna2Button? timeSlots = null,
-            Guna.UI2.WinForms.Guna2Button? facultyAssignments = null,
-            Guna.UI2.WinForms.Guna2Button? facultyMembers = null,
-            Guna.UI2.WinForms.Guna2Button? schedules = null)
-        {
-            currentButton?.SetEnabled(false);
-
-            Wire(dashboard, currentForm, static () => new DashboardForm());
-            Wire(branches, currentForm, static () => new BranchesForm());
-            Wire(studyYears, currentForm, static () => new StudyYearsForm());
-            Wire(sections, currentForm, static () => new SectionsForm());
-            Wire(subjects, currentForm, static () => new SubjectsForm());
-            Wire(classrooms, currentForm, static () => new ClassroomsForm());
-            Wire(timeSlots, currentForm, static () => new TimeSlotsForm());
-            Wire(facultyAssignments, currentForm, static () => new FacultyMemberSubjectsForm());
-            Wire(facultyMembers, currentForm, static () => new FacultyMembersForm());
-            Wire(schedules, currentForm, static () => new SchedulesForm());
-        }
-
-        private static void Wire(
-            Guna.UI2.WinForms.Guna2Button? button,
-            System.Windows.Forms.Form currentForm,
-            Func<System.Windows.Forms.Form> createForm)
-        {
-            if (button is null || !button.Enabled)
+            return page switch
             {
-                return;
+                NavigationPage.Dashboard => new DashboardForm(),
+                NavigationPage.Branches => new BranchesForm(),
+                NavigationPage.StudyYears => new StudyYearsForm(),
+                NavigationPage.Sections => new SectionsForm(),
+                NavigationPage.Subjects => new SubjectsForm(),
+                NavigationPage.Classrooms => new ClassroomsForm(),
+                NavigationPage.TimeSlots => new TimeSlotsForm(),
+                NavigationPage.FacultyAssignments => new FacultyMemberSubjectsForm(),
+                NavigationPage.FacultyMembers => new FacultyMembersForm(),
+                NavigationPage.Schedules => new SchedulesForm(),
+                _ => throw new ArgumentOutOfRangeException(nameof(page), page, null)
+            };
+        }
+
+        private static void PrepareContentPage(System.Windows.Forms.Control currentPage)
+        {
+            currentPage.Dock = System.Windows.Forms.DockStyle.Fill;
+            currentPage.BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
+
+            if (FindControl(currentPage, "pnlSidebar") is { } legacySidebar)
+            {
+                legacySidebar.Visible = false;
+                legacySidebar.Enabled = false;
+                legacySidebar.Dock = System.Windows.Forms.DockStyle.None;
+                legacySidebar.Width = 0;
             }
 
-            button.Click += (_, _) => Open(currentForm, createForm());
+            if (FindControl(currentPage, "pnlMain") is { } mainPanel)
+            {
+                mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+                mainPanel.Location = System.Drawing.Point.Empty;
+                mainPanel.Margin = System.Windows.Forms.Padding.Empty;
+            }
+        }
+
+        private static System.Windows.Forms.Control? FindControl(
+            System.Windows.Forms.Control parent,
+            string name)
+        {
+            foreach (System.Windows.Forms.Control child in parent.Controls)
+            {
+                if (child.Name == name)
+                {
+                    return child;
+                }
+
+                var match = FindControl(child, name);
+
+                if (match is not null)
+                {
+                    return match;
+                }
+            }
+
+            return null;
         }
 
         private static void RemoveExistingNavigationButtons(Guna.UI2.WinForms.Guna2Panel sidebar)
@@ -157,31 +141,6 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 sidebar.Controls.Remove(button);
                 button.Dispose();
-            }
-        }
-
-        private static void OpenFromNavigationButton(
-            System.Windows.Forms.Form currentForm,
-            Guna.UI2.WinForms.Guna2Button button,
-            NavigationItem item)
-        {
-            if (item.Page is null || !button.Enabled)
-            {
-                return;
-            }
-
-            try
-            {
-                Open(currentForm, CreateForm(item.Page.Value));
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show(
-                    currentForm,
-                    $"Unable to open {item.Text}.\n\n{ex.Message}",
-                    "Navigation Error",
-                    System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Error);
             }
         }
 
@@ -204,51 +163,16 @@ namespace University_Timetable_and_Classroom_Management_System
             };
         }
 
-        private static void SetActiveOrDisabled(Guna.UI2.WinForms.Guna2Button button, bool isActive)
+        private static void SetActive(Guna.UI2.WinForms.Guna2Button button)
         {
-            button.Enabled = false;
-            button.Cursor = System.Windows.Forms.Cursors.Default;
-
-            if (!isActive)
-            {
-                return;
-            }
-
             button.Checked = true;
+            button.Cursor = System.Windows.Forms.Cursors.Default;
+            button.Enabled = false;
             button.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
             button.ForeColor = System.Drawing.Color.White;
             button.HoverState.FillColor = System.Drawing.Color.FromArgb(29, 78, 216);
         }
 
-        private static System.Windows.Forms.Form CreateForm(NavigationPage page)
-        {
-            return page switch
-            {
-                NavigationPage.Dashboard => new DashboardForm(),
-                NavigationPage.Branches => new BranchesForm(),
-                NavigationPage.StudyYears => new StudyYearsForm(),
-                NavigationPage.Sections => new SectionsForm(),
-                NavigationPage.Subjects => new SubjectsForm(),
-                NavigationPage.Classrooms => new ClassroomsForm(),
-                NavigationPage.TimeSlots => new TimeSlotsForm(),
-                NavigationPage.FacultyAssignments => new FacultyMemberSubjectsForm(),
-                NavigationPage.FacultyMembers => new FacultyMembersForm(),
-                NavigationPage.Schedules => new SchedulesForm(),
-                _ => throw new ArgumentOutOfRangeException(nameof(page), page, null)
-            };
-        }
-
-        private sealed record NavigationItem(string ButtonName, string Text, NavigationPage? Page);
-    }
-
-    internal static class NavigationButtonExtensions
-    {
-        public static void SetEnabled(this Guna.UI2.WinForms.Guna2Button button, bool enabled)
-        {
-            button.Enabled = enabled;
-            button.Cursor = enabled
-                ? System.Windows.Forms.Cursors.Hand
-                : System.Windows.Forms.Cursors.Default;
-        }
+        private sealed record NavigationItem(string ButtonName, string Text, NavigationPage Page);
     }
 }

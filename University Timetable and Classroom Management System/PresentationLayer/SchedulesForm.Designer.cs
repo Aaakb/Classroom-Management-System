@@ -1,6 +1,6 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class SchedulesForm : System.Windows.Forms.Form
+    public partial class SchedulesForm : System.Windows.Forms.UserControl
     {
         /// <summary>
         /// Required designer variable.
@@ -1236,7 +1236,6 @@ namespace University_Timetable_and_Classroom_Management_System
             Font = new Font("Segoe UI", 9F);
             MinimumSize = new Size(1180, 720);
             Name = "SchedulesForm";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "Schedules Management";
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();

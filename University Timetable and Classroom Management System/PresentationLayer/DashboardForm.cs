@@ -2,7 +2,7 @@ using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    public partial class DashboardForm : System.Windows.Forms.Form
+    public partial class DashboardForm : System.Windows.Forms.UserControl
     {
         private readonly DatabaseHealthService _databaseHealthService = new();
 
