@@ -60,7 +60,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             int subjectsWithoutSections = subjects.Count(subject =>
                 !sections.Any(section =>
                     section.StudyYearID == subject.StudyYearID &&
-                    (!subject.BranchID.HasValue || section.BranchID == subject.BranchID)));
+                    AcademicStructureRules.SectionMatchesSubject(
+                        subject.StudyYearID,
+                        subject.BranchID,
+                        section.BranchID,
+                        section.SectionName)));
             int oversizedSections = sections.Count(section =>
                 classrooms.Count == 0 || !classrooms.Any(classroom => classroom.Capacity >= section.StudentCount));
 

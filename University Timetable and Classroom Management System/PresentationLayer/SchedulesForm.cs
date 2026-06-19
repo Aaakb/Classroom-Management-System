@@ -449,6 +449,18 @@ namespace University_Timetable_and_Classroom_Management_System
                 return false;
             }
 
+            if (subject is not null &&
+                section is not null &&
+                !AcademicStructureRules.SectionMatchesSubject(
+                    subject.StudyYearID,
+                    subject.BranchID,
+                    section.BranchID,
+                    section.SectionName))
+            {
+                ShowInformation("The selected section is not valid for this subject.");
+                return false;
+            }
+
             return true;
         }
 
@@ -502,6 +514,7 @@ namespace University_Timetable_and_Classroom_Management_System
             ClearCombo(cmbDayOfWeek);
             ClearCombo(cmbStudyYear);
             ClearCombo(cmbBranch);
+            cmbBranch.Enabled = true;
             BindSectionsCombo();
             BindSubjectsCombo();
             ClearCombo(cmbSection);
@@ -544,8 +557,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void BindSubjectsCombo(int? studyYearId = null, int? branchId = null, int? selectedSubjectId = null)
         {
             var subjects = subjectsLookup
-                .Where(subject => !studyYearId.HasValue || subject.StudyYearID == studyYearId.Value)
-                .Where(subject => !branchId.HasValue || !subject.BranchID.HasValue || subject.BranchID == branchId.Value)
+                .Where(subject => SubjectMatchesFilter(subject, studyYearId, branchId))
                 .OrderBy(subject => subject.StudyYearID)
                 .ThenBy(subject => subject.BranchID ?? 0)
                 .ThenBy(subject => subject.SubjectID)
@@ -558,8 +570,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void BindSectionsCombo(int? studyYearId = null, int? branchId = null, int? selectedSectionId = null)
         {
             var sections = sectionsLookup
-                .Where(section => !studyYearId.HasValue || section.StudyYearID == studyYearId.Value)
-                .Where(section => !branchId.HasValue || section.BranchID == branchId.Value)
+                .Where(section => SectionMatchesFilter(section, studyYearId, branchId))
                 .OrderBy(section => section.StudyYearID)
                 .ThenBy(section => section.BranchID ?? 0)
                 .ThenBy(section => section.SectionName)
@@ -622,6 +633,18 @@ namespace University_Timetable_and_Classroom_Management_System
             int? branchId = GetSelectedOptionalId(cmbBranch);
 
             isUpdatingScheduleLookups = true;
+
+            if (studyYearId.HasValue && AcademicStructureRules.UsesGeneralSections(studyYearId.Value))
+            {
+                ClearCombo(cmbBranch);
+                cmbBranch.Enabled = false;
+                branchId = null;
+            }
+            else
+            {
+                cmbBranch.Enabled = true;
+            }
+
             BindSectionsCombo(studyYearId, branchId);
             BindSubjectsCombo(studyYearId, branchId);
             isUpdatingScheduleLookups = false;
@@ -638,6 +661,13 @@ namespace University_Timetable_and_Classroom_Management_System
             int? branchId = GetSelectedOptionalId(cmbBranch);
 
             isUpdatingScheduleLookups = true;
+
+            if (studyYearId.HasValue && AcademicStructureRules.UsesGeneralSections(studyYearId.Value))
+            {
+                ClearCombo(cmbBranch);
+                branchId = null;
+            }
+
             BindSectionsCombo(studyYearId, branchId);
             BindSubjectsCombo(studyYearId, branchId);
             isUpdatingScheduleLookups = false;
@@ -666,7 +696,50 @@ namespace University_Timetable_and_Classroom_Management_System
             SelectComboValue(cmbStudyYear, section.StudyYearID);
             SelectComboValue(cmbBranch, section.BranchID);
             BindSubjectsCombo(section.StudyYearID, section.BranchID, selectedSubjectId);
+            cmbBranch.Enabled = !AcademicStructureRules.UsesGeneralSections(section.StudyYearID);
             isUpdatingScheduleLookups = false;
+        }
+
+        private static bool SubjectMatchesFilter(Subject subject, int? studyYearId, int? branchId)
+        {
+            if (studyYearId.HasValue && subject.StudyYearID != studyYearId.Value)
+            {
+                return false;
+            }
+
+            if (AcademicStructureRules.UsesGeneralSections(subject.StudyYearID))
+            {
+                return !subject.BranchID.HasValue;
+            }
+
+            if (!branchId.HasValue)
+            {
+                return true;
+            }
+
+            return subject.BranchID == branchId.Value;
+        }
+
+        private static bool SectionMatchesFilter(Section section, int? studyYearId, int? branchId)
+        {
+            if (studyYearId.HasValue && section.StudyYearID != studyYearId.Value)
+            {
+                return false;
+            }
+
+            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return !section.BranchID.HasValue &&
+                    AcademicStructureRules.GetAllowedSectionNames(section.StudyYearID)
+                        .Contains(section.SectionName.Trim(), StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (!branchId.HasValue)
+            {
+                return section.BranchID.HasValue;
+            }
+
+            return section.BranchID == branchId.Value;
         }
 
         private void BindDayCombos()

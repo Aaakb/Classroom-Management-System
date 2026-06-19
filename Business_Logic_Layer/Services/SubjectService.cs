@@ -98,6 +98,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Study year does not exist.");
             }
 
+            if (AcademicStructureRules.UsesGeneralSections(subject.StudyYearID) && subject.BranchID.HasValue)
+            {
+                throw new ArgumentException("First and second year subjects must be general and not linked to a branch.");
+            }
+
+            if (AcademicStructureRules.UsesBranches(subject.StudyYearID) && !subject.BranchID.HasValue)
+            {
+                throw new ArgumentException("Third and fourth year subjects must be linked to a branch.");
+            }
+
             if (subject.BranchID.HasValue &&
                 !await context.Branches.AnyAsync(b => b.BranchID == subject.BranchID.Value))
             {

@@ -88,6 +88,25 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Study year does not exist.");
             }
 
+            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID) && section.BranchID.HasValue)
+            {
+                throw new ArgumentException("First and second year sections must not be linked to a branch.");
+            }
+
+            if (AcademicStructureRules.UsesBranches(section.StudyYearID) && !section.BranchID.HasValue)
+            {
+                throw new ArgumentException("Third and fourth year sections must be linked to a branch.");
+            }
+
+            var allowedSectionNames = AcademicStructureRules.GetAllowedSectionNames(section.StudyYearID);
+
+            if (allowedSectionNames.Count > 0 &&
+                !allowedSectionNames.Contains(section.SectionName.Trim(), StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    $"Allowed section names for this study year are: {AcademicStructureRules.FormatAllowedSectionNames(section.StudyYearID)}.");
+            }
+
             if (section.BranchID.HasValue &&
                 !await context.Branches.AnyAsync(b => b.BranchID == section.BranchID.Value))
             {

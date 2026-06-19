@@ -63,6 +63,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddSubject.Click += async (_, _) => await AddSubjectAsync();
             btnUpdateSubject.Click += async (_, _) => await UpdateSubjectAsync();
             btnDeleteSubject.Click += async (_, _) => await DeleteSubjectAsync();
+            cmbStudyYear.SelectedIndexChanged += (_, _) => ApplyStudyYearRulesToEditor();
             cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyStudyYearFilterSelection();
             cmbBranchFilter.SelectedIndexChanged += (_, _) => ApplySubjectFilters();
         }
@@ -291,6 +292,18 @@ namespace University_Timetable_and_Classroom_Management_System
                 return false;
             }
 
+            if (AcademicStructureRules.UsesGeneralSections(subject.StudyYearID))
+            {
+                subject.BranchID = null;
+            }
+
+            if (AcademicStructureRules.UsesBranches(subject.StudyYearID) && !subject.BranchID.HasValue)
+            {
+                ShowInformation("Branch is required for third and fourth year subjects.");
+                cmbBranch.Focus();
+                return false;
+            }
+
             if (!int.TryParse(cmbSemester.Text, out int semester) || semester <= 0)
             {
                 ShowInformation("Semester is required.");
@@ -396,6 +409,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtSubjectName.Text = row.SubjectName;
             SelectComboValue(cmbStudyYear, row.StudyYearID);
             SelectComboValue(cmbBranch, row.BranchID);
+            ApplyStudyYearRulesToEditor();
             SelectComboText(cmbSemester, row.SemesterNumber.ToString());
             SelectComboText(cmbRequirementType, row.RequirementType);
             txtTheoreticalHours.Text = row.TheoreticalHours.ToString("0.##");
@@ -424,6 +438,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtSubjectName.Clear();
             ClearCombo(cmbStudyYear);
             ClearCombo(cmbBranch);
+            cmbBranch.Enabled = true;
             ClearCombo(cmbSemester);
             ClearCombo(cmbRequirementType);
             txtTheoreticalHours.Clear();
@@ -432,6 +447,26 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSubjects.ClearSelection();
             txtSubjectId.Text = GetNextAvailableSubjectId().ToString();
             txtSubjectId.Focus();
+        }
+
+        private void ApplyStudyYearRulesToEditor()
+        {
+            var studyYearId = GetSelectedRequiredId(cmbStudyYear);
+
+            if (studyYearId <= 0)
+            {
+                cmbBranch.Enabled = true;
+                return;
+            }
+
+            if (AcademicStructureRules.UsesGeneralSections(studyYearId))
+            {
+                SelectComboValue(cmbBranch, null);
+                cmbBranch.Enabled = false;
+                return;
+            }
+
+            cmbBranch.Enabled = true;
         }
 
         private void SetSubjectActionsEnabled(bool enabled)

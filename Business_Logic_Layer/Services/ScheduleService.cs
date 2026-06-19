@@ -128,7 +128,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     var matchingSections = sections
                         .Where(section =>
                             section.StudyYearID == subject.StudyYearID &&
-                            (!subject.BranchID.HasValue || section.BranchID == subject.BranchID))
+                            AcademicStructureRules.SectionMatchesSubject(
+                                subject.StudyYearID,
+                                subject.BranchID,
+                                section.BranchID,
+                                section.SectionName))
                         .ToList();
 
                     if (matchingSections.Count == 0)
@@ -290,7 +294,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             schedule.DayOfWeek = schedule.DayOfWeek.Trim();
 
-            if (!await context.Subjects.AnyAsync(s => s.SubjectID == schedule.SubjectID))
+            var subject = await context.Subjects
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.SubjectID == schedule.SubjectID);
+
+            if (subject is null)
             {
                 throw new ArgumentException("Subject does not exist.");
             }
@@ -310,28 +318,36 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Time slot does not exist.");
             }
 
-            if (schedule.StudyYearID.HasValue &&
-                !await context.StudyYears.AnyAsync(sy => sy.StudyYearID == schedule.StudyYearID.Value))
-            {
-                throw new ArgumentException("Study year does not exist.");
-            }
-
-            if (schedule.BranchID.HasValue &&
-                !await context.Branches.AnyAsync(b => b.BranchID == schedule.BranchID.Value))
-            {
-                throw new ArgumentException("Branch does not exist.");
-            }
-
-            if (schedule.SectionID.HasValue &&
-                !await context.Sections.AnyAsync(s => s.SectionID == schedule.SectionID.Value))
-            {
-                throw new ArgumentException("Section does not exist.");
-            }
-
             if (!schedule.SectionID.HasValue)
             {
                 throw new ArgumentException("Section is required.");
             }
+
+            var section = await context.Sections
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.SectionID == schedule.SectionID.Value);
+
+            if (section is null)
+            {
+                throw new ArgumentException("Section does not exist.");
+            }
+
+            if (section.StudyYearID != subject.StudyYearID)
+            {
+                throw new ArgumentException("The selected section does not belong to the subject study year.");
+            }
+
+            if (!AcademicStructureRules.SectionMatchesSubject(
+                subject.StudyYearID,
+                subject.BranchID,
+                section.BranchID,
+                section.SectionName))
+            {
+                throw new ArgumentException("The selected section is not valid for this subject.");
+            }
+
+            schedule.StudyYearID = subject.StudyYearID;
+            schedule.BranchID = subject.BranchID ?? section.BranchID;
 
             await EnsureNoConflictsAsync(context, schedule, isUpdate);
         }

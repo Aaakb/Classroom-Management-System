@@ -47,6 +47,8 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvSections.SelectionChanged += (_, _) => PopulateSectionEditorFromSelection();
             txtSectionId.Leave += async (_, _) => await PopulateSectionEditorFromEnteredIdAsync();
+            cmbStudyYear.SelectedIndexChanged += (_, _) => ApplyStudyYearRulesToEditor();
+            cmbBranch.SelectedIndexChanged += (_, _) => ApplyBranchSelectionToSectionName();
             btnAddSection.Click += async (_, _) => await AddSectionAsync();
             btnUpdateSection.Click += async (_, _) => await UpdateSectionAsync();
             btnDeleteSection.Click += async (_, _) => await DeleteSectionAsync();
@@ -199,6 +201,26 @@ namespace University_Timetable_and_Classroom_Management_System
                 return false;
             }
 
+            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                section.BranchID = null;
+                var allowedNames = AcademicStructureRules.GetAllowedSectionNames(section.StudyYearID);
+
+                if (!allowedNames.Contains(section.SectionName, StringComparer.OrdinalIgnoreCase))
+                {
+                    ShowInformation($"Allowed section names are: {AcademicStructureRules.FormatAllowedSectionNames(section.StudyYearID)}.");
+                    txtSectionName.Focus();
+                    return false;
+                }
+            }
+
+            if (AcademicStructureRules.UsesBranches(section.StudyYearID) && !section.BranchID.HasValue)
+            {
+                ShowInformation("Branch is required for third and fourth year sections.");
+                cmbBranch.Focus();
+                return false;
+            }
+
             section.StudentCount = studentCount;
             return true;
         }
@@ -257,6 +279,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtStudentCount.Text = row.StudentCount.ToString();
             SelectComboValue(cmbStudyYear, row.StudyYearID);
             SelectComboValue(cmbBranch, row.BranchID);
+            ApplyStudyYearRulesToEditor();
         }
 
         private void SelectSectionRow(int sectionId)
@@ -281,8 +304,49 @@ namespace University_Timetable_and_Classroom_Management_System
             txtStudentCount.Clear();
             ClearCombo(cmbStudyYear);
             ClearCombo(cmbBranch);
+            cmbBranch.Enabled = true;
+            txtSectionName.PlaceholderText = "Enter section name";
             dgvSections.ClearSelection();
             txtSectionId.Focus();
+        }
+
+        private void ApplyStudyYearRulesToEditor()
+        {
+            var studyYearId = GetSelectedRequiredId(cmbStudyYear);
+
+            if (studyYearId <= 0)
+            {
+                cmbBranch.Enabled = true;
+                txtSectionName.PlaceholderText = "Enter section name";
+                return;
+            }
+
+            if (AcademicStructureRules.UsesGeneralSections(studyYearId))
+            {
+                SelectComboValue(cmbBranch, null);
+                cmbBranch.Enabled = false;
+                txtSectionName.PlaceholderText = AcademicStructureRules.FormatAllowedSectionNames(studyYearId);
+                return;
+            }
+
+            cmbBranch.Enabled = true;
+            txtSectionName.PlaceholderText = "Use branch name";
+            ApplyBranchSelectionToSectionName();
+        }
+
+        private void ApplyBranchSelectionToSectionName()
+        {
+            var studyYearId = GetSelectedRequiredId(cmbStudyYear);
+
+            if (!AcademicStructureRules.UsesBranches(studyYearId) ||
+                cmbBranch.SelectedItem is not ComboOption branch ||
+                !branch.Id.HasValue ||
+                !string.IsNullOrWhiteSpace(txtSectionName.Text))
+            {
+                return;
+            }
+
+            txtSectionName.Text = branch.Text;
         }
 
         private void SetSectionActionsEnabled(bool enabled)
