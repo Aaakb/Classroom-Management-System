@@ -472,7 +472,6 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.Height = 42;
             dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dgvFacultyMemberSubjects.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(30, 64, 175);
-            dgvFacultyMemberSubjects.CellContentClick += dgvFacultyMemberSubjects_CellContentClick;
             // 
             // colFacultyMemberId
             // 
@@ -525,7 +524,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableTitle.Size = new Size(189, 25);
             lblTableTitle.TabIndex = 0;
             lblTableTitle.Text = "Faculty Assignments List";
-            lblTableTitle.Click += lblTableTitle_Click;
             // 
             // pnlAssignmentEditor
             // 

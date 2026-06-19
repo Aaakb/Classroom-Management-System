@@ -243,9 +243,5 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Branches", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-
-        private void lblApplicationName_Click(object sender, EventArgs e)
-        {
-        }
     }
 }

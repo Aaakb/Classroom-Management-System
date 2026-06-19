@@ -15,7 +15,9 @@ namespace University_Timetable_and_Classroom_Management_System
             ApplicationConfiguration.Initialize();
             bool updateDatabaseOnly = args.Contains("--update-db", StringComparer.OrdinalIgnoreCase);
 
-            if (!ApplyDatabaseFixes(updateDatabaseOnly))
+            var databaseUpdated = ApplyDatabaseFixes(updateDatabaseOnly);
+
+            if (updateDatabaseOnly && !databaseUpdated)
             {
                 Environment.ExitCode = 1;
                 return;

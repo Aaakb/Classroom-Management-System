@@ -1,3 +1,4 @@
+using System.Globalization;
 using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 using University_Timetable_and_Classroom_Management_System.Models;
 
@@ -251,7 +252,9 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private bool TryReadNonNegativeDouble(string text, string fieldName, out double value)
         {
-            if (double.TryParse(text, out value) && value >= 0)
+            if ((double.TryParse(text, NumberStyles.Number, CultureInfo.CurrentCulture, out value) ||
+                 double.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out value)) &&
+                value >= 0)
             {
                 return true;
             }
@@ -301,8 +304,8 @@ namespace University_Timetable_and_Classroom_Management_System
             txtSubjectName.Text = row.SubjectName;
             SelectComboValue(cmbStudyYear, row.StudyYearID);
             SelectComboValue(cmbBranch, row.BranchID);
-            cmbSemester.SelectedItem = row.SemesterNumber.ToString();
-            cmbRequirementType.SelectedItem = row.RequirementType;
+            SelectComboText(cmbSemester, row.SemesterNumber.ToString());
+            SelectComboText(cmbRequirementType, row.RequirementType);
             txtTheoreticalHours.Text = row.TheoreticalHours.ToString("0.##");
             txtPracticalHours.Text = row.PracticalHours.ToString("0.##");
             txtCreditUnits.Text = row.CreditUnits.ToString("0.##");
@@ -375,6 +378,15 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             if (!id.HasValue)
             {
+                foreach (var item in combo.Items)
+                {
+                    if (item is ComboOption { Id: null })
+                    {
+                        combo.SelectedItem = item;
+                        return;
+                    }
+                }
+
                 combo.SelectedIndex = -1;
                 return;
             }
@@ -389,6 +401,21 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             combo.SelectedIndex = -1;
+        }
+
+        private static void SelectComboText(Guna.UI2.WinForms.Guna2ComboBox combo, string text)
+        {
+            foreach (var item in combo.Items)
+            {
+                if (string.Equals(item?.ToString(), text, StringComparison.OrdinalIgnoreCase))
+                {
+                    combo.SelectedItem = item;
+                    return;
+                }
+            }
+
+            combo.Items.Add(text);
+            combo.SelectedItem = text;
         }
 
         private static void ClearCombo(Guna.UI2.WinForms.Guna2ComboBox combo)

@@ -177,7 +177,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblQuickStartBody.Name = "lblQuickStartBody";
             lblQuickStartBody.Size = new System.Drawing.Size(421, 116);
             lblQuickStartBody.TabIndex = 1;
-            lblQuickStartBody.Text = "Use the sidebar to manage academic branches, study years, sections, subjects, classrooms, time slots, faculty assignments, and final schedules. Database summaries will be connected in the next stage.";
+            lblQuickStartBody.Text = "Checking schedule readiness...";
             // 
             // lblQuickStartTitle
             // 
@@ -214,7 +214,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblDatabaseStatusValue.Name = "lblDatabaseStatusValue";
             lblDatabaseStatusValue.Size = new System.Drawing.Size(168, 32);
             lblDatabaseStatusValue.TabIndex = 1;
-            lblDatabaseStatusValue.Text = "Not checked yet";
+            lblDatabaseStatusValue.Text = "Checking...";
             // 
             // lblDatabaseStatusTitle
             // 

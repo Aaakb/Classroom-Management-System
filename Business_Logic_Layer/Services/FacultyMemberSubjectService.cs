@@ -12,6 +12,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return await context.FacultyMemberSubjects
                 .Include(fms => fms.FacultyMember)
                 .Include(fms => fms.Subject)
+                    .ThenInclude(subject => subject.StudyYear)
+                .Include(fms => fms.Subject)
+                    .ThenInclude(subject => subject.Branch)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -36,6 +39,31 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return entity;
         }
 
+        public async Task<FacultyMemberSubject> UpdateAsync(
+            int currentFacultyMemberId,
+            int currentSubjectId,
+            FacultyMemberSubject entity)
+        {
+            await using var context = new AppDbContext();
+            var item = await context.FacultyMemberSubjects.FindAsync(currentFacultyMemberId, currentSubjectId)
+                ?? throw new KeyNotFoundException("Faculty member subject assignment not found.");
+
+            if (item.FacultyMemberID == entity.FacultyMemberID && item.SubjectID == entity.SubjectID)
+            {
+                return entity;
+            }
+
+            await ValidateAsync(context, entity, currentFacultyMemberId, currentSubjectId);
+
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            context.FacultyMemberSubjects.Remove(item);
+            await context.FacultyMemberSubjects.AddAsync(entity);
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return entity;
+        }
+
         public async Task DeleteAsync(int facultyMemberId, int subjectId)
         {
             await using var context = new AppDbContext();
@@ -46,7 +74,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await context.SaveChangesAsync();
         }
 
-        private static async Task ValidateAsync(AppDbContext context, FacultyMemberSubject entity)
+        private static async Task ValidateAsync(
+            AppDbContext context,
+            FacultyMemberSubject entity,
+            int? currentFacultyMemberId = null,
+            int? currentSubjectId = null)
         {
             if (!await context.FacultyMembers.AnyAsync(f => f.FacultyMemberID == entity.FacultyMemberID))
             {
@@ -60,11 +92,25 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             var exists = await context.FacultyMemberSubjects.AnyAsync(fms =>
                 fms.FacultyMemberID == entity.FacultyMemberID &&
-                fms.SubjectID == entity.SubjectID);
+                fms.SubjectID == entity.SubjectID &&
+                (!currentFacultyMemberId.HasValue ||
+                    fms.FacultyMemberID != currentFacultyMemberId.Value ||
+                    fms.SubjectID != currentSubjectId!.Value));
 
             if (exists)
             {
                 throw new ArgumentException("This faculty member is already assigned to the subject.");
+            }
+
+            var subjectAlreadyAssigned = await context.FacultyMemberSubjects.AnyAsync(fms =>
+                fms.SubjectID == entity.SubjectID &&
+                (!currentFacultyMemberId.HasValue ||
+                    fms.FacultyMemberID != currentFacultyMemberId.Value ||
+                    fms.SubjectID != currentSubjectId!.Value));
+
+            if (subjectAlreadyAssigned)
+            {
+                throw new ArgumentException("This subject already has a faculty assignment.");
             }
         }
     }

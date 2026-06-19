@@ -278,7 +278,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName.Size = new Size(216, 33);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "University Timetable";
-            lblApplicationName.Click += lblApplicationName_Click;
             // 
             // pnlMain
             // 

@@ -413,6 +413,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 return false;
             }
 
+            if (!schedule.SectionID.HasValue)
+            {
+                ShowInformation("Section is required.");
+                cmbSection.Focus();
+                return false;
+            }
+
             int subjectId = schedule.SubjectID;
             int? sectionId = schedule.SectionID;
             var subject = subjectsLookup.FirstOrDefault(item => item.SubjectID == subjectId);

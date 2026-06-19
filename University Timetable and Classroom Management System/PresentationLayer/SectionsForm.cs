@@ -322,6 +322,15 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             if (!id.HasValue)
             {
+                foreach (var item in combo.Items)
+                {
+                    if (item is ComboOption { Id: null })
+                    {
+                        combo.SelectedItem = item;
+                        return;
+                    }
+                }
+
                 combo.SelectedIndex = -1;
                 return;
             }

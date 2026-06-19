@@ -156,9 +156,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
                 var targetClassrooms = classrooms
                     .Where(classroom => classroom.Capacity >= section.StudentCount)
-                    .DefaultIfEmpty(classrooms.FirstOrDefault())
-                    .Where(classroom => classroom is not null)
-                    .Cast<Classroom>()
                     .ToList();
 
                 if (targetClassrooms.Count == 0)
@@ -329,6 +326,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 !await context.Sections.AnyAsync(s => s.SectionID == schedule.SectionID.Value))
             {
                 throw new ArgumentException("Section does not exist.");
+            }
+
+            if (!schedule.SectionID.HasValue)
+            {
+                throw new ArgumentException("Section is required.");
             }
 
             await EnsureNoConflictsAsync(context, schedule, isUpdate);
