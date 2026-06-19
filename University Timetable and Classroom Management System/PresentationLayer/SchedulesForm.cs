@@ -64,7 +64,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddSchedule.Click += async (_, _) => await AddScheduleAsync();
             btnUpdateSchedule.Click += async (_, _) => await UpdateScheduleAsync();
             btnDeleteSchedule.Click += async (_, _) => await DeleteScheduleAsync();
-            btnClearScheduleForm.Click += (_, _) => ClearScheduleForm();
+            btnClearScheduleForm.Click += (_, _) => ClearGeneratedScheduleTable();
             btnExportSchedulePdf.Click += async (_, _) => await ExportSchedulePdfAsync();
 
             dgvSchedules.SelectionChanged += (_, _) => PopulateScheduleEditorFromSelection();
@@ -429,6 +429,14 @@ namespace University_Timetable_and_Classroom_Management_System
             BindSectionsCombo(row.StudyYearID, row.BranchID, row.SectionID);
             BindSubjectsCombo(row.StudyYearID, row.BranchID, row.SubjectID);
             SelectComboValue(cmbSection, row.SectionID);
+        }
+
+        private void ClearGeneratedScheduleTable()
+        {
+            scheduleRows = [];
+            ApplyScheduleFilters();
+            ClearScheduleForm();
+            ShowInformation("Schedule table cleared from the current view. Database records were not deleted.");
         }
 
         private void ClearScheduleForm()
