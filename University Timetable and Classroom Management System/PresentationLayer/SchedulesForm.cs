@@ -144,7 +144,7 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 var result = await scheduleService.GenerateAsync();
                 await LoadSchedulesAsync();
-                ShowInformation($"Generation completed. Created: {result.CreatedCount}, Skipped: {result.SkippedCount}.");
+                ShowInformation(BuildGenerationMessage(result));
             }
             catch (Exception ex)
             {
@@ -154,6 +154,52 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 SetScheduleActionsEnabled(true);
             }
+        }
+
+        private static string BuildGenerationMessage(ScheduleGenerationResult result)
+        {
+            var message = new List<string>
+            {
+                $"Generation completed. Created: {result.CreatedCount}, Skipped: {result.SkippedCount}.",
+                $"Required subject-section lessons: {result.RequiredCount}.",
+                $"Available setup: {result.TimeSlotCount} time slots, {result.ClassroomCount} classrooms, {result.SectionCount} sections."
+            };
+
+            if (result.SkippedCount == 0 && result.UnassignedSubjectsCount == 0)
+            {
+                message.Add("The generated schedule is complete.");
+                return string.Join(Environment.NewLine, message);
+            }
+
+            message.Add("");
+            message.Add("To create a complete schedule, check:");
+
+            if (result.UnassignedSubjectsCount > 0)
+            {
+                message.Add($"- Assign faculty members to {result.UnassignedSubjectsCount} subject(s).");
+            }
+
+            if (result.MissingSectionCount > 0)
+            {
+                message.Add($"- Add matching sections for {result.MissingSectionCount} subject assignment(s).");
+            }
+
+            if (result.NoClassroomCount > 0)
+            {
+                message.Add($"- Add classrooms or increase classroom capacity for {result.NoClassroomCount} lesson(s).");
+            }
+
+            if (result.ConflictCount > 0)
+            {
+                message.Add($"- Add more non-break time slots, classrooms, or faculty coverage for {result.ConflictCount} conflicted lesson(s).");
+            }
+
+            if (result.DuplicateAssignmentCount > 0)
+            {
+                message.Add($"- Remove {result.DuplicateAssignmentCount} duplicate faculty-subject assignment(s).");
+            }
+
+            return string.Join(Environment.NewLine, message);
         }
 
         private async Task AddScheduleAsync()

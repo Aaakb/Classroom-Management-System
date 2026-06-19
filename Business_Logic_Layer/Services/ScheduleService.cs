@@ -68,6 +68,10 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         {
             await using var context = new AppDbContext();
 
+            var subjects = await context.Subjects
+                .AsNoTracking()
+                .ToListAsync();
+
             var assignments = await context.FacultyMemberSubjects
                 .Include(fms => fms.Subject)
                 .OrderBy(fms => fms.Subject.StudyYearID)
@@ -99,6 +103,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             var scheduledSubjectSections = new HashSet<(int SubjectId, int SectionId)>();
             string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
             int skippedCount = 0;
+            int missingSectionCount = 0;
+            int noClassroomCount = 0;
+            int conflictCount = 0;
+            int duplicateAssignmentCount = 0;
+
+            var assignedSubjectIds = assignments
+                .Select(assignment => assignment.SubjectID)
+                .ToHashSet();
+            int unassignedSubjectsCount = subjects.Count(subject => !assignedSubjectIds.Contains(subject.SubjectID));
 
             var scheduleRequests = assignments
                 .SelectMany(assignment =>
@@ -113,6 +126,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     if (matchingSections.Count == 0)
                     {
                         skippedCount++;
+                        missingSectionCount++;
                     }
 
                     return matchingSections.Select(section => new ScheduleGenerationRequest(assignment, section));
@@ -131,6 +145,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
                 if (!scheduledSubjectSections.Add((subject.SubjectID, section.SectionID)))
                 {
+                    duplicateAssignmentCount++;
                     continue;
                 }
 
@@ -140,6 +155,13 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     .Where(classroom => classroom is not null)
                     .Cast<Classroom>()
                     .ToList();
+
+                if (targetClassrooms.Count == 0)
+                {
+                    skippedCount++;
+                    noClassroomCount++;
+                    continue;
+                }
 
                 bool created = false;
 
@@ -181,6 +203,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 if (!created)
                 {
                     skippedCount++;
+                    conflictCount++;
                 }
             }
 
@@ -193,7 +216,18 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            return new ScheduleGenerationResult(generatedSchedules.Count, skippedCount);
+            return new ScheduleGenerationResult(
+                generatedSchedules.Count,
+                skippedCount,
+                scheduleRequests.Count,
+                unassignedSubjectsCount,
+                missingSectionCount,
+                noClassroomCount,
+                conflictCount,
+                duplicateAssignmentCount,
+                timeSlots.Count,
+                classrooms.Count,
+                sections.Count);
         }
 
         private static async Task ValidateAsync(AppDbContext context, Schedule schedule, bool isUpdate)
@@ -297,7 +331,18 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         }
     }
 
-    public sealed record ScheduleGenerationResult(int CreatedCount, int SkippedCount);
+    public sealed record ScheduleGenerationResult(
+        int CreatedCount,
+        int SkippedCount,
+        int RequiredCount,
+        int UnassignedSubjectsCount,
+        int MissingSectionCount,
+        int NoClassroomCount,
+        int ConflictCount,
+        int DuplicateAssignmentCount,
+        int TimeSlotCount,
+        int ClassroomCount,
+        int SectionCount);
 
     internal sealed record ScheduleGenerationRequest(FacultyMemberSubject Assignment, Section Section);
 }
