@@ -100,23 +100,31 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             var existingSchedules = await context.Schedules.ToListAsync();
             var generatedSchedules = new List<Schedule>();
-            var scheduledSubjectSections = new HashSet<(int SubjectId, int SectionId)>();
             string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
             int skippedCount = 0;
             int missingSectionCount = 0;
             int noClassroomCount = 0;
             int conflictCount = 0;
-            int duplicateAssignmentCount = 0;
+            int duplicateAssignmentCount = assignments.Count - assignments
+                .Select(assignment => assignment.SubjectID)
+                .Distinct()
+                .Count();
 
             var assignedSubjectIds = assignments
                 .Select(assignment => assignment.SubjectID)
                 .ToHashSet();
             int unassignedSubjectsCount = subjects.Count(subject => !assignedSubjectIds.Contains(subject.SubjectID));
 
-            var scheduleRequests = assignments
+            var primaryAssignments = assignments
+                .GroupBy(assignment => assignment.SubjectID)
+                .Select(group => group.First())
+                .ToList();
+
+            var scheduleRequests = primaryAssignments
                 .SelectMany(assignment =>
                 {
                     var subject = assignment.Subject;
+                    int lessonCount = CalculateLessonCount(subject);
                     var matchingSections = sections
                         .Where(section =>
                             section.StudyYearID == subject.StudyYearID &&
@@ -129,12 +137,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         missingSectionCount++;
                     }
 
-                    return matchingSections.Select(section => new ScheduleGenerationRequest(assignment, section));
+                    return matchingSections.SelectMany(section =>
+                        Enumerable.Range(1, lessonCount)
+                            .Select(lessonNumber => new ScheduleGenerationRequest(assignment, section, lessonNumber, lessonCount)));
                 })
                 .OrderByDescending(request => request.Assignment.Subject.StudyYearID)
                 .ThenBy(request => request.Assignment.Subject.BranchID ?? request.Section.BranchID ?? 0)
                 .ThenBy(request => request.Section.SectionName)
                 .ThenBy(request => request.Assignment.Subject.SubjectName)
+                .ThenBy(request => request.LessonNumber)
                 .ToList();
 
             foreach (var request in scheduleRequests)
@@ -142,12 +153,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 var assignment = request.Assignment;
                 var subject = assignment.Subject;
                 var section = request.Section;
-
-                if (!scheduledSubjectSections.Add((subject.SubjectID, section.SectionID)))
-                {
-                    duplicateAssignmentCount++;
-                    continue;
-                }
 
                 var targetClassrooms = classrooms
                     .Where(classroom => classroom.Capacity >= section.StudentCount)
@@ -188,9 +193,58 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                 continue;
                             }
 
+                            if (request.RequiredLessons > 1 &&
+                                HasSameSubjectSectionOnDay(generatedSchedules, candidate))
+                            {
+                                continue;
+                            }
+
                             generatedSchedules.Add(candidate);
                             created = true;
                             break;
+                        }
+
+                        if (created)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (!created && request.RequiredLessons > 1)
+                {
+                    foreach (string day in days)
+                    {
+                        foreach (var timeSlot in timeSlots)
+                        {
+                            foreach (var classroom in targetClassrooms)
+                            {
+                                var candidate = new Schedule
+                                {
+                                    SubjectID = subject.SubjectID,
+                                    FacultyMemberID = assignment.FacultyMemberID,
+                                    ClassroomID = classroom.ClassroomID,
+                                    TimeSlotID = timeSlot.TimeSlotID,
+                                    DayOfWeek = day,
+                                    StudyYearID = subject.StudyYearID,
+                                    BranchID = subject.BranchID ?? section.BranchID,
+                                    SectionID = section.SectionID
+                                };
+
+                                if (HasScheduleConflict(generatedSchedules, candidate))
+                                {
+                                    continue;
+                                }
+
+                                generatedSchedules.Add(candidate);
+                                created = true;
+                                break;
+                            }
+
+                            if (created)
+                            {
+                                break;
+                            }
                         }
 
                         if (created)
@@ -329,6 +383,26 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                   schedule.BranchID == candidate.BranchID &&
                   schedule.SectionID == candidate.SectionID)));
         }
+
+        private static bool HasSameSubjectSectionOnDay(IEnumerable<Schedule> schedules, Schedule candidate)
+        {
+            return schedules.Any(schedule =>
+                schedule.SubjectID == candidate.SubjectID &&
+                schedule.SectionID == candidate.SectionID &&
+                schedule.DayOfWeek == candidate.DayOfWeek);
+        }
+
+        private static int CalculateLessonCount(Subject subject)
+        {
+            var hours = subject.TheoreticalHours + subject.PracticalHours;
+
+            if (hours <= 0)
+            {
+                hours = subject.CreditUnits;
+            }
+
+            return Math.Max(1, (int)Math.Ceiling(hours));
+        }
     }
 
     public sealed record ScheduleGenerationResult(
@@ -344,5 +418,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         int ClassroomCount,
         int SectionCount);
 
-    internal sealed record ScheduleGenerationRequest(FacultyMemberSubject Assignment, Section Section);
+    internal sealed record ScheduleGenerationRequest(
+        FacultyMemberSubject Assignment,
+        Section Section,
+        int LessonNumber,
+        int RequiredLessons);
 }
