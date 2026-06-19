@@ -95,79 +95,80 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .ToListAsync();
 
             var existingSchedules = await context.Schedules.ToListAsync();
+            var generatedSchedules = new List<Schedule>();
+            var scheduledSubjectSections = new HashSet<(int SubjectId, int SectionId)>();
             string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
-            int createdCount = 0;
             int skippedCount = 0;
 
-            foreach (var assignment in assignments)
-            {
-                var subject = assignment.Subject;
-                var matchingSections = sections
-                    .Where(section =>
-                        section.StudyYearID == subject.StudyYearID &&
-                        (!subject.BranchID.HasValue || section.BranchID == subject.BranchID))
-                    .ToList();
-
-                if (matchingSections.Count == 0)
+            var scheduleRequests = assignments
+                .SelectMany(assignment =>
                 {
-                    skippedCount++;
+                    var subject = assignment.Subject;
+                    var matchingSections = sections
+                        .Where(section =>
+                            section.StudyYearID == subject.StudyYearID &&
+                            (!subject.BranchID.HasValue || section.BranchID == subject.BranchID))
+                        .ToList();
+
+                    if (matchingSections.Count == 0)
+                    {
+                        skippedCount++;
+                    }
+
+                    return matchingSections.Select(section => new ScheduleGenerationRequest(assignment, section));
+                })
+                .OrderByDescending(request => request.Assignment.Subject.StudyYearID)
+                .ThenBy(request => request.Assignment.Subject.BranchID ?? request.Section.BranchID ?? 0)
+                .ThenBy(request => request.Section.SectionName)
+                .ThenBy(request => request.Assignment.Subject.SubjectName)
+                .ToList();
+
+            foreach (var request in scheduleRequests)
+            {
+                var assignment = request.Assignment;
+                var subject = assignment.Subject;
+                var section = request.Section;
+
+                if (!scheduledSubjectSections.Add((subject.SubjectID, section.SectionID)))
+                {
                     continue;
                 }
 
-                foreach (var section in matchingSections)
+                var targetClassrooms = classrooms
+                    .Where(classroom => classroom.Capacity >= section.StudentCount)
+                    .DefaultIfEmpty(classrooms.FirstOrDefault())
+                    .Where(classroom => classroom is not null)
+                    .Cast<Classroom>()
+                    .ToList();
+
+                bool created = false;
+
+                foreach (string day in days)
                 {
-                    bool alreadyScheduled = existingSchedules.Any(schedule =>
-                        schedule.SubjectID == subject.SubjectID &&
-                        schedule.SectionID == section.SectionID);
-
-                    if (alreadyScheduled)
+                    foreach (var timeSlot in timeSlots)
                     {
-                        continue;
-                    }
-
-                    var targetClassrooms = classrooms
-                        .Where(classroom => classroom.Capacity >= section.StudentCount)
-                        .DefaultIfEmpty(classrooms.FirstOrDefault())
-                        .Where(classroom => classroom is not null)
-                        .Cast<Classroom>()
-                        .ToList();
-
-                    bool created = false;
-
-                    foreach (string day in days)
-                    {
-                        foreach (var timeSlot in timeSlots)
+                        foreach (var classroom in targetClassrooms)
                         {
-                            foreach (var classroom in targetClassrooms)
+                            var candidate = new Schedule
                             {
-                                var candidate = new Schedule
-                                {
-                                    SubjectID = subject.SubjectID,
-                                    FacultyMemberID = assignment.FacultyMemberID,
-                                    ClassroomID = classroom.ClassroomID,
-                                    TimeSlotID = timeSlot.TimeSlotID,
-                                    DayOfWeek = day,
-                                    StudyYearID = subject.StudyYearID,
-                                    BranchID = subject.BranchID ?? section.BranchID,
-                                    SectionID = section.SectionID
-                                };
+                                SubjectID = subject.SubjectID,
+                                FacultyMemberID = assignment.FacultyMemberID,
+                                ClassroomID = classroom.ClassroomID,
+                                TimeSlotID = timeSlot.TimeSlotID,
+                                DayOfWeek = day,
+                                StudyYearID = subject.StudyYearID,
+                                BranchID = subject.BranchID ?? section.BranchID,
+                                SectionID = section.SectionID
+                            };
 
-                                if (HasScheduleConflict(existingSchedules, candidate))
-                                {
-                                    continue;
-                                }
-
-                                await context.Schedules.AddAsync(candidate);
-                                existingSchedules.Add(candidate);
-                                createdCount++;
-                                created = true;
-                                break;
+                            if (HasScheduleConflict(generatedSchedules, candidate))
+                            {
+                                continue;
                             }
 
-                            if (created)
-                            {
-                                break;
-                            }
+                            generatedSchedules.Add(candidate);
+                            created = true;
+                            break;
                         }
 
                         if (created)
@@ -175,16 +176,24 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                             break;
                         }
                     }
+                }
 
-                    if (!created)
-                    {
-                        skippedCount++;
-                    }
+                if (!created)
+                {
+                    skippedCount++;
                 }
             }
 
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
+            context.Schedules.RemoveRange(existingSchedules);
             await context.SaveChangesAsync();
-            return new ScheduleGenerationResult(createdCount, skippedCount);
+
+            await context.Schedules.AddRangeAsync(generatedSchedules);
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return new ScheduleGenerationResult(generatedSchedules.Count, skippedCount);
         }
 
         private static async Task ValidateAsync(AppDbContext context, Schedule schedule, bool isUpdate)
@@ -289,4 +298,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
     }
 
     public sealed record ScheduleGenerationResult(int CreatedCount, int SkippedCount);
+
+    internal sealed record ScheduleGenerationRequest(FacultyMemberSubject Assignment, Section Section);
 }
