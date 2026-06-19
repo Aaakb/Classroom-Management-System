@@ -23,7 +23,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await using var context = new AppDbContext();
             await ValidateAsync(context, classroom, false);
             await context.Classrooms.AddAsync(classroom);
-            await context.SaveChangesAsync();
+            await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Classrooms]");
             return classroom;
         }
 
@@ -48,6 +48,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task ValidateAsync(AppDbContext context, Classroom classroom, bool isUpdate)
         {
+            if (classroom.ClassroomID <= 0)
+            {
+                throw new ArgumentException("Classroom ID is required.");
+            }
+
+            var idExists = await context.Classrooms.AnyAsync(c => c.ClassroomID == classroom.ClassroomID);
+
+            if (!isUpdate && idExists)
+            {
+                throw new ArgumentException("Classroom ID already exists.");
+            }
+
+            if (isUpdate && !idExists)
+            {
+                throw new KeyNotFoundException("Classroom not found.");
+            }
+
             if (string.IsNullOrWhiteSpace(classroom.ClassroomNumber))
             {
                 throw new ArgumentException("Classroom number is required.");

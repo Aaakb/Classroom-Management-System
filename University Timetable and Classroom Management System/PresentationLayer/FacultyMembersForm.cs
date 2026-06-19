@@ -36,6 +36,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureFacultyMembersEvents()
         {
             dgvFacultyMembers.SelectionChanged += (_, _) => PopulateFacultyMemberEditorFromSelection();
+            txtFacultyMemberId.Leave += async (_, _) => await PopulateFacultyMemberEditorFromEnteredIdAsync();
             btnAddFacultyMember.Click += async (_, _) => await AddFacultyMemberAsync();
             btnUpdateFacultyMember.Click += async (_, _) => await UpdateFacultyMemberAsync();
             btnDeleteFacultyMember.Click += async (_, _) => await DeleteFacultyMemberAsync();
@@ -75,13 +76,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task UpdateFacultyMemberAsync()
         {
-            if (!TryGetSelectedFacultyMemberId(out int facultyMemberId) || !TryBuildFacultyMember(out var facultyMember))
+            if (!TryBuildFacultyMember(out var facultyMember))
             {
-                ShowInformation("Select a faculty member before updating.");
                 return;
             }
-
-            facultyMember.FacultyMemberID = facultyMemberId;
 
             await ExecuteFacultyMemberActionAsync(
                 async () => await facultyMemberService.UpdateAsync(facultyMember),
@@ -90,9 +88,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task DeleteFacultyMemberAsync()
         {
-            if (!TryGetSelectedFacultyMemberId(out int facultyMemberId))
+            if (!TryGetFacultyMemberIdFromEditor(out int facultyMemberId))
             {
-                ShowInformation("Select a faculty member before deleting.");
                 return;
             }
 
@@ -142,6 +139,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 AcademicTitle = cmbAcademicTitle.Text.Trim()
             };
 
+            if (!TryGetFacultyMemberIdFromEditor(out int facultyMemberId))
+            {
+                return false;
+            }
+
+            facultyMember.FacultyMemberID = facultyMemberId;
+
             if (string.IsNullOrWhiteSpace(facultyMember.FullName))
             {
                 ShowInformation("Faculty member full name is required.");
@@ -157,16 +161,16 @@ namespace University_Timetable_and_Classroom_Management_System
             return true;
         }
 
-        private bool TryGetSelectedFacultyMemberId(out int facultyMemberId)
+        private bool TryGetFacultyMemberIdFromEditor(out int facultyMemberId)
         {
-            if (int.TryParse(txtFacultyMemberId.Text, out facultyMemberId))
+            if (int.TryParse(txtFacultyMemberId.Text, out facultyMemberId) && facultyMemberId > 0)
             {
                 return true;
             }
 
-            var selectedFacultyMember = dgvFacultyMembers.CurrentRow?.DataBoundItem as FacultyMember;
-            facultyMemberId = selectedFacultyMember?.FacultyMemberID ?? 0;
-            return facultyMemberId > 0;
+            ShowInformation("Enter a valid faculty member ID.");
+            txtFacultyMemberId.Focus();
+            return false;
         }
 
         private void PopulateFacultyMemberEditorFromSelection()
@@ -181,13 +185,54 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbAcademicTitle.Text = facultyMember.AcademicTitle ?? string.Empty;
         }
 
+        private async Task PopulateFacultyMemberEditorFromEnteredIdAsync()
+        {
+            if (!int.TryParse(txtFacultyMemberId.Text, out int facultyMemberId) || facultyMemberId <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var facultyMember = await facultyMemberService.GetByIdAsync(facultyMemberId);
+
+                if (facultyMember is null)
+                {
+                    return;
+                }
+
+                txtFacultyMemberFullName.Text = facultyMember.FullName;
+                cmbAcademicTitle.Text = facultyMember.AcademicTitle ?? string.Empty;
+                SelectFacultyMemberRow(facultyMember.FacultyMemberID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load faculty member details.", ex);
+            }
+        }
+
+        private void SelectFacultyMemberRow(int facultyMemberId)
+        {
+            foreach (DataGridViewRow row in dgvFacultyMembers.Rows)
+            {
+                if (row.DataBoundItem is not FacultyMember facultyMember || facultyMember.FacultyMemberID != facultyMemberId)
+                {
+                    continue;
+                }
+
+                row.Selected = true;
+                dgvFacultyMembers.CurrentCell = row.Cells[0];
+                break;
+            }
+        }
+
         private void ClearFacultyMemberForm()
         {
             txtFacultyMemberId.Clear();
             txtFacultyMemberFullName.Clear();
             cmbAcademicTitle.SelectedIndex = -1;
             dgvFacultyMembers.ClearSelection();
-            txtFacultyMemberFullName.Focus();
+            txtFacultyMemberId.Focus();
         }
 
         private void SetFacultyMemberActionsEnabled(bool enabled)

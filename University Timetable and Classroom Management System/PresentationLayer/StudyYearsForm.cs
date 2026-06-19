@@ -36,6 +36,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureStudyYearsEvents()
         {
             dgvStudyYears.SelectionChanged += (_, _) => PopulateStudyYearEditorFromSelection();
+            txtStudyYearId.Leave += async (_, _) => await PopulateStudyYearEditorFromEnteredIdAsync();
             btnAddStudyYear.Click += async (_, _) => await AddStudyYearAsync();
             btnUpdateStudyYear.Click += async (_, _) => await UpdateStudyYearAsync();
             btnDeleteStudyYear.Click += async (_, _) => await DeleteStudyYearAsync();
@@ -75,13 +76,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task UpdateStudyYearAsync()
         {
-            if (!TryGetSelectedStudyYearId(out int studyYearId) || !TryBuildStudyYear(out var studyYear))
+            if (!TryBuildStudyYear(out var studyYear))
             {
-                ShowInformation("Select a study year before updating.");
                 return;
             }
-
-            studyYear.StudyYearID = studyYearId;
 
             await ExecuteStudyYearActionAsync(
                 async () => await studyYearService.UpdateAsync(studyYear),
@@ -90,9 +88,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task DeleteStudyYearAsync()
         {
-            if (!TryGetSelectedStudyYearId(out int studyYearId))
+            if (!TryGetStudyYearIdFromEditor(out int studyYearId))
             {
-                ShowInformation("Select a study year before deleting.");
                 return;
             }
 
@@ -141,6 +138,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 YearName = txtYearName.Text.Trim()
             };
 
+            if (!TryGetStudyYearIdFromEditor(out int studyYearId))
+            {
+                return false;
+            }
+
+            studyYear.StudyYearID = studyYearId;
+
             if (!string.IsNullOrWhiteSpace(studyYear.YearName))
             {
                 return true;
@@ -151,16 +155,16 @@ namespace University_Timetable_and_Classroom_Management_System
             return false;
         }
 
-        private bool TryGetSelectedStudyYearId(out int studyYearId)
+        private bool TryGetStudyYearIdFromEditor(out int studyYearId)
         {
-            if (int.TryParse(txtStudyYearId.Text, out studyYearId))
+            if (int.TryParse(txtStudyYearId.Text, out studyYearId) && studyYearId > 0)
             {
                 return true;
             }
 
-            var selectedStudyYear = dgvStudyYears.CurrentRow?.DataBoundItem as StudyYear;
-            studyYearId = selectedStudyYear?.StudyYearID ?? 0;
-            return studyYearId > 0;
+            ShowInformation("Enter a valid study year ID.");
+            txtStudyYearId.Focus();
+            return false;
         }
 
         private void PopulateStudyYearEditorFromSelection()
@@ -174,12 +178,52 @@ namespace University_Timetable_and_Classroom_Management_System
             txtYearName.Text = studyYear.YearName;
         }
 
+        private async Task PopulateStudyYearEditorFromEnteredIdAsync()
+        {
+            if (!int.TryParse(txtStudyYearId.Text, out int studyYearId) || studyYearId <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var studyYear = await studyYearService.GetByIdAsync(studyYearId);
+
+                if (studyYear is null)
+                {
+                    return;
+                }
+
+                txtYearName.Text = studyYear.YearName;
+                SelectStudyYearRow(studyYear.StudyYearID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load study year details.", ex);
+            }
+        }
+
+        private void SelectStudyYearRow(int studyYearId)
+        {
+            foreach (DataGridViewRow row in dgvStudyYears.Rows)
+            {
+                if (row.DataBoundItem is not StudyYear studyYear || studyYear.StudyYearID != studyYearId)
+                {
+                    continue;
+                }
+
+                row.Selected = true;
+                dgvStudyYears.CurrentCell = row.Cells[0];
+                break;
+            }
+        }
+
         private void ClearStudyYearForm()
         {
             txtStudyYearId.Clear();
             txtYearName.Clear();
             dgvStudyYears.ClearSelection();
-            txtYearName.Focus();
+            txtStudyYearId.Focus();
         }
 
         private void SetStudyYearActionsEnabled(bool enabled)

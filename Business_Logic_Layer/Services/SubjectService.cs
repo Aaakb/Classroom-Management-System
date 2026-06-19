@@ -31,7 +31,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await using var context = new AppDbContext();
             await ValidateAsync(context, subject, false);
             await context.Subjects.AddAsync(subject);
-            await context.SaveChangesAsync();
+            await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Subjects]");
             return subject;
         }
 
@@ -56,6 +56,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task ValidateAsync(AppDbContext context, Subject subject, bool isUpdate)
         {
+            if (subject.SubjectID <= 0)
+            {
+                throw new ArgumentException("Subject ID is required.");
+            }
+
+            var idExists = await context.Subjects.AnyAsync(s => s.SubjectID == subject.SubjectID);
+
+            if (!isUpdate && idExists)
+            {
+                throw new ArgumentException("Subject ID already exists.");
+            }
+
+            if (isUpdate && !idExists)
+            {
+                throw new KeyNotFoundException("Subject not found.");
+            }
+
             if (string.IsNullOrWhiteSpace(subject.SubjectName))
             {
                 throw new ArgumentException("Subject name is required.");

@@ -36,6 +36,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureBranchesEvents()
         {
             dgvBranches.SelectionChanged += (_, _) => PopulateBranchEditorFromSelection();
+            txtBranchId.Leave += async (_, _) => await PopulateBranchEditorFromEnteredIdAsync();
             btnAddBranch.Click += async (_, _) => await AddBranchAsync();
             btnUpdateBranch.Click += async (_, _) => await UpdateBranchAsync();
             btnDeleteBranch.Click += async (_, _) => await DeleteBranchAsync();
@@ -75,13 +76,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task UpdateBranchAsync()
         {
-            if (!TryGetSelectedBranchId(out int branchId) || !TryBuildBranch(out var branch))
+            if (!TryBuildBranch(out var branch))
             {
-                ShowInformation("Select a branch before updating.");
                 return;
             }
-
-            branch.BranchID = branchId;
 
             await ExecuteBranchActionAsync(
                 async () => await branchService.UpdateAsync(branch),
@@ -90,9 +88,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task DeleteBranchAsync()
         {
-            if (!TryGetSelectedBranchId(out int branchId))
+            if (!TryGetBranchIdFromEditor(out int branchId))
             {
-                ShowInformation("Select a branch before deleting.");
                 return;
             }
 
@@ -141,6 +138,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 BranchName = txtBranchName.Text.Trim()
             };
 
+            if (!TryGetBranchIdFromEditor(out int branchId))
+            {
+                return false;
+            }
+
+            branch.BranchID = branchId;
+
             if (!string.IsNullOrWhiteSpace(branch.BranchName))
             {
                 return true;
@@ -151,16 +155,16 @@ namespace University_Timetable_and_Classroom_Management_System
             return false;
         }
 
-        private bool TryGetSelectedBranchId(out int branchId)
+        private bool TryGetBranchIdFromEditor(out int branchId)
         {
-            if (int.TryParse(txtBranchId.Text, out branchId))
+            if (int.TryParse(txtBranchId.Text, out branchId) && branchId > 0)
             {
                 return true;
             }
 
-            var selectedBranch = dgvBranches.CurrentRow?.DataBoundItem as Branch;
-            branchId = selectedBranch?.BranchID ?? 0;
-            return branchId > 0;
+            ShowInformation("Enter a valid branch ID.");
+            txtBranchId.Focus();
+            return false;
         }
 
         private void PopulateBranchEditorFromSelection()
@@ -174,12 +178,52 @@ namespace University_Timetable_and_Classroom_Management_System
             txtBranchName.Text = branch.BranchName;
         }
 
+        private async Task PopulateBranchEditorFromEnteredIdAsync()
+        {
+            if (!int.TryParse(txtBranchId.Text, out int branchId) || branchId <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var branch = await branchService.GetByIdAsync(branchId);
+
+                if (branch is null)
+                {
+                    return;
+                }
+
+                txtBranchName.Text = branch.BranchName;
+                SelectBranchRow(branch.BranchID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load branch details.", ex);
+            }
+        }
+
+        private void SelectBranchRow(int branchId)
+        {
+            foreach (DataGridViewRow row in dgvBranches.Rows)
+            {
+                if (row.DataBoundItem is not Branch branch || branch.BranchID != branchId)
+                {
+                    continue;
+                }
+
+                row.Selected = true;
+                dgvBranches.CurrentCell = row.Cells[0];
+                break;
+            }
+        }
+
         private void ClearBranchForm()
         {
             txtBranchId.Clear();
             txtBranchName.Clear();
             dgvBranches.ClearSelection();
-            txtBranchName.Focus();
+            txtBranchId.Focus();
         }
 
         private void SetBranchActionsEnabled(bool enabled)

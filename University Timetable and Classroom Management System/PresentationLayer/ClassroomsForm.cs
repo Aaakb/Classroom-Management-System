@@ -36,6 +36,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureClassroomsEvents()
         {
             dgvClassrooms.SelectionChanged += (_, _) => PopulateClassroomEditorFromSelection();
+            txtClassroomId.Leave += async (_, _) => await PopulateClassroomEditorFromEnteredIdAsync();
             btnAddClassroom.Click += async (_, _) => await AddClassroomAsync();
             btnUpdateClassroom.Click += async (_, _) => await UpdateClassroomAsync();
             btnDeleteClassroom.Click += async (_, _) => await DeleteClassroomAsync();
@@ -75,13 +76,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task UpdateClassroomAsync()
         {
-            if (!TryGetSelectedClassroomId(out int classroomId) || !TryBuildClassroom(out var classroom))
+            if (!TryBuildClassroom(out var classroom))
             {
-                ShowInformation("Select a classroom before updating.");
                 return;
             }
-
-            classroom.ClassroomID = classroomId;
 
             await ExecuteClassroomActionAsync(
                 async () => await classroomService.UpdateAsync(classroom),
@@ -90,9 +88,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task DeleteClassroomAsync()
         {
-            if (!TryGetSelectedClassroomId(out int classroomId))
+            if (!TryGetClassroomIdFromEditor(out int classroomId))
             {
-                ShowInformation("Select a classroom before deleting.");
                 return;
             }
 
@@ -142,6 +139,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 RoomType = cmbRoomType.Text.Trim()
             };
 
+            if (!TryGetClassroomIdFromEditor(out int classroomId))
+            {
+                return false;
+            }
+
+            classroom.ClassroomID = classroomId;
+
             if (string.IsNullOrWhiteSpace(classroom.ClassroomNumber))
             {
                 ShowInformation("Classroom number is required.");
@@ -166,16 +170,16 @@ namespace University_Timetable_and_Classroom_Management_System
             return true;
         }
 
-        private bool TryGetSelectedClassroomId(out int classroomId)
+        private bool TryGetClassroomIdFromEditor(out int classroomId)
         {
-            if (int.TryParse(txtClassroomId.Text, out classroomId))
+            if (int.TryParse(txtClassroomId.Text, out classroomId) && classroomId > 0)
             {
                 return true;
             }
 
-            var selectedClassroom = dgvClassrooms.CurrentRow?.DataBoundItem as Classroom;
-            classroomId = selectedClassroom?.ClassroomID ?? 0;
-            return classroomId > 0;
+            ShowInformation("Enter a valid classroom ID.");
+            txtClassroomId.Focus();
+            return false;
         }
 
         private void PopulateClassroomEditorFromSelection()
@@ -191,6 +195,48 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbRoomType.Text = classroom.RoomType ?? string.Empty;
         }
 
+        private async Task PopulateClassroomEditorFromEnteredIdAsync()
+        {
+            if (!int.TryParse(txtClassroomId.Text, out int classroomId) || classroomId <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var classroom = await classroomService.GetByIdAsync(classroomId);
+
+                if (classroom is null)
+                {
+                    return;
+                }
+
+                txtClassroomNumber.Text = classroom.ClassroomNumber;
+                txtCapacity.Text = classroom.Capacity.ToString();
+                cmbRoomType.Text = classroom.RoomType ?? string.Empty;
+                SelectClassroomRow(classroom.ClassroomID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load classroom details.", ex);
+            }
+        }
+
+        private void SelectClassroomRow(int classroomId)
+        {
+            foreach (DataGridViewRow row in dgvClassrooms.Rows)
+            {
+                if (row.DataBoundItem is not Classroom classroom || classroom.ClassroomID != classroomId)
+                {
+                    continue;
+                }
+
+                row.Selected = true;
+                dgvClassrooms.CurrentCell = row.Cells[0];
+                break;
+            }
+        }
+
         private void ClearClassroomForm()
         {
             txtClassroomId.Clear();
@@ -198,7 +244,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtCapacity.Clear();
             cmbRoomType.SelectedIndex = -1;
             dgvClassrooms.ClearSelection();
-            txtClassroomNumber.Focus();
+            txtClassroomId.Focus();
         }
 
         private void SetClassroomActionsEnabled(bool enabled)

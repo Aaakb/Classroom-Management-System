@@ -23,7 +23,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await using var context = new AppDbContext();
             await ValidateAsync(context, timeSlot, false);
             await context.TimeSlots.AddAsync(timeSlot);
-            await context.SaveChangesAsync();
+            await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[TimeSlots]");
             return timeSlot;
         }
 
@@ -48,6 +48,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task ValidateAsync(AppDbContext context, TimeSlot timeSlot, bool isUpdate)
         {
+            if (timeSlot.TimeSlotID <= 0)
+            {
+                throw new ArgumentException("Time slot ID is required.");
+            }
+
+            var idExists = await context.TimeSlots.AnyAsync(t => t.TimeSlotID == timeSlot.TimeSlotID);
+
+            if (!isUpdate && idExists)
+            {
+                throw new ArgumentException("Time slot ID already exists.");
+            }
+
+            if (isUpdate && !idExists)
+            {
+                throw new KeyNotFoundException("Time slot not found.");
+            }
+
             if (timeSlot.EndTime <= timeSlot.StartTime)
             {
                 throw new ArgumentException("End time must be after start time.");

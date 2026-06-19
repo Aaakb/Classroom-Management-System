@@ -36,6 +36,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureTimeSlotsEvents()
         {
             dgvTimeSlots.SelectionChanged += (_, _) => PopulateTimeSlotEditorFromSelection();
+            txtTimeSlotId.Leave += async (_, _) => await PopulateTimeSlotEditorFromEnteredIdAsync();
             btnAddTimeSlot.Click += async (_, _) => await AddTimeSlotAsync();
             btnUpdateTimeSlot.Click += async (_, _) => await UpdateTimeSlotAsync();
             btnDeleteTimeSlot.Click += async (_, _) => await DeleteTimeSlotAsync();
@@ -75,13 +76,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task UpdateTimeSlotAsync()
         {
-            if (!TryGetSelectedTimeSlotId(out int timeSlotId) || !TryBuildTimeSlot(out var timeSlot))
+            if (!TryBuildTimeSlot(out var timeSlot))
             {
-                ShowInformation("Select a time slot before updating.");
                 return;
             }
-
-            timeSlot.TimeSlotID = timeSlotId;
 
             await ExecuteTimeSlotActionAsync(
                 async () => await timeSlotService.UpdateAsync(timeSlot),
@@ -90,9 +88,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task DeleteTimeSlotAsync()
         {
-            if (!TryGetSelectedTimeSlotId(out int timeSlotId))
+            if (!TryGetTimeSlotIdFromEditor(out int timeSlotId))
             {
-                ShowInformation("Select a time slot before deleting.");
                 return;
             }
 
@@ -143,6 +140,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 IsBreak = tglIsBreak.Checked
             };
 
+            if (!TryGetTimeSlotIdFromEditor(out int timeSlotId))
+            {
+                return false;
+            }
+
+            timeSlot.TimeSlotID = timeSlotId;
+
             if (timeSlot.EndTime > timeSlot.StartTime)
             {
                 return true;
@@ -153,16 +157,16 @@ namespace University_Timetable_and_Classroom_Management_System
             return false;
         }
 
-        private bool TryGetSelectedTimeSlotId(out int timeSlotId)
+        private bool TryGetTimeSlotIdFromEditor(out int timeSlotId)
         {
-            if (int.TryParse(txtTimeSlotId.Text, out timeSlotId))
+            if (int.TryParse(txtTimeSlotId.Text, out timeSlotId) && timeSlotId > 0)
             {
                 return true;
             }
 
-            var selectedTimeSlot = dgvTimeSlots.CurrentRow?.DataBoundItem as TimeSlot;
-            timeSlotId = selectedTimeSlot?.TimeSlotID ?? 0;
-            return timeSlotId > 0;
+            ShowInformation("Enter a valid time slot ID.");
+            txtTimeSlotId.Focus();
+            return false;
         }
 
         private void PopulateTimeSlotEditorFromSelection()
@@ -178,6 +182,48 @@ namespace University_Timetable_and_Classroom_Management_System
             tglIsBreak.Checked = timeSlot.IsBreak;
         }
 
+        private async Task PopulateTimeSlotEditorFromEnteredIdAsync()
+        {
+            if (!int.TryParse(txtTimeSlotId.Text, out int timeSlotId) || timeSlotId <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var timeSlot = await timeSlotService.GetByIdAsync(timeSlotId);
+
+                if (timeSlot is null)
+                {
+                    return;
+                }
+
+                dtpStartTime.Value = DateTime.Today.Add(timeSlot.StartTime);
+                dtpEndTime.Value = DateTime.Today.Add(timeSlot.EndTime);
+                tglIsBreak.Checked = timeSlot.IsBreak;
+                SelectTimeSlotRow(timeSlot.TimeSlotID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load time slot details.", ex);
+            }
+        }
+
+        private void SelectTimeSlotRow(int timeSlotId)
+        {
+            foreach (DataGridViewRow row in dgvTimeSlots.Rows)
+            {
+                if (row.DataBoundItem is not TimeSlot timeSlot || timeSlot.TimeSlotID != timeSlotId)
+                {
+                    continue;
+                }
+
+                row.Selected = true;
+                dgvTimeSlots.CurrentCell = row.Cells[0];
+                break;
+            }
+        }
+
         private void ClearTimeSlotForm()
         {
             txtTimeSlotId.Clear();
@@ -185,7 +231,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dtpEndTime.Value = DateTime.Today.AddHours(9);
             tglIsBreak.Checked = false;
             dgvTimeSlots.ClearSelection();
-            dtpStartTime.Focus();
+            txtTimeSlotId.Focus();
         }
 
         private void SetTimeSlotActionsEnabled(bool enabled)

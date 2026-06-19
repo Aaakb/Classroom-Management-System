@@ -23,7 +23,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await using var context = new AppDbContext();
             await ValidateAsync(context, facultyMember, false);
             await context.FacultyMembers.AddAsync(facultyMember);
-            await context.SaveChangesAsync();
+            await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[FacultyMembers]");
             return facultyMember;
         }
 
@@ -48,6 +48,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task ValidateAsync(AppDbContext context, FacultyMember facultyMember, bool isUpdate)
         {
+            if (facultyMember.FacultyMemberID <= 0)
+            {
+                throw new ArgumentException("Faculty member ID is required.");
+            }
+
+            var idExists = await context.FacultyMembers.AnyAsync(f => f.FacultyMemberID == facultyMember.FacultyMemberID);
+
+            if (!isUpdate && idExists)
+            {
+                throw new ArgumentException("Faculty member ID already exists.");
+            }
+
+            if (isUpdate && !idExists)
+            {
+                throw new KeyNotFoundException("Faculty member not found.");
+            }
+
             if (string.IsNullOrWhiteSpace(facultyMember.FullName))
             {
                 throw new ArgumentException("Faculty member full name is required.");

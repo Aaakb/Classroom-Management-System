@@ -30,6 +30,9 @@ namespace Data_Access_Layer
                 entity.HasKey(e => e.BranchID);
                 entity.HasIndex(e => e.BranchName).IsUnique();
 
+                entity.Property(e => e.BranchID)
+                    .ValueGeneratedNever();
+
                 entity.Property(e => e.BranchName)
                     .HasMaxLength(100)
                     .IsRequired();
@@ -41,6 +44,9 @@ namespace Data_Access_Layer
                 entity.HasKey(e => e.StudyYearID);
                 entity.HasIndex(e => e.YearName).IsUnique();
 
+                entity.Property(e => e.StudyYearID)
+                    .ValueGeneratedNever();
+
                 entity.Property(e => e.YearName)
                     .HasMaxLength(100)
                     .IsRequired();
@@ -51,6 +57,9 @@ namespace Data_Access_Layer
                 entity.ToTable("Sections");
                 entity.HasKey(e => e.SectionID);
                 entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionName }).IsUnique();
+
+                entity.Property(e => e.SectionID)
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.SectionName)
                     .HasMaxLength(100)
@@ -75,6 +84,9 @@ namespace Data_Access_Layer
                 entity.ToTable("Subjects");
                 entity.HasKey(e => e.SubjectID);
                 entity.HasIndex(e => new { e.SubjectName, e.StudyYearID, e.SemesterNumber }).IsUnique();
+
+                entity.Property(e => e.SubjectID)
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.SubjectName)
                     .HasMaxLength(150)
@@ -113,6 +125,9 @@ namespace Data_Access_Layer
                 entity.HasKey(e => e.FacultyMemberID);
                 entity.HasIndex(e => e.FullName).IsUnique();
 
+                entity.Property(e => e.FacultyMemberID)
+                    .ValueGeneratedNever();
+
                 entity.Property(e => e.FullName)
                     .HasMaxLength(150)
                     .IsRequired();
@@ -143,6 +158,9 @@ namespace Data_Access_Layer
                 entity.HasKey(e => e.ClassroomID);
                 entity.HasIndex(e => e.ClassroomNumber).IsUnique();
 
+                entity.Property(e => e.ClassroomID)
+                    .ValueGeneratedNever();
+
                 entity.Property(e => e.ClassroomNumber)
                     .HasMaxLength(100)
                     .IsRequired();
@@ -159,6 +177,9 @@ namespace Data_Access_Layer
                 entity.ToTable("TimeSlots");
                 entity.HasKey(e => e.TimeSlotID);
                 entity.HasIndex(e => new { e.StartTime, e.EndTime, e.IsBreak }).IsUnique();
+
+                entity.Property(e => e.TimeSlotID)
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.StartTime)
                     .IsRequired();

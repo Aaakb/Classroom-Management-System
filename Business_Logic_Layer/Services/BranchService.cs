@@ -23,7 +23,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await using var context = new AppDbContext();
             await ValidateAsync(context, branch, false);
             await context.Branches.AddAsync(branch);
-            await context.SaveChangesAsync();
+            await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Branches]");
             return branch;
         }
 
@@ -48,6 +48,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task ValidateAsync(AppDbContext context, Branch branch, bool isUpdate)
         {
+            if (branch.BranchID <= 0)
+            {
+                throw new ArgumentException("Branch ID is required.");
+            }
+
+            var idExists = await context.Branches.AnyAsync(b => b.BranchID == branch.BranchID);
+
+            if (!isUpdate && idExists)
+            {
+                throw new ArgumentException("Branch ID already exists.");
+            }
+
+            if (isUpdate && !idExists)
+            {
+                throw new KeyNotFoundException("Branch not found.");
+            }
+
             if (string.IsNullOrWhiteSpace(branch.BranchName))
             {
                 throw new ArgumentException("Branch name is required.");

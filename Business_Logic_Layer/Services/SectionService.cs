@@ -31,7 +31,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await using var context = new AppDbContext();
             await ValidateAsync(context, section, false);
             await context.Sections.AddAsync(section);
-            await context.SaveChangesAsync();
+            await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Sections]");
             return section;
         }
 
@@ -56,6 +56,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task ValidateAsync(AppDbContext context, Section section, bool isUpdate)
         {
+            if (section.SectionID <= 0)
+            {
+                throw new ArgumentException("Section ID is required.");
+            }
+
+            var idExists = await context.Sections.AnyAsync(s => s.SectionID == section.SectionID);
+
+            if (!isUpdate && idExists)
+            {
+                throw new ArgumentException("Section ID already exists.");
+            }
+
+            if (isUpdate && !idExists)
+            {
+                throw new KeyNotFoundException("Section not found.");
+            }
+
             if (string.IsNullOrWhiteSpace(section.SectionName))
             {
                 throw new ArgumentException("Section name is required.");
