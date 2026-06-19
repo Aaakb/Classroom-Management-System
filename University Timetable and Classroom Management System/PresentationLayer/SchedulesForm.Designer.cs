@@ -799,7 +799,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnExportSchedulePdf.Size = new Size(130, 38);
             btnExportSchedulePdf.TabIndex = 25;
             btnExportSchedulePdf.Text = "Export PDF";
-            btnExportSchedulePdf.Click += btnExportSchedulePdf_Click;
             // 
             // btnGenerateSchedule
             // 

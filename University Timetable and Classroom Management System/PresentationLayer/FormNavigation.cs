@@ -38,6 +38,12 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
+            if (MainShellForm.Current is not null)
+            {
+                MainShellForm.Current.ShowPage(nextForm);
+                return;
+            }
+
             if (NavigationApplicationContext.Current is not null)
             {
                 NavigationApplicationContext.Current.Navigate(currentForm, nextForm);
