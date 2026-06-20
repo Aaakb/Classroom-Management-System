@@ -261,40 +261,11 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Faculty Members", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-    
-        // Code-only UI initialization (merged from former Designer.cs).
-
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer? components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            components = new System.ComponentModel.Container();
             pnlSidebar = new Guna.UI2.WinForms.Guna2Panel();
             lblSidebarFooter = new Guna.UI2.WinForms.Guna2HtmlLabel();
             btnNavigationSchedules = new Guna.UI2.WinForms.Guna2Button();
@@ -898,9 +869,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlHeader.PerformLayout();
             ResumeLayout(false);
         }
-
-        #endregion
-
         private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
