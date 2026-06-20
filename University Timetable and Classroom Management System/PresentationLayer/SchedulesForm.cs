@@ -81,9 +81,9 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.BorderStyle = BorderStyle.None;
             dgvSchedules.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvSchedules.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dgvSchedules.ColumnHeadersHeight = 40;
+            dgvSchedules.ColumnHeadersHeight = 42;
             dgvSchedules.EnableHeadersVisualStyles = false;
-            dgvSchedules.RowTemplate.Height = 36;
+            dgvSchedules.RowTemplate.Height = 38;
             dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
             colScheduleId.DataPropertyName = nameof(ScheduleRow.ScheduleID);
@@ -303,36 +303,43 @@ namespace University_Timetable_and_Classroom_Management_System
                 ReadOnly = true
             });
 
-            column.DisplayIndex = 0;
-            colStudyYear.DisplayIndex = 1;
-            colBranch.DisplayIndex = 2;
-            colSection.DisplayIndex = 3;
-            dgvSchedules.Columns["colGroupName"].DisplayIndex = 4;
-            dgvSchedules.Columns["colLectureType"].DisplayIndex = 5;
-            colSubject.DisplayIndex = 6;
-            colFacultyMember.DisplayIndex = 7;
-            colClassroom.DisplayIndex = 8;
-            colDayOfWeek.DisplayIndex = 9;
-            colTimeSlot.DisplayIndex = 10;
-            dgvSchedules.Columns["colEndTime"].DisplayIndex = 11;
+            colDayOfWeek.DisplayIndex = 0;
+            colTimeSlot.DisplayIndex = 1;
+            dgvSchedules.Columns["colEndTime"].DisplayIndex = 2;
+            colSubject.DisplayIndex = 3;
+            colFacultyMember.DisplayIndex = 4;
+            colClassroom.DisplayIndex = 5;
+            dgvSchedules.Columns["colLectureType"].DisplayIndex = 6;
+            dgvSchedules.Columns["colGroupName"].DisplayIndex = 7;
+            colStudyYear.DisplayIndex = 8;
+            colBranch.DisplayIndex = 9;
+            colSection.DisplayIndex = 10;
+            column.DisplayIndex = 11;
         }
 
         private void ApplyScheduleGridColumnLayout()
         {
+            SetGridColumn(colDayOfWeek, "Day", 78);
+            SetGridColumn(colTimeSlot, "Start", 62);
+            SetGridColumn(dgvSchedules.Columns["colEndTime"], "End", 62);
+            SetGridColumn(colSubject, "Subject", 160);
+            SetGridColumn(colFacultyMember, "Faculty", 132);
+            SetGridColumn(colClassroom, "Room/Lab", 76);
+            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Lecture Type", 82);
+            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 58);
             SetGridColumn(colStudyYear, "Year", 78);
             SetGridColumn(colBranch, "Branch", 92);
             SetGridColumn(colSection, "Section", 66);
-            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 58);
-            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Lecture Type", 82);
-            SetGridColumn(colSubject, "Subject", 148);
-            SetGridColumn(colFacultyMember, "Faculty", 132);
-            SetGridColumn(colClassroom, "Room/Lab", 78);
-            SetGridColumn(colDayOfWeek, "Day", 74);
-            SetGridColumn(colTimeSlot, "Start", 58);
-            SetGridColumn(dgvSchedules.Columns["colEndTime"], "End", 58);
+            SetGridColumn(dgvSchedules.Columns["colSemester"], "Semester", 58);
 
-            dgvSchedules.DefaultCellStyle.Padding = new Padding(2, 0, 2, 0);
-            dgvSchedules.ColumnHeadersDefaultCellStyle.Padding = new Padding(2, 0, 2, 0);
+            dgvSchedules.DefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
+            dgvSchedules.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
+            dgvSchedules.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F);
+            dgvSchedules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            dgvSchedules.RowsDefaultCellStyle.BackColor = Color.White;
+            dgvSchedules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgvSchedules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgvSchedules.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
         }
 
         private static void SetGridColumn(DataGridViewColumn column, string headerText, float fillWeight)
@@ -648,6 +655,10 @@ namespace University_Timetable_and_Classroom_Management_System
                     ? Color.FromArgb(187, 247, 208)
                     : Color.FromArgb(219, 234, 254);
                 row.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
+
+                row.Cells["colDayOfWeek"].Style.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+                row.Cells["colTimeSlot"].Style.ForeColor = Color.FromArgb(37, 99, 235);
+                row.Cells["colEndTime"].Style.ForeColor = Color.FromArgb(37, 99, 235);
 
                 if (row.Cells["colSubject"] is DataGridViewCell subjectCell)
                 {
