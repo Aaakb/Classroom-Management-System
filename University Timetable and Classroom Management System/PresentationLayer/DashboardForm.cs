@@ -2,6 +2,7 @@ using University_Timetable_and_Classroom_Management_System.BusinessLayer;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class DashboardForm : System.Windows.Forms.UserControl
     {
         private readonly DatabaseHealthService _databaseHealthService = new();
@@ -143,7 +144,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -580,33 +581,33 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlSubjectsMetric;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectsMetricTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectsMetricValue;
-        private Guna.UI2.WinForms.Guna2Panel pnlFacultyMetric;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyMetricTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyMetricValue;
-        private Guna.UI2.WinForms.Guna2Panel pnlClassroomsMetric;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomsMetricTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomsMetricValue;
-        private Guna.UI2.WinForms.Guna2Panel pnlSchedulesMetric;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSchedulesMetricTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSchedulesMetricValue;
-        private Guna.UI2.WinForms.Guna2Panel pnlQuickStart;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblQuickStartTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblQuickStartBody;
-        private Guna.UI2.WinForms.Guna2Panel pnlDatabaseStatus;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblDatabaseStatusTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblDatabaseStatusValue;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSubjectsMetric = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectsMetricTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectsMetricValue = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlFacultyMetric = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyMetricTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyMetricValue = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlClassroomsMetric = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomsMetricTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomsMetricValue = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSchedulesMetric = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSchedulesMetricTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSchedulesMetricValue = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlQuickStart = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblQuickStartTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblQuickStartBody = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlDatabaseStatus = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblDatabaseStatusTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblDatabaseStatusValue = null!;
 }
 }

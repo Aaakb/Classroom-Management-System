@@ -3,6 +3,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class BranchesForm : System.Windows.Forms.UserControl
     {
         private readonly BranchService branchService = new();
@@ -257,7 +258,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -920,38 +921,38 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlBranchEditor;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranchId;
-        private Guna.UI2.WinForms.Guna2TextBox txtBranchId;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranchName;
-        private Guna.UI2.WinForms.Guna2TextBox txtBranchName;
-        private Guna.UI2.WinForms.Guna2Button btnAddBranch;
-        private Guna.UI2.WinForms.Guna2Button btnUpdateBranch;
-        private Guna.UI2.WinForms.Guna2Button btnDeleteBranch;
-        private Guna.UI2.WinForms.Guna2Button btnClearBranchForm;
-        private Guna.UI2.WinForms.Guna2Panel pnlBranchesTable;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;
-        private Guna.UI2.WinForms.Guna2DataGridView dgvBranches;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colBranchId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colBranchName;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlBranchEditor = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranchId = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtBranchId = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranchName = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtBranchName = null!;
+        private Guna.UI2.WinForms.Guna2Button btnAddBranch = null!;
+        private Guna.UI2.WinForms.Guna2Button btnUpdateBranch = null!;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteBranch = null!;
+        private Guna.UI2.WinForms.Guna2Button btnClearBranchForm = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlBranchesTable = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvBranches = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colBranchId = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colBranchName = null!;
 }
 }

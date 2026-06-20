@@ -5,6 +5,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class SubjectsForm : System.Windows.Forms.UserControl
     {
         private readonly SubjectService subjectService = new();
@@ -648,7 +649,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -1673,60 +1674,60 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlSubjectEditor;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectId;
-        private Guna.UI2.WinForms.Guna2TextBox txtSubjectId;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectName;
-        private Guna.UI2.WinForms.Guna2TextBox txtSubjectName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYear;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYear;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranch;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbBranch;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSemester;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbSemester;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblRequirementType;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbRequirementType;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTheoreticalHours;
-        private Guna.UI2.WinForms.Guna2TextBox txtTheoreticalHours;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPracticalHours;
-        private Guna.UI2.WinForms.Guna2TextBox txtPracticalHours;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblCreditUnits;
-        private Guna.UI2.WinForms.Guna2TextBox txtCreditUnits;
-        private Guna.UI2.WinForms.Guna2Button btnAddSubject;
-        private Guna.UI2.WinForms.Guna2Button btnUpdateSubject;
-        private Guna.UI2.WinForms.Guna2Button btnDeleteSubject;
-        private Guna.UI2.WinForms.Guna2Button btnClearSubjectForm;
-        private Guna.UI2.WinForms.Guna2Panel pnlSubjectsTable;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;
-        private Guna.UI2.WinForms.Guna2DataGridView dgvSubjects;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSubjectId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSubjectName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colBranch;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSemester;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colTheoreticalHours;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colPracticalHours;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colCreditUnits;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colRequirementType;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSubjectEditor = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectId = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtSubjectId = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectName = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtSubjectName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYear = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYear = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranch = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbBranch = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSemester = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbSemester = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblRequirementType = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbRequirementType = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTheoreticalHours = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtTheoreticalHours = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPracticalHours = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtPracticalHours = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblCreditUnits = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtCreditUnits = null!;
+        private Guna.UI2.WinForms.Guna2Button btnAddSubject = null!;
+        private Guna.UI2.WinForms.Guna2Button btnUpdateSubject = null!;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteSubject = null!;
+        private Guna.UI2.WinForms.Guna2Button btnClearSubjectForm = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSubjectsTable = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvSubjects = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSubjectId = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSubjectName = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colBranch = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSemester = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTheoreticalHours = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colPracticalHours = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCreditUnits = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colRequirementType = null!;
 }
 }

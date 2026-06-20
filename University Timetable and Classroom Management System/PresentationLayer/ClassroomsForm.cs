@@ -3,6 +3,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class ClassroomsForm : System.Windows.Forms.UserControl
     {
         private readonly ClassroomService classroomService = new();
@@ -278,7 +279,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -1086,46 +1087,46 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlClassroomEditor;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomId;
-        private Guna.UI2.WinForms.Guna2TextBox txtClassroomId;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomNumber;
-        private Guna.UI2.WinForms.Guna2TextBox txtClassroomNumber;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblCapacity;
-        private Guna.UI2.WinForms.Guna2TextBox txtCapacity;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblRoomType;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbRoomType;
-        private Guna.UI2.WinForms.Guna2Button btnAddClassroom;
-        private Guna.UI2.WinForms.Guna2Button btnUpdateClassroom;
-        private Guna.UI2.WinForms.Guna2Button btnDeleteClassroom;
-        private Guna.UI2.WinForms.Guna2Button btnClearClassroomForm;
-        private Guna.UI2.WinForms.Guna2Panel pnlClassroomsTable;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;
-        private Guna.UI2.WinForms.Guna2DataGridView dgvClassrooms;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colClassroomId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colClassroomNumber;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colCapacity;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colRoomType;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlClassroomEditor = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomId = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtClassroomId = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomNumber = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtClassroomNumber = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblCapacity = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtCapacity = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblRoomType = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbRoomType = null!;
+        private Guna.UI2.WinForms.Guna2Button btnAddClassroom = null!;
+        private Guna.UI2.WinForms.Guna2Button btnUpdateClassroom = null!;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteClassroom = null!;
+        private Guna.UI2.WinForms.Guna2Button btnClearClassroomForm = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlClassroomsTable = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvClassrooms = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colClassroomId = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colClassroomNumber = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colCapacity = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colRoomType = null!;
 }
 }

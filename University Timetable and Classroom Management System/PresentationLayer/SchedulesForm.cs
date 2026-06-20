@@ -3,6 +3,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class SchedulesForm : System.Windows.Forms.UserControl
     {
         private readonly ScheduleService scheduleService = new();
@@ -1515,7 +1516,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -2765,73 +2766,73 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Button btnRefreshSchedule;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlScheduleFilters;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbFacultyFilter;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyFilter;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbSectionFilter;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionFilter;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYearFilter;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYearFilter;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbDayFilter;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblDayFilter;
-        private Guna.UI2.WinForms.Guna2Panel pnlScheduleEditor;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblScheduleId;
-        private Guna.UI2.WinForms.Guna2TextBox txtScheduleId;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblDayOfWeek;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbDayOfWeek;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubject;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbSubject;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyMember;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbFacultyMember;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroom;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbClassroom;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTimeSlot;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbTimeSlot;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYear;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYear;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranch;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbBranch;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSection;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbSection;
-        private Guna.UI2.WinForms.Guna2Button btnGenerateSchedule;
-        private Guna.UI2.WinForms.Guna2Button btnAddSchedule;
-        private Guna.UI2.WinForms.Guna2Button btnUpdateSchedule;
-        private Guna.UI2.WinForms.Guna2Button btnDeleteSchedule;
-        private Guna.UI2.WinForms.Guna2Button btnClearScheduleForm;
-        private Guna.UI2.WinForms.Guna2Button btnExportSchedulePdf;
-        private Guna.UI2.WinForms.Guna2Panel pnlSchedulesTable;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;
-        private Guna.UI2.WinForms.Guna2DataGridView dgvSchedules;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colScheduleId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colDayOfWeek;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSubject;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colFacultyMember;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colClassroom;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colTimeSlot;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colBranch;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSection;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Button btnRefreshSchedule = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlScheduleFilters = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbFacultyFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyFilter = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbSectionFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionFilter = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYearFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYearFilter = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbDayFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblDayFilter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlScheduleEditor = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblScheduleId = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtScheduleId = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblDayOfWeek = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbDayOfWeek = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubject = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbSubject = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblFacultyMember = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbFacultyMember = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroom = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbClassroom = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTimeSlot = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbTimeSlot = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYear = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYear = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranch = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbBranch = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSection = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbSection = null!;
+        private Guna.UI2.WinForms.Guna2Button btnGenerateSchedule = null!;
+        private Guna.UI2.WinForms.Guna2Button btnAddSchedule = null!;
+        private Guna.UI2.WinForms.Guna2Button btnUpdateSchedule = null!;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteSchedule = null!;
+        private Guna.UI2.WinForms.Guna2Button btnClearScheduleForm = null!;
+        private Guna.UI2.WinForms.Guna2Button btnExportSchedulePdf = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSchedulesTable = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvSchedules = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colScheduleId = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDayOfWeek = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSubject = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colFacultyMember = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colClassroom = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTimeSlot = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colBranch = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSection = null!;
 }
 }

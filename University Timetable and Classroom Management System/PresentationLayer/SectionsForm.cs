@@ -3,6 +3,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class SectionsForm : System.Windows.Forms.UserControl
     {
         private readonly SectionService sectionService = new();
@@ -480,7 +481,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -1256,50 +1257,50 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSections;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlSectionEditor;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionId;
-        private Guna.UI2.WinForms.Guna2TextBox txtSectionId;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionName;
-        private Guna.UI2.WinForms.Guna2TextBox txtSectionName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudentCount;
-        private Guna.UI2.WinForms.Guna2TextBox txtStudentCount;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYear;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYear;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranch;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbBranch;
-        private Guna.UI2.WinForms.Guna2Button btnAddSection;
-        private Guna.UI2.WinForms.Guna2Button btnUpdateSection;
-        private Guna.UI2.WinForms.Guna2Button btnDeleteSection;
-        private Guna.UI2.WinForms.Guna2Button btnClearSectionForm;
-        private Guna.UI2.WinForms.Guna2Panel pnlSectionsTable;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;
-        private Guna.UI2.WinForms.Guna2DataGridView dgvSections;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSectionId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colSectionName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colStudentCount;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colBranch;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSections = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSectionEditor = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionId = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtSectionId = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSectionName = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtSectionName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudentCount = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtStudentCount = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStudyYear = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbStudyYear = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblBranch = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbBranch = null!;
+        private Guna.UI2.WinForms.Guna2Button btnAddSection = null!;
+        private Guna.UI2.WinForms.Guna2Button btnUpdateSection = null!;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteSection = null!;
+        private Guna.UI2.WinForms.Guna2Button btnClearSectionForm = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSectionsTable = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvSections = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSectionId = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colSectionName = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colStudentCount = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colBranch = null!;
 }
 }

@@ -3,6 +3,7 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class TimeSlotsForm : System.Windows.Forms.UserControl
     {
         private readonly TimeSlotService timeSlotService = new();
@@ -270,7 +271,7 @@ namespace University_Timetable_and_Classroom_Management_System
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer? components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -965,46 +966,46 @@ namespace University_Timetable_and_Classroom_Management_System
 
         #endregion
 
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Panel pnlMain;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle;
-        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace;
-        private Guna.UI2.WinForms.Guna2Panel pnlTimeSlotEditor;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTimeSlotId;
-        private Guna.UI2.WinForms.Guna2TextBox txtTimeSlotId;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblStartTime;
-        private Guna.UI2.WinForms.Guna2DateTimePicker dtpStartTime;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblEndTime;
-        private Guna.UI2.WinForms.Guna2DateTimePicker dtpEndTime;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblIsBreak;
-        private Guna.UI2.WinForms.Guna2ToggleSwitch tglIsBreak;
-        private Guna.UI2.WinForms.Guna2Button btnAddTimeSlot;
-        private Guna.UI2.WinForms.Guna2Button btnUpdateTimeSlot;
-        private Guna.UI2.WinForms.Guna2Button btnDeleteTimeSlot;
-        private Guna.UI2.WinForms.Guna2Button btnClearTimeSlotForm;
-        private Guna.UI2.WinForms.Guna2Panel pnlTimeSlotsTable;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle;
-        private Guna.UI2.WinForms.Guna2DataGridView dgvTimeSlots;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colTimeSlotId;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colStartTime;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colEndTime;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colIsBreak;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationClassrooms = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationTimeSlots = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationFaculty = null!;
+        private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlTimeSlotEditor = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEditorSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTimeSlotId = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtTimeSlotId = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblStartTime = null!;
+        private Guna.UI2.WinForms.Guna2DateTimePicker dtpStartTime = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblEndTime = null!;
+        private Guna.UI2.WinForms.Guna2DateTimePicker dtpEndTime = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblIsBreak = null!;
+        private Guna.UI2.WinForms.Guna2ToggleSwitch tglIsBreak = null!;
+        private Guna.UI2.WinForms.Guna2Button btnAddTimeSlot = null!;
+        private Guna.UI2.WinForms.Guna2Button btnUpdateTimeSlot = null!;
+        private Guna.UI2.WinForms.Guna2Button btnDeleteTimeSlot = null!;
+        private Guna.UI2.WinForms.Guna2Button btnClearTimeSlotForm = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlTimeSlotsTable = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableTitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTableSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2DataGridView dgvTimeSlots = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colTimeSlotId = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colStartTime = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colEndTime = null!;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colIsBreak = null!;
 }
 }

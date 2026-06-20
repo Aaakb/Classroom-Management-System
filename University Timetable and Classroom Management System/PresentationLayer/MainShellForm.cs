@@ -1,5 +1,6 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
+    [System.ComponentModel.DesignerCategory("Code")]
     public partial class MainShellForm : System.Windows.Forms.Form
     {
         private System.Windows.Forms.UserControl? activePage;
@@ -43,12 +44,12 @@ namespace University_Timetable_and_Classroom_Management_System
         // Code-only UI initialization (merged from former Designer.cs).
 
         private System.ComponentModel.IContainer components = null!;
-        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
-        private Guna.UI2.WinForms.Guna2Panel pnlPageHost;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
-        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlPageHost = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
 
         protected override void Dispose(bool disposing)
         {
