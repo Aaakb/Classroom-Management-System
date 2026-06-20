@@ -12,6 +12,8 @@ namespace University_Timetable_and_Classroom_Management_System.Models
 
         public int TimeSlotID { get; set; }
 
+        public int SemesterNumber { get; set; }
+
         public string DayOfWeek { get; set; } = string.Empty;
 
         public int? StudyYearID { get; set; }

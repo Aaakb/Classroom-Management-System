@@ -75,10 +75,12 @@ namespace Data_Access_Layer.Repositories
             int classroomId,
             string dayOfWeek,
             int timeSlotId,
+            int semesterNumber,
             int? excludeScheduleId = null)
         {
             var query = _context.Schedules.AsNoTracking().Where(s =>
                 s.ClassroomID == classroomId &&
+                s.SemesterNumber == semesterNumber &&
                 s.DayOfWeek == dayOfWeek &&
                 s.TimeSlotID == timeSlotId);
 
@@ -94,10 +96,12 @@ namespace Data_Access_Layer.Repositories
             int facultyMemberId,
             string dayOfWeek,
             int timeSlotId,
+            int semesterNumber,
             int? excludeScheduleId = null)
         {
             var query = _context.Schedules.AsNoTracking().Where(s =>
                 s.FacultyMemberID == facultyMemberId &&
+                s.SemesterNumber == semesterNumber &&
                 s.DayOfWeek == dayOfWeek &&
                 s.TimeSlotID == timeSlotId);
 
@@ -113,10 +117,12 @@ namespace Data_Access_Layer.Repositories
             int sectionId,
             string dayOfWeek,
             int timeSlotId,
+            int semesterNumber,
             int? excludeScheduleId = null)
         {
             var query = _context.Schedules.AsNoTracking().Where(s =>
                 s.SectionID == sectionId &&
+                s.SemesterNumber == semesterNumber &&
                 s.DayOfWeek == dayOfWeek &&
                 s.TimeSlotID == timeSlotId);
 

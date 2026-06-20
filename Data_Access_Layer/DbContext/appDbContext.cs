@@ -195,9 +195,24 @@ namespace Data_Access_Layer
             {
                 entity.ToTable("Schedules");
                 entity.HasKey(e => e.ScheduleID);
-                entity.HasIndex(e => new { e.ClassroomID, e.TimeSlotID, e.DayOfWeek }).IsUnique();
-                entity.HasIndex(e => new { e.FacultyMemberID, e.TimeSlotID, e.DayOfWeek }).IsUnique();
-                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionID, e.TimeSlotID, e.DayOfWeek }).IsUnique();
+                entity.HasIndex(e => new { e.ClassroomID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID })
+                    .IsUnique()
+                    .HasDatabaseName("UQ_Classroom_Semester_Time");
+
+                entity.HasIndex(e => new { e.FacultyMemberID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID })
+                    .IsUnique()
+                    .HasDatabaseName("UQ_Faculty_Semester_Time");
+
+                entity.HasIndex(e => new { e.SectionID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID })
+                    .IsUnique()
+                    .HasDatabaseName("UQ_Section_Semester_Time");
+
+                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID })
+                    .IsUnique()
+                    .HasDatabaseName("IX_Schedules_Year_Branch_Section_Semester_Time");
+
+                entity.Property(e => e.SemesterNumber)
+                    .IsRequired();
 
                 entity.Property(e => e.DayOfWeek)
                     .HasMaxLength(20)

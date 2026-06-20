@@ -147,6 +147,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 })
                 .OrderByDescending(request => request.Assignment.Subject.StudyYearID)
                 .ThenBy(request => request.Assignment.Subject.BranchID ?? request.Section.BranchID ?? 0)
+                .ThenBy(request => request.Assignment.Subject.SemesterNumber)
                 .ThenBy(request => request.Section.SectionName)
                 .ThenBy(request => request.Assignment.Subject.SubjectName)
                 .ThenBy(request => request.LessonNumber)
@@ -183,6 +184,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                 FacultyMemberID = assignment.FacultyMemberID,
                                 ClassroomID = classroom.ClassroomID,
                                 TimeSlotID = timeSlot.TimeSlotID,
+                                SemesterNumber = subject.SemesterNumber,
                                 DayOfWeek = day,
                                 StudyYearID = subject.StudyYearID,
                                 BranchID = subject.BranchID ?? section.BranchID,
@@ -226,6 +228,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                     FacultyMemberID = assignment.FacultyMemberID,
                                     ClassroomID = classroom.ClassroomID,
                                     TimeSlotID = timeSlot.TimeSlotID,
+                                    SemesterNumber = subject.SemesterNumber,
                                     DayOfWeek = day,
                                     StudyYearID = subject.StudyYearID,
                                     BranchID = subject.BranchID ?? section.BranchID,
@@ -348,6 +351,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             schedule.StudyYearID = subject.StudyYearID;
             schedule.BranchID = subject.BranchID ?? section.BranchID;
+            schedule.SemesterNumber = subject.SemesterNumber;
 
             await EnsureNoConflictsAsync(context, schedule, isUpdate);
         }
@@ -356,6 +360,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         {
             var classroomConflict = await context.Schedules.AnyAsync(s =>
                 s.ClassroomID == schedule.ClassroomID &&
+                s.SemesterNumber == schedule.SemesterNumber &&
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
@@ -367,6 +372,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             var facultyConflict = await context.Schedules.AnyAsync(s =>
                 s.FacultyMemberID == schedule.FacultyMemberID &&
+                s.SemesterNumber == schedule.SemesterNumber &&
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
@@ -380,6 +386,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 s.StudyYearID == schedule.StudyYearID &&
                 s.BranchID == schedule.BranchID &&
                 s.SectionID == schedule.SectionID &&
+                s.SemesterNumber == schedule.SemesterNumber &&
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
@@ -393,6 +400,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private static bool HasScheduleConflict(IEnumerable<Schedule> schedules, Schedule candidate)
         {
             return schedules.Any(schedule =>
+                schedule.SemesterNumber == candidate.SemesterNumber &&
                 schedule.TimeSlotID == candidate.TimeSlotID &&
                 schedule.DayOfWeek == candidate.DayOfWeek &&
                 (schedule.ClassroomID == candidate.ClassroomID ||
@@ -407,6 +415,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return schedules.Any(schedule =>
                 schedule.SubjectID == candidate.SubjectID &&
                 schedule.SectionID == candidate.SectionID &&
+                schedule.SemesterNumber == candidate.SemesterNumber &&
                 schedule.DayOfWeek == candidate.DayOfWeek);
         }
 
