@@ -34,6 +34,20 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         ALTER TABLE [Schedules] ALTER COLUMN [SemesterNumber] int NOT NULL;
                     END
 
+                    IF COL_LENGTH(N'dbo.Schedules', N'LectureType') IS NULL
+                        ALTER TABLE [Schedules] ADD [LectureType] nvarchar(20) NULL;
+
+                    IF COL_LENGTH(N'dbo.Schedules', N'GroupName') IS NULL
+                        ALTER TABLE [Schedules] ADD [GroupName] nvarchar(20) NULL;
+
+                    UPDATE [Schedules]
+                    SET [LectureType] = N'Theory'
+                    WHERE [LectureType] IS NULL OR LTRIM(RTRIM([LectureType])) = N'';
+
+                    UPDATE [Schedules]
+                    SET [GroupName] = NULL
+                    WHERE [LectureType] = N'Theory';
+
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_ClassroomID_TimeSlotID' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_ClassroomID_TimeSlotID] ON [Schedules];
 
@@ -87,6 +101,34 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                             HAVING COUNT(*) > 1)
                         CREATE UNIQUE INDEX [IX_Schedules_Year_Branch_Section_Semester_Time]
                         ON [Schedules] ([StudyYearID], [BranchID], [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID]);
+
+                    EXEC(N'
+                        CREATE OR ALTER VIEW [dbo].[vw_ScheduleDetails]
+                        AS
+                        SELECT
+                            schedule.[ScheduleID],
+                            schedule.[SemesterNumber],
+                            studyYear.[YearName],
+                            branch.[BranchName],
+                            section.[SectionName],
+                            schedule.[GroupName],
+                            schedule.[LectureType],
+                            subject.[SubjectName],
+                            faculty.[FullName] AS [FacultyMemberName],
+                            classroom.[ClassroomNumber],
+                            classroom.[Capacity],
+                            timeSlot.[StartTime],
+                            timeSlot.[EndTime],
+                            schedule.[DayOfWeek]
+                        FROM [dbo].[Schedules] schedule
+                        INNER JOIN [dbo].[Subjects] subject ON subject.[SubjectID] = schedule.[SubjectID]
+                        INNER JOIN [dbo].[FacultyMembers] faculty ON faculty.[FacultyMemberID] = schedule.[FacultyMemberID]
+                        INNER JOIN [dbo].[Classrooms] classroom ON classroom.[ClassroomID] = schedule.[ClassroomID]
+                        INNER JOIN [dbo].[TimeSlots] timeSlot ON timeSlot.[TimeSlotID] = schedule.[TimeSlotID]
+                        LEFT JOIN [dbo].[StudyYears] studyYear ON studyYear.[StudyYearID] = schedule.[StudyYearID]
+                        LEFT JOIN [dbo].[Branches] branch ON branch.[BranchID] = schedule.[BranchID]
+                        LEFT JOIN [dbo].[Sections] section ON section.[SectionID] = schedule.[SectionID];
+                    ');
                 END
                 """);
         }

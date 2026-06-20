@@ -14,6 +14,10 @@ namespace University_Timetable_and_Classroom_Management_System.Models
 
         public int SemesterNumber { get; set; }
 
+        public string LectureType { get; set; } = "Theory";
+
+        public string? GroupName { get; set; }
+
         public string DayOfWeek { get; set; } = string.Empty;
 
         public int? StudyYearID { get; set; }

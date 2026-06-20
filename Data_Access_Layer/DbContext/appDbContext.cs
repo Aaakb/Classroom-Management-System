@@ -215,6 +215,14 @@ namespace Data_Access_Layer
                 entity.Property(e => e.SemesterNumber)
                     .IsRequired();
 
+                entity.Property(e => e.LectureType)
+                    .HasMaxLength(20)
+                    .HasDefaultValue("Theory")
+                    .IsRequired();
+
+                entity.Property(e => e.GroupName)
+                    .HasMaxLength(20);
+
                 entity.Property(e => e.DayOfWeek)
                     .HasMaxLength(20)
                     .IsRequired();

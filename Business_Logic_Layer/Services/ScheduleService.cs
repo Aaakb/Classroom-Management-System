@@ -23,19 +23,20 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         public async Task<List<ScheduleDetailsView>> GetScheduleDetailsAsync()
         {
-            return await GetScheduleDetailsByFiltersAsync(null, null, null, null);
+            return await GetScheduleDetailsByFiltersAsync(null, null, null, null, null);
         }
 
         public async Task<List<ScheduleDetailsView>> GetScheduleDetailsBySemesterAsync(int semesterNumber)
         {
-            return await GetScheduleDetailsByFiltersAsync(semesterNumber, null, null, null);
+            return await GetScheduleDetailsByFiltersAsync(semesterNumber, null, null, null, null);
         }
 
         public async Task<List<ScheduleDetailsView>> GetScheduleDetailsByFiltersAsync(
             int? semesterNumber,
             int? studyYearId,
             int? branchId,
-            int? sectionId)
+            int? sectionId,
+            string? lectureType = null)
         {
             await using var context = new AppDbContext();
             var query = context.ScheduleDetails.AsNoTracking().AsQueryable();
@@ -43,6 +44,13 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             if (semesterNumber.HasValue)
             {
                 query = query.Where(schedule => schedule.SemesterNumber == semesterNumber.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(lectureType) &&
+                !string.Equals(lectureType, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                string normalizedLectureType = NormalizeLectureType(lectureType);
+                query = query.Where(schedule => schedule.LectureType == normalizedLectureType);
             }
 
             if (studyYearId.HasValue || branchId.HasValue || sectionId.HasValue)
@@ -261,6 +269,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                 ClassroomID = classroom.ClassroomID,
                                 TimeSlotID = timeSlot.TimeSlotID,
                                 SemesterNumber = subject.SemesterNumber,
+                                LectureType = "Theory",
+                                GroupName = null,
                                 DayOfWeek = day,
                                 StudyYearID = subject.StudyYearID,
                                 BranchID = subject.BranchID ?? section.BranchID,
@@ -305,6 +315,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                     ClassroomID = classroom.ClassroomID,
                                     TimeSlotID = timeSlot.TimeSlotID,
                                     SemesterNumber = subject.SemesterNumber,
+                                    LectureType = "Theory",
+                                    GroupName = null,
                                     DayOfWeek = day,
                                     StudyYearID = subject.StudyYearID,
                                     BranchID = subject.BranchID ?? section.BranchID,
@@ -372,6 +384,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             schedule.DayOfWeek = schedule.DayOfWeek.Trim();
+            schedule.LectureType = NormalizeLectureType(schedule.LectureType);
+            schedule.GroupName = NormalizeGroupName(schedule.LectureType, schedule.GroupName);
 
             var subject = await context.Subjects
                 .AsNoTracking()
@@ -493,6 +507,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 s.SemesterNumber == schedule.SemesterNumber &&
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
+                (schedule.GroupName == null || s.GroupName == null || s.GroupName == schedule.GroupName) &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
         }
 
@@ -511,6 +526,34 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return classroom.Capacity >= section.StudentCount;
         }
 
+        private static string NormalizeLectureType(string? lectureType)
+        {
+            if (string.Equals(lectureType, "Practical", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Practical";
+            }
+
+            if (string.IsNullOrWhiteSpace(lectureType) ||
+                string.Equals(lectureType, "Theory", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Theory";
+            }
+
+            throw new ArgumentException("Lecture type must be Theory or Practical.");
+        }
+
+        private static string? NormalizeGroupName(string lectureType, string? groupName)
+        {
+            if (lectureType == "Theory")
+            {
+                return null;
+            }
+
+            return string.IsNullOrWhiteSpace(groupName)
+                ? null
+                : groupName.Trim();
+        }
+
         private static bool HasScheduleConflict(IEnumerable<Schedule> schedules, Schedule candidate)
         {
             return schedules.Any(schedule =>
@@ -521,7 +564,10 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                  schedule.FacultyMemberID == candidate.FacultyMemberID ||
                  (schedule.StudyYearID == candidate.StudyYearID &&
                   schedule.BranchID == candidate.BranchID &&
-                  schedule.SectionID == candidate.SectionID)));
+                  schedule.SectionID == candidate.SectionID &&
+                  (candidate.GroupName == null ||
+                   schedule.GroupName == null ||
+                   schedule.GroupName == candidate.GroupName))));
         }
 
         private static bool HasSameSubjectSectionOnDay(IEnumerable<Schedule> schedules, Schedule candidate)

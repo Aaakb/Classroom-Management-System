@@ -23,6 +23,8 @@ namespace University_Timetable_and_Classroom_Management_System
         private bool isUpdatingScheduleLookups;
         private Guna.UI2.WinForms.Guna2ComboBox cmbSemesterFilter = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSemesterFilter = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbLectureTypeFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblLectureTypeFilter = null!;
 
         public SchedulesForm()
         {
@@ -56,7 +58,8 @@ namespace University_Timetable_and_Classroom_Management_System
             colSubject.DataPropertyName = nameof(ScheduleRow.SubjectName);
             colFacultyMember.DataPropertyName = nameof(ScheduleRow.FacultyMemberName);
             colClassroom.DataPropertyName = nameof(ScheduleRow.ClassroomName);
-            colTimeSlot.DataPropertyName = nameof(ScheduleRow.TimeSlotName);
+            colTimeSlot.DataPropertyName = nameof(ScheduleRow.StartTimeText);
+            colTimeSlot.HeaderText = "Start";
             colStudyYear.DataPropertyName = nameof(ScheduleRow.StudyYearName);
             colBranch.DataPropertyName = nameof(ScheduleRow.BranchName);
             colSection.DataPropertyName = nameof(ScheduleRow.SectionName);
@@ -69,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 BackColor = Color.Transparent,
                 Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(15, 23, 42),
-                Location = new Point(912, 14),
+                Location = new Point(896, 14),
                 Name = "lblSemesterFilter",
                 Size = new Size(83, 17),
                 TabIndex = 8,
@@ -87,15 +90,47 @@ namespace University_Timetable_and_Classroom_Management_System
                 Font = new Font("Segoe UI", 10F),
                 ForeColor = Color.FromArgb(15, 23, 42),
                 ItemHeight = 30,
-                Location = new Point(912, 36),
+                Location = new Point(896, 36),
                 Name = "cmbSemesterFilter",
-                Size = new Size(180, 36),
+                Size = new Size(136, 36),
                 TabIndex = 9
             };
 
+            lblLectureTypeFilter = new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                Location = new Point(1052, 14),
+                Name = "lblLectureTypeFilter",
+                Size = new Size(62, 17),
+                TabIndex = 10,
+                Text = "Type filter"
+            };
+
+            cmbLectureTypeFilter = new Guna.UI2.WinForms.Guna2ComboBox
+            {
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(203, 213, 225),
+                BorderRadius = 8,
+                DrawMode = DrawMode.OwnerDrawFixed,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FocusedColor = Color.FromArgb(37, 99, 235),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                ItemHeight = 30,
+                Location = new Point(1052, 36),
+                Name = "cmbLectureTypeFilter",
+                Size = new Size(128, 36),
+                TabIndex = 11
+            };
+
             cmbSemesterFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            cmbLectureTypeFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
             pnlScheduleFilters.Controls.Add(cmbSemesterFilter);
             pnlScheduleFilters.Controls.Add(lblSemesterFilter);
+            pnlScheduleFilters.Controls.Add(cmbLectureTypeFilter);
+            pnlScheduleFilters.Controls.Add(lblLectureTypeFilter);
         }
 
         private void EnsureSemesterColumn()
@@ -115,6 +150,46 @@ namespace University_Timetable_and_Classroom_Management_System
             };
 
             dgvSchedules.Columns.Insert(1, column);
+
+            dgvSchedules.Columns.Insert(4, new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(ScheduleRow.GroupName),
+                FillWeight = 56F,
+                HeaderText = "Group",
+                Name = "colGroupName",
+                ReadOnly = true
+            });
+
+            dgvSchedules.Columns.Insert(5, new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(ScheduleRow.LectureType),
+                FillWeight = 64F,
+                HeaderText = "Type",
+                Name = "colLectureType",
+                ReadOnly = true
+            });
+
+            dgvSchedules.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(ScheduleRow.EndTimeText),
+                FillWeight = 60F,
+                HeaderText = "End",
+                Name = "colEndTime",
+                ReadOnly = true
+            });
+
+            column.DisplayIndex = 0;
+            colStudyYear.DisplayIndex = 1;
+            colBranch.DisplayIndex = 2;
+            colSection.DisplayIndex = 3;
+            dgvSchedules.Columns["colGroupName"].DisplayIndex = 4;
+            dgvSchedules.Columns["colLectureType"].DisplayIndex = 5;
+            colSubject.DisplayIndex = 6;
+            colFacultyMember.DisplayIndex = 7;
+            colClassroom.DisplayIndex = 8;
+            colDayOfWeek.DisplayIndex = 9;
+            colTimeSlot.DisplayIndex = 10;
+            dgvSchedules.Columns["colEndTime"].DisplayIndex = 11;
         }
 
         private void ConfigureScheduleEvents()
@@ -137,6 +212,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyStudyYearFilterSelection();
             cmbDayFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbSemesterFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbLectureTypeFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
         }
 
         private async Task RefreshSchedulesAsync()
@@ -182,6 +258,7 @@ namespace University_Timetable_and_Classroom_Management_System
             BindSectionFilterCombo();
             BindDayCombos();
             BindSemesterFilterCombo();
+            BindLectureTypeFilterCombo();
         }
 
         private async Task LoadSchedulesAsync()
@@ -439,10 +516,14 @@ namespace University_Timetable_and_Classroom_Management_System
             int? sectionId = GetSelectedOptionalId(cmbSectionFilter);
             int? studyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
             int? semesterNumber = GetSelectedOptionalId(cmbSemesterFilter);
+            string? lectureType = cmbLectureTypeFilter.SelectedItem is ComboOption option ? option.Text : null;
             string? day = cmbDayFilter.SelectedItem as string;
 
             return scheduleRows.Where(row =>
                 (!semesterNumber.HasValue || row.SemesterNumber == semesterNumber.Value) &&
+                (string.IsNullOrWhiteSpace(lectureType) ||
+                    lectureType == "All" ||
+                    row.LectureType == lectureType) &&
                 RowMatchesFacultyFilter(row, facultyId) &&
                 RowMatchesSectionFilter(row, sectionId) &&
                 RowMatchesStudyYearFilter(row, studyYearId) &&
@@ -738,6 +819,17 @@ namespace University_Timetable_and_Classroom_Management_System
                 "All semesters");
         }
 
+        private void BindLectureTypeFilterCombo()
+        {
+            BindFilterCombo(
+                cmbLectureTypeFilter,
+                [
+                    new ComboOption(null, "Theory"),
+                    new ComboOption(null, "Practical")
+                ],
+                "All");
+        }
+
         private void ApplySubjectSelection()
         {
             if (isUpdatingScheduleLookups)
@@ -1010,12 +1102,18 @@ namespace University_Timetable_and_Classroom_Management_System
             public string FacultyMemberName { get; init; } = string.Empty;
             public string ClassroomName { get; init; } = string.Empty;
             public string TimeSlotName { get; init; } = string.Empty;
+            public string StartTimeText { get; init; } = string.Empty;
+            public string EndTimeText { get; init; } = string.Empty;
             public string StudyYearName { get; init; } = string.Empty;
             public string BranchName { get; init; } = string.Empty;
             public string SectionName { get; init; } = string.Empty;
+            public string GroupName { get; init; } = "-";
+            public string LectureType { get; init; } = "Theory";
 
             public static ScheduleRow FromSchedule(Schedule schedule)
             {
+                string timeSlotName = schedule.TimeSlot is null ? "-" : FormatTimeSlot(schedule.TimeSlot);
+
                 return new ScheduleRow
                 {
                     ScheduleID = schedule.ScheduleID,
@@ -1031,10 +1129,14 @@ namespace University_Timetable_and_Classroom_Management_System
                     SubjectName = schedule.Subject?.SubjectName ?? "-",
                     FacultyMemberName = schedule.FacultyMember?.FullName ?? "-",
                     ClassroomName = schedule.Classroom?.ClassroomNumber ?? "-",
-                    TimeSlotName = schedule.TimeSlot is null ? "-" : FormatTimeSlot(schedule.TimeSlot),
+                    TimeSlotName = timeSlotName,
+                    StartTimeText = schedule.TimeSlot is null ? "-" : $"{schedule.TimeSlot.StartTime:hh\\:mm}",
+                    EndTimeText = schedule.TimeSlot is null ? "-" : $"{schedule.TimeSlot.EndTime:hh\\:mm}",
                     StudyYearName = schedule.StudyYear?.YearName ?? "-",
                     BranchName = schedule.Branch?.BranchName ?? "-",
-                    SectionName = FormatScheduleSection(schedule)
+                    SectionName = FormatScheduleSection(schedule),
+                    GroupName = string.IsNullOrWhiteSpace(schedule.GroupName) ? "-" : schedule.GroupName,
+                    LectureType = schedule.LectureType
                 };
             }
 
@@ -1049,9 +1151,13 @@ namespace University_Timetable_and_Classroom_Management_System
                     FacultyMemberName = details.FacultyMemberName,
                     ClassroomName = details.ClassroomNumber,
                     TimeSlotName = FormatTimeSlot(details.StartTime, details.EndTime),
+                    StartTimeText = $"{details.StartTime:hh\\:mm}",
+                    EndTimeText = $"{details.EndTime:hh\\:mm}",
                     StudyYearName = details.YearName,
                     BranchName = string.IsNullOrWhiteSpace(details.BranchName) ? "-" : details.BranchName,
-                    SectionName = details.SectionName
+                    SectionName = details.SectionName,
+                    GroupName = string.IsNullOrWhiteSpace(details.GroupName) ? "-" : details.GroupName,
+                    LectureType = details.LectureType
                 };
             }
         }

@@ -12,6 +12,10 @@ namespace University_Timetable_and_Classroom_Management_System.Models
 
         public string SectionName { get; set; } = string.Empty;
 
+        public string? GroupName { get; set; }
+
+        public string LectureType { get; set; } = "Theory";
+
         public string SubjectName { get; set; } = string.Empty;
 
         public string FacultyMemberName { get; set; } = string.Empty;
