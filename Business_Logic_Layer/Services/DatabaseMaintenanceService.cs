@@ -71,14 +71,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     UPDATE schedule
                     SET
                         [SectionID] = mapping.[BaseSectionID],
-                        [GroupName] =
-                            CASE
-                                WHEN schedule.[LectureType] = N'Practical'
-                                    THEN COALESCE(schedule.[GroupName], mapping.[CurrentSectionName])
-                                ELSE NULL
-                            END
+                        [LectureType] = N'Practical',
+                        [GroupName] = COALESCE(NULLIF(LTRIM(RTRIM(schedule.[GroupName])), N''), mapping.[CurrentSectionName])
                     FROM [Schedules] schedule
                     INNER JOIN SectionMappings mapping ON mapping.[ScheduleID] = schedule.[ScheduleID];
+
+                    UPDATE [Schedules]
+                    SET [GroupName] = NULL
+                    WHERE [LectureType] = N'Theory';
 
                     DELETE practicalSection
                     FROM [Sections] practicalSection

@@ -210,7 +210,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .SelectMany(assignment =>
                 {
                     var subject = assignment.Subject;
-                    int lessonCount = CalculateLessonCount(subject);
                     var matchingSections = sections
                         .Where(section =>
                             section.StudyYearID == subject.StudyYearID &&
@@ -227,9 +226,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         missingSectionCount++;
                     }
 
-                    return matchingSections.SelectMany(section =>
-                        Enumerable.Range(1, lessonCount)
-                            .Select(lessonNumber => new ScheduleGenerationRequest(assignment, section, lessonNumber, lessonCount)));
+                    return matchingSections.SelectMany(section => CreateScheduleRequests(assignment, section));
                 })
                 .OrderByDescending(request => request.Assignment.Subject.StudyYearID)
                 .ThenBy(request => request.Assignment.Subject.BranchID ?? request.Section.BranchID ?? 0)
@@ -245,8 +242,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 var subject = assignment.Subject;
                 var section = request.Section;
 
+                int requiredCapacity = GetRequiredCapacity(section, request.GroupName);
                 var targetClassrooms = classrooms
-                    .Where(classroom => classroom.Capacity >= section.StudentCount)
+                    .Where(classroom => classroom.Capacity >= requiredCapacity)
                     .ToList();
 
                 if (targetClassrooms.Count == 0)
@@ -271,8 +269,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                 ClassroomID = classroom.ClassroomID,
                                 TimeSlotID = timeSlot.TimeSlotID,
                                 SemesterNumber = subject.SemesterNumber,
-                                LectureType = "Theory",
-                                GroupName = null,
+                                LectureType = request.LectureType,
+                                GroupName = request.GroupName,
                                 DayOfWeek = day,
                                 StudyYearID = subject.StudyYearID,
                                 BranchID = subject.BranchID ?? section.BranchID,
@@ -317,8 +315,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                     ClassroomID = classroom.ClassroomID,
                                     TimeSlotID = timeSlot.TimeSlotID,
                                     SemesterNumber = subject.SemesterNumber,
-                                    LectureType = "Theory",
-                                    GroupName = null,
+                                    LectureType = request.LectureType,
+                                    GroupName = request.GroupName,
                                     DayOfWeek = day,
                                     StudyYearID = subject.StudyYearID,
                                     BranchID = subject.BranchID ?? section.BranchID,
@@ -437,7 +435,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             EnsureBaseSectionIsUsed(section);
             NormalizeLectureTypeAndGroup(schedule, section);
 
-            if (!IsClassroomCapacityEnough(classroom, section))
+            if (!IsClassroomCapacityEnough(classroom, section, schedule.GroupName))
             {
                 throw new ArgumentException("The selected classroom capacity is not enough for this section.");
             }
@@ -553,7 +551,23 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static bool IsClassroomCapacityEnough(Classroom classroom, Section section)
         {
-            return classroom.Capacity >= section.StudentCount;
+            return IsClassroomCapacityEnough(classroom, section, null);
+        }
+
+        private static bool IsClassroomCapacityEnough(Classroom classroom, Section section, string? groupName)
+        {
+            return classroom.Capacity >= GetRequiredCapacity(section, groupName);
+        }
+
+        private static int GetRequiredCapacity(Section section, string? groupName)
+        {
+            if (!string.IsNullOrWhiteSpace(groupName) &&
+                AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return Math.Max(1, (int)Math.Ceiling(section.StudentCount / 2.0));
+            }
+
+            return section.StudentCount;
         }
 
         private static void NormalizeLectureTypeAndGroup(Schedule schedule, Section section)
@@ -646,19 +660,106 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 schedule.SubjectID == candidate.SubjectID &&
                 schedule.SectionID == candidate.SectionID &&
                 schedule.SemesterNumber == candidate.SemesterNumber &&
+                (schedule.GroupName == null ||
+                 candidate.GroupName == null ||
+                 schedule.GroupName == candidate.GroupName) &&
                 schedule.DayOfWeek == candidate.DayOfWeek);
         }
 
-        private static int CalculateLessonCount(Subject subject)
+        private static IEnumerable<ScheduleGenerationRequest> CreateScheduleRequests(
+            FacultyMemberSubject assignment,
+            Section section)
         {
-            var hours = subject.TheoreticalHours + subject.PracticalHours;
+            var subject = assignment.Subject;
+            int theoryLessons = CalculateTheoryLessonCount(subject);
 
-            if (hours <= 0)
+            foreach (int lessonNumber in Enumerable.Range(1, theoryLessons))
             {
-                hours = subject.CreditUnits;
+                yield return new ScheduleGenerationRequest(
+                    assignment,
+                    section,
+                    lessonNumber,
+                    theoryLessons,
+                    "Theory",
+                    null);
             }
 
-            return Math.Max(1, (int)Math.Ceiling(hours));
+            int practicalLessons = CalculatePracticalLessonCount(subject);
+
+            if (practicalLessons <= 0)
+            {
+                yield break;
+            }
+
+            var practicalGroups = GetPracticalGroupsForSection(section);
+
+            if (practicalGroups.Count == 0)
+            {
+                foreach (int lessonNumber in Enumerable.Range(1, practicalLessons))
+                {
+                    yield return new ScheduleGenerationRequest(
+                        assignment,
+                        section,
+                        lessonNumber,
+                        practicalLessons,
+                        "Practical",
+                        null);
+                }
+
+                yield break;
+            }
+
+            foreach (string groupName in practicalGroups)
+            {
+                foreach (int lessonNumber in Enumerable.Range(1, practicalLessons))
+                {
+                    yield return new ScheduleGenerationRequest(
+                        assignment,
+                        section,
+                        lessonNumber,
+                        practicalLessons,
+                        "Practical",
+                        groupName);
+                }
+            }
+        }
+
+        private static int CalculateTheoryLessonCount(Subject subject)
+        {
+            if (subject.TheoreticalHours > 0)
+            {
+                return (int)Math.Ceiling(subject.TheoreticalHours);
+            }
+
+            if (subject.PracticalHours > 0)
+            {
+                return 0;
+            }
+
+            var fallbackHours = subject.CreditUnits > 0 ? subject.CreditUnits : 1;
+            return Math.Max(1, (int)Math.Ceiling(fallbackHours));
+        }
+
+        private static int CalculatePracticalLessonCount(Subject subject)
+        {
+            return subject.PracticalHours > 0
+                ? Math.Max(1, (int)Math.Ceiling(subject.PracticalHours))
+                : 0;
+        }
+
+        private static IReadOnlyList<string> GetPracticalGroupsForSection(Section section)
+        {
+            if (!AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return [];
+            }
+
+            return AcademicStructureRules.GetBaseSectionName(section.SectionName).ToUpperInvariant() switch
+            {
+                "A" => ["A1", "A2"],
+                "B" => ["B1", "B2"],
+                _ => []
+            };
         }
 
         private static int StudyYearOrder(string yearName)
@@ -704,5 +805,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         FacultyMemberSubject Assignment,
         Section Section,
         int LessonNumber,
-        int RequiredLessons);
+        int RequiredLessons,
+        string LectureType,
+        string? GroupName);
 }
