@@ -39,6 +39,8 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvTimeSlots.AutoGenerateColumns = false;
             dgvTimeSlots.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvTimeSlots.CellFormatting += FormatTimeSlotCell;
+            dgvTimeSlots.DataBindingComplete += (_, _) => ApplyTimeSlotRowStyles();
         }
 
         private void ConfigureTimeSlotsEvents()
@@ -48,6 +50,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddTimeSlot.Click += async (_, _) => await AddTimeSlotAsync();
             btnUpdateTimeSlot.Click += async (_, _) => await UpdateTimeSlotAsync();
             btnDeleteTimeSlot.Click += async (_, _) => await DeleteTimeSlotAsync();
+            tglIsBreak.CheckedChanged += (_, _) => UpdateSlotTypePreview();
         }
 
         private async Task LoadTimeSlotsAsync()
@@ -58,6 +61,7 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 var timeSlots = await timeSlotService.GetAllAsync();
                 dgvTimeSlots.DataSource = timeSlots;
+                ApplyTimeSlotRowStyles();
                 dgvTimeSlots.ClearSelection();
             }
             catch (Exception ex)
@@ -188,6 +192,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dtpStartTime.Value = DateTime.Today.Add(timeSlot.StartTime);
             dtpEndTime.Value = DateTime.Today.Add(timeSlot.EndTime);
             tglIsBreak.Checked = timeSlot.IsBreak;
+            UpdateSlotTypePreview();
         }
 
         private async Task PopulateTimeSlotEditorFromEnteredIdAsync()
@@ -209,6 +214,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 dtpStartTime.Value = DateTime.Today.Add(timeSlot.StartTime);
                 dtpEndTime.Value = DateTime.Today.Add(timeSlot.EndTime);
                 tglIsBreak.Checked = timeSlot.IsBreak;
+                UpdateSlotTypePreview();
                 SelectTimeSlotRow(timeSlot.TimeSlotID);
             }
             catch (Exception ex)
@@ -238,6 +244,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dtpStartTime.Value = DateTime.Today.AddHours(8);
             dtpEndTime.Value = DateTime.Today.AddHours(9);
             tglIsBreak.Checked = false;
+            UpdateSlotTypePreview();
             dgvTimeSlots.ClearSelection();
             dtpStartTime.Focus();
         }
@@ -248,6 +255,70 @@ namespace University_Timetable_and_Classroom_Management_System
             btnUpdateTimeSlot.Enabled = enabled;
             btnDeleteTimeSlot.Enabled = enabled;
             dgvTimeSlots.Enabled = enabled;
+        }
+
+        private void FormatTimeSlotCell(object? sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            if ((dgvTimeSlots.Columns[e.ColumnIndex] == colStartTime ||
+                 dgvTimeSlots.Columns[e.ColumnIndex] == colEndTime) &&
+                e.Value is TimeSpan time)
+            {
+                e.Value = time.ToString(@"hh\:mm");
+                e.FormattingApplied = true;
+                return;
+            }
+
+            if (dgvTimeSlots.Columns[e.ColumnIndex] == colIsBreak && e.Value is bool isBreak)
+            {
+                e.Value = isBreak ? "Break period" : "Lecture";
+                if (e.CellStyle is not null)
+                {
+                    e.CellStyle.ForeColor = isBreak
+                        ? System.Drawing.Color.FromArgb(146, 64, 14)
+                        : System.Drawing.Color.FromArgb(30, 41, 59);
+                }
+
+                e.FormattingApplied = true;
+            }
+        }
+
+        private void ApplyTimeSlotRowStyles()
+        {
+            foreach (DataGridViewRow row in dgvTimeSlots.Rows)
+            {
+                if (row.DataBoundItem is not TimeSlot timeSlot || !timeSlot.IsBreak)
+                {
+                    row.DefaultCellStyle.BackColor = System.Drawing.Color.Empty;
+                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.Empty;
+                    row.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.Empty;
+                    row.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Empty;
+                    continue;
+                }
+
+                row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255, 251, 235);
+                row.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(120, 53, 15);
+                row.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(251, 191, 36);
+                row.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            }
+        }
+
+        private void UpdateSlotTypePreview()
+        {
+            bool isBreak = tglIsBreak.Checked;
+
+            btnSlotTypeBadge.Text = isBreak ? "Break" : "Lecture";
+            btnSlotTypeBadge.FillColor = isBreak
+                ? System.Drawing.Color.FromArgb(245, 158, 11)
+                : System.Drawing.Color.FromArgb(37, 99, 235);
+            btnSlotTypeBadge.HoverState.FillColor = btnSlotTypeBadge.FillColor;
+            btnSlotTypeBadge.PressedColor = btnSlotTypeBadge.FillColor;
+            tglIsBreak.CheckedState.BorderColor = System.Drawing.Color.FromArgb(245, 158, 11);
+            tglIsBreak.CheckedState.FillColor = System.Drawing.Color.FromArgb(245, 158, 11);
         }
 
         private static TimeSpan ToMinutePrecision(DateTime value)
@@ -297,6 +368,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnDeleteTimeSlot = new Guna.UI2.WinForms.Guna2Button();
             btnUpdateTimeSlot = new Guna.UI2.WinForms.Guna2Button();
             btnAddTimeSlot = new Guna.UI2.WinForms.Guna2Button();
+            btnSlotTypeBadge = new Guna.UI2.WinForms.Guna2Button();
             tglIsBreak = new Guna.UI2.WinForms.Guna2ToggleSwitch();
             lblIsBreak = new Guna.UI2.WinForms.Guna2HtmlLabel();
             dtpEndTime = new Guna.UI2.WinForms.Guna2DateTimePicker();
@@ -564,7 +636,7 @@ namespace University_Timetable_and_Classroom_Management_System
             colEndTime.ReadOnly = true;
             colIsBreak.DataPropertyName = "IsBreak";
             colIsBreak.FillWeight = 65F;
-            colIsBreak.HeaderText = "Break";
+            colIsBreak.HeaderText = "Slot Type";
             colIsBreak.Name = "colIsBreak";
             colIsBreak.ReadOnly = true;
             lblTableSubtitle.BackColor = System.Drawing.Color.Transparent;
@@ -572,9 +644,9 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             lblTableSubtitle.Location = new System.Drawing.Point(24, 43);
             lblTableSubtitle.Name = "lblTableSubtitle";
-            lblTableSubtitle.Size = new System.Drawing.Size(286, 17);
+            lblTableSubtitle.Size = new System.Drawing.Size(246, 17);
             lblTableSubtitle.TabIndex = 1;
-            lblTableSubtitle.Text = "Review lecture and break time slot records.";
+            lblTableSubtitle.Text = "Lecture slots and protected break periods.";
             lblTableTitle.BackColor = System.Drawing.Color.Transparent;
             lblTableTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblTableTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -592,6 +664,7 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlTimeSlotEditor.Controls.Add(btnDeleteTimeSlot);
             pnlTimeSlotEditor.Controls.Add(btnUpdateTimeSlot);
             pnlTimeSlotEditor.Controls.Add(btnAddTimeSlot);
+            pnlTimeSlotEditor.Controls.Add(btnSlotTypeBadge);
             pnlTimeSlotEditor.Controls.Add(tglIsBreak);
             pnlTimeSlotEditor.Controls.Add(lblIsBreak);
             pnlTimeSlotEditor.Controls.Add(dtpEndTime);
@@ -658,6 +731,18 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddTimeSlot.Size = new System.Drawing.Size(108, 38);
             btnAddTimeSlot.TabIndex = 10;
             btnAddTimeSlot.Text = "Add";
+            btnSlotTypeBadge.BorderRadius = 16;
+            btnSlotTypeBadge.Cursor = System.Windows.Forms.Cursors.Default;
+            btnSlotTypeBadge.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            btnSlotTypeBadge.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            btnSlotTypeBadge.ForeColor = System.Drawing.Color.White;
+            btnSlotTypeBadge.Location = new System.Drawing.Point(500, 116);
+            btnSlotTypeBadge.Name = "btnSlotTypeBadge";
+            btnSlotTypeBadge.PressedColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            btnSlotTypeBadge.Size = new System.Drawing.Size(104, 32);
+            btnSlotTypeBadge.TabIndex = 14;
+            btnSlotTypeBadge.TabStop = false;
+            btnSlotTypeBadge.Text = "Lecture";
             tglIsBreak.CheckedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
             tglIsBreak.CheckedState.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
             tglIsBreak.CheckedState.InnerBorderColor = System.Drawing.Color.White;
@@ -675,9 +760,9 @@ namespace University_Timetable_and_Classroom_Management_System
             lblIsBreak.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
             lblIsBreak.Location = new System.Drawing.Point(438, 91);
             lblIsBreak.Name = "lblIsBreak";
-            lblIsBreak.Size = new System.Drawing.Size(50, 19);
+            lblIsBreak.Size = new System.Drawing.Size(56, 19);
             lblIsBreak.TabIndex = 8;
-            lblIsBreak.Text = "Is Break";
+            lblIsBreak.Text = "Slot Type";
             dtpEndTime.BorderRadius = 8;
             dtpEndTime.Checked = true;
             dtpEndTime.CustomFormat = "HH:mm";
@@ -836,6 +921,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2DateTimePicker dtpEndTime = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblIsBreak = null!;
         private Guna.UI2.WinForms.Guna2ToggleSwitch tglIsBreak = null!;
+        private Guna.UI2.WinForms.Guna2Button btnSlotTypeBadge = null!;
         private Guna.UI2.WinForms.Guna2Button btnAddTimeSlot = null!;
         private Guna.UI2.WinForms.Guna2Button btnUpdateTimeSlot = null!;
         private Guna.UI2.WinForms.Guna2Button btnDeleteTimeSlot = null!;
