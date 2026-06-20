@@ -14,6 +14,7 @@ namespace Data_Access_Layer
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<ScheduleDetailsView> ScheduleDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -252,6 +253,12 @@ namespace Data_Access_Layer
                     .WithMany(s => s.Schedules)
                     .HasForeignKey(e => e.SectionID)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ScheduleDetailsView>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("vw_ScheduleDetails");
             });
         }
     }

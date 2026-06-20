@@ -21,10 +21,13 @@ namespace University_Timetable_and_Classroom_Management_System
         private List<Branch> branchesLookup = [];
         private List<Section> sectionsLookup = [];
         private bool isUpdatingScheduleLookups;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbSemesterFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSemesterFilter = null!;
 
         public SchedulesForm()
         {
             InitializeComponent();
+            ConfigureSemesterFilterControl();
             ConfigureNavigation();
             ConfigureScheduleGrid();
             ConfigureScheduleEvents();
@@ -47,6 +50,8 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
             colScheduleId.DataPropertyName = nameof(ScheduleRow.ScheduleID);
+            colScheduleId.Visible = false;
+            EnsureSemesterColumn();
             colDayOfWeek.DataPropertyName = nameof(ScheduleRow.DayOfWeek);
             colSubject.DataPropertyName = nameof(ScheduleRow.SubjectName);
             colFacultyMember.DataPropertyName = nameof(ScheduleRow.FacultyMemberName);
@@ -55,6 +60,61 @@ namespace University_Timetable_and_Classroom_Management_System
             colStudyYear.DataPropertyName = nameof(ScheduleRow.StudyYearName);
             colBranch.DataPropertyName = nameof(ScheduleRow.BranchName);
             colSection.DataPropertyName = nameof(ScheduleRow.SectionName);
+        }
+
+        private void ConfigureSemesterFilterControl()
+        {
+            lblSemesterFilter = new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                Location = new Point(912, 14),
+                Name = "lblSemesterFilter",
+                Size = new Size(83, 17),
+                TabIndex = 8,
+                Text = "Semester filter"
+            };
+
+            cmbSemesterFilter = new Guna.UI2.WinForms.Guna2ComboBox
+            {
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(203, 213, 225),
+                BorderRadius = 8,
+                DrawMode = DrawMode.OwnerDrawFixed,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FocusedColor = Color.FromArgb(37, 99, 235),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                ItemHeight = 30,
+                Location = new Point(912, 36),
+                Name = "cmbSemesterFilter",
+                Size = new Size(180, 36),
+                TabIndex = 9
+            };
+
+            cmbSemesterFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            pnlScheduleFilters.Controls.Add(cmbSemesterFilter);
+            pnlScheduleFilters.Controls.Add(lblSemesterFilter);
+        }
+
+        private void EnsureSemesterColumn()
+        {
+            if (dgvSchedules.Columns.Contains("colSemester"))
+            {
+                return;
+            }
+
+            var column = new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = nameof(ScheduleRow.SemesterNumber),
+                FillWeight = 58F,
+                HeaderText = "Semester",
+                Name = "colSemester",
+                ReadOnly = true
+            };
+
+            dgvSchedules.Columns.Insert(1, column);
         }
 
         private void ConfigureScheduleEvents()
@@ -67,7 +127,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearScheduleForm.Click += (_, _) => ClearGeneratedScheduleTable();
             btnExportSchedulePdf.Click += async (_, _) => await ExportSchedulePdfAsync();
 
-            dgvSchedules.SelectionChanged += (_, _) => PopulateScheduleEditorFromSelection();
+            dgvSchedules.SelectionChanged += async (_, _) => await PopulateScheduleEditorFromSelectionAsync();
             cmbSubject.SelectedIndexChanged += (_, _) => ApplySubjectSelection();
             cmbStudyYear.SelectedIndexChanged += (_, _) => ApplyStudyYearSelection();
             cmbBranch.SelectedIndexChanged += (_, _) => ApplyBranchSelection();
@@ -76,6 +136,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbSectionFilter.SelectedIndexChanged += (_, _) => ApplySectionFilterSelection();
             cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyStudyYearFilterSelection();
             cmbDayFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbSemesterFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
         }
 
         private async Task RefreshSchedulesAsync()
@@ -120,17 +181,20 @@ namespace University_Timetable_and_Classroom_Management_System
             BindFilterCombo(cmbStudyYearFilter, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
             BindSectionFilterCombo();
             BindDayCombos();
+            BindSemesterFilterCombo();
         }
 
         private async Task LoadSchedulesAsync()
         {
-            var schedules = await scheduleService.GetAllAsync();
+            var schedules = await scheduleService.GetScheduleDetailsAsync();
             scheduleRows = schedules
-                .Select(ScheduleRow.FromSchedule)
-                .OrderBy(row => DayOrder(row.DayOfWeek))
-                .ThenBy(row => row.TimeSlotName)
-                .ThenBy(row => row.StudyYearName)
+                .Select(ScheduleRow.FromDetails)
+                .OrderBy(row => row.SemesterNumber)
+                .ThenBy(row => StudyYearOrder(row.StudyYearName))
+                .ThenBy(row => row.BranchName)
                 .ThenBy(row => row.SectionName)
+                .ThenBy(row => DayOrder(row.DayOfWeek))
+                .ThenBy(row => row.TimeSlotName)
                 .ToList();
 
             ApplyScheduleFilters();
@@ -374,13 +438,69 @@ namespace University_Timetable_and_Classroom_Management_System
             int? facultyId = GetSelectedOptionalId(cmbFacultyFilter);
             int? sectionId = GetSelectedOptionalId(cmbSectionFilter);
             int? studyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
+            int? semesterNumber = GetSelectedOptionalId(cmbSemesterFilter);
             string? day = cmbDayFilter.SelectedItem as string;
 
             return scheduleRows.Where(row =>
-                (!facultyId.HasValue || row.FacultyMemberID == facultyId.Value) &&
-                (!sectionId.HasValue || row.SectionID == sectionId.Value) &&
-                (!studyYearId.HasValue || row.StudyYearID == studyYearId.Value) &&
+                (!semesterNumber.HasValue || row.SemesterNumber == semesterNumber.Value) &&
+                RowMatchesFacultyFilter(row, facultyId) &&
+                RowMatchesSectionFilter(row, sectionId) &&
+                RowMatchesStudyYearFilter(row, studyYearId) &&
                 (string.IsNullOrWhiteSpace(day) || day == "All days" || row.DayOfWeek == day));
+        }
+
+        private bool RowMatchesFacultyFilter(ScheduleRow row, int? facultyId)
+        {
+            if (!facultyId.HasValue)
+            {
+                return true;
+            }
+
+            var selectedFaculty = cmbFacultyFilter.SelectedItem as ComboOption;
+            return string.Equals(row.FacultyMemberName, selectedFaculty?.Text, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool RowMatchesStudyYearFilter(ScheduleRow row, int? studyYearId)
+        {
+            if (!studyYearId.HasValue)
+            {
+                return true;
+            }
+
+            var studyYear = studyYearsLookup.FirstOrDefault(item => item.StudyYearID == studyYearId.Value);
+            return string.Equals(row.StudyYearName, studyYear?.YearName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool RowMatchesSectionFilter(ScheduleRow row, int? sectionId)
+        {
+            if (!sectionId.HasValue)
+            {
+                return true;
+            }
+
+            var section = sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId.Value);
+
+            if (section is null ||
+                !string.Equals(row.SectionName, section.SectionName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            var studyYear = studyYearsLookup.FirstOrDefault(item => item.StudyYearID == section.StudyYearID);
+
+            if (studyYear is not null &&
+                !string.Equals(row.StudyYearName, studyYear.YearName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            var branchName = section.BranchID.HasValue
+                ? branchesLookup.FirstOrDefault(item => item.BranchID == section.BranchID.Value)?.BranchName
+                : null;
+
+            return string.IsNullOrWhiteSpace(branchName)
+                ? string.IsNullOrWhiteSpace(row.BranchName) || row.BranchName == "-"
+                : string.Equals(row.BranchName, branchName, StringComparison.OrdinalIgnoreCase);
         }
 
         private bool TryBuildSchedule(out Schedule schedule)
@@ -476,24 +596,38 @@ namespace University_Timetable_and_Classroom_Management_System
             return scheduleId > 0;
         }
 
-        private void PopulateScheduleEditorFromSelection()
+        private async Task PopulateScheduleEditorFromSelectionAsync()
         {
             if (dgvSchedules.CurrentRow?.DataBoundItem is not ScheduleRow row)
             {
                 return;
             }
 
-            txtScheduleId.Text = row.ScheduleID.ToString();
-            cmbDayOfWeek.SelectedItem = row.DayOfWeek;
-            SelectComboValue(cmbSubject, row.SubjectID);
-            SelectComboValue(cmbFacultyMember, row.FacultyMemberID);
-            SelectComboValue(cmbClassroom, row.ClassroomID);
-            SelectComboValue(cmbTimeSlot, row.TimeSlotID);
-            SelectComboValue(cmbStudyYear, row.StudyYearID);
-            SelectComboValue(cmbBranch, row.BranchID);
-            BindSectionsCombo(row.StudyYearID, row.BranchID, row.SectionID);
-            BindSubjectsCombo(row.StudyYearID, row.BranchID, row.SubjectID);
-            SelectComboValue(cmbSection, row.SectionID);
+            try
+            {
+                var schedule = await scheduleService.GetByIdAsync(row.ScheduleID);
+
+                if (schedule is null)
+                {
+                    return;
+                }
+
+                txtScheduleId.Text = schedule.ScheduleID.ToString();
+                cmbDayOfWeek.SelectedItem = schedule.DayOfWeek;
+                SelectComboValue(cmbSubject, schedule.SubjectID);
+                SelectComboValue(cmbFacultyMember, schedule.FacultyMemberID);
+                SelectComboValue(cmbClassroom, schedule.ClassroomID);
+                SelectComboValue(cmbTimeSlot, schedule.TimeSlotID);
+                SelectComboValue(cmbStudyYear, schedule.StudyYearID);
+                SelectComboValue(cmbBranch, schedule.BranchID);
+                BindSectionsCombo(schedule.StudyYearID, schedule.BranchID, schedule.SectionID);
+                BindSubjectsCombo(schedule.StudyYearID, schedule.BranchID, schedule.SubjectID);
+                SelectComboValue(cmbSection, schedule.SectionID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load the selected schedule.", ex);
+            }
         }
 
         private void ClearGeneratedScheduleTable()
@@ -591,6 +725,17 @@ namespace University_Timetable_and_Classroom_Management_System
 
             BindFilterCombo(cmbSectionFilter, sections, "All sections");
             SelectComboValue(cmbSectionFilter, selectedSectionId);
+        }
+
+        private void BindSemesterFilterCombo()
+        {
+            BindFilterCombo(
+                cmbSemesterFilter,
+                [
+                    new ComboOption(1, "Semester 1"),
+                    new ComboOption(2, "Semester 2")
+                ],
+                "All semesters");
         }
 
         private void ApplySubjectSelection()
@@ -798,6 +943,11 @@ namespace University_Timetable_and_Classroom_Management_System
             return timeSlot.IsBreak ? $"{label} (Break)" : label;
         }
 
+        private static string FormatTimeSlot(TimeSpan startTime, TimeSpan endTime)
+        {
+            return $"{startTime:hh\\:mm} - {endTime:hh\\:mm}";
+        }
+
         private static string FormatSection(Section section)
         {
             string year = section.StudyYear?.YearName ?? "Year";
@@ -816,6 +966,18 @@ namespace University_Timetable_and_Classroom_Management_System
                 "Tuesday" => 3,
                 "Wednesday" => 4,
                 "Thursday" => 5,
+                _ => 99
+            };
+        }
+
+        private static int StudyYearOrder(string studyYearName)
+        {
+            return studyYearName switch
+            {
+                "First Year" => 1,
+                "Second Year" => 2,
+                "Third Year" => 3,
+                "Fourth Year" => 4,
                 _ => 99
             };
         }
@@ -839,6 +1001,7 @@ namespace University_Timetable_and_Classroom_Management_System
             public int FacultyMemberID { get; init; }
             public int ClassroomID { get; init; }
             public int TimeSlotID { get; init; }
+            public int SemesterNumber { get; init; }
             public int? StudyYearID { get; init; }
             public int? BranchID { get; init; }
             public int? SectionID { get; init; }
@@ -860,6 +1023,7 @@ namespace University_Timetable_and_Classroom_Management_System
                     FacultyMemberID = schedule.FacultyMemberID,
                     ClassroomID = schedule.ClassroomID,
                     TimeSlotID = schedule.TimeSlotID,
+                    SemesterNumber = schedule.SemesterNumber,
                     StudyYearID = schedule.StudyYearID,
                     BranchID = schedule.BranchID,
                     SectionID = schedule.SectionID,
@@ -871,6 +1035,23 @@ namespace University_Timetable_and_Classroom_Management_System
                     StudyYearName = schedule.StudyYear?.YearName ?? "-",
                     BranchName = schedule.Branch?.BranchName ?? "-",
                     SectionName = FormatScheduleSection(schedule)
+                };
+            }
+
+            public static ScheduleRow FromDetails(ScheduleDetailsView details)
+            {
+                return new ScheduleRow
+                {
+                    ScheduleID = details.ScheduleID,
+                    SemesterNumber = details.SemesterNumber,
+                    DayOfWeek = details.DayOfWeek,
+                    SubjectName = details.SubjectName,
+                    FacultyMemberName = details.FacultyMemberName,
+                    ClassroomName = details.ClassroomNumber,
+                    TimeSlotName = FormatTimeSlot(details.StartTime, details.EndTime),
+                    StudyYearName = details.YearName,
+                    BranchName = string.IsNullOrWhiteSpace(details.BranchName) ? "-" : details.BranchName,
+                    SectionName = details.SectionName
                 };
             }
         }

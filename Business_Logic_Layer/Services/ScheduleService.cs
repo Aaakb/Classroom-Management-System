@@ -21,6 +21,66 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .ToListAsync();
         }
 
+        public async Task<List<ScheduleDetailsView>> GetScheduleDetailsAsync()
+        {
+            return await GetScheduleDetailsByFiltersAsync(null, null, null, null);
+        }
+
+        public async Task<List<ScheduleDetailsView>> GetScheduleDetailsBySemesterAsync(int semesterNumber)
+        {
+            return await GetScheduleDetailsByFiltersAsync(semesterNumber, null, null, null);
+        }
+
+        public async Task<List<ScheduleDetailsView>> GetScheduleDetailsByFiltersAsync(
+            int? semesterNumber,
+            int? studyYearId,
+            int? branchId,
+            int? sectionId)
+        {
+            await using var context = new AppDbContext();
+            var query = context.ScheduleDetails.AsNoTracking().AsQueryable();
+
+            if (semesterNumber.HasValue)
+            {
+                query = query.Where(schedule => schedule.SemesterNumber == semesterNumber.Value);
+            }
+
+            if (studyYearId.HasValue || branchId.HasValue || sectionId.HasValue)
+            {
+                var scheduleIds = context.Schedules.AsNoTracking().AsQueryable();
+
+                if (studyYearId.HasValue)
+                {
+                    scheduleIds = scheduleIds.Where(schedule => schedule.StudyYearID == studyYearId.Value);
+                }
+
+                if (branchId.HasValue)
+                {
+                    scheduleIds = scheduleIds.Where(schedule => schedule.BranchID == branchId.Value);
+                }
+
+                if (sectionId.HasValue)
+                {
+                    scheduleIds = scheduleIds.Where(schedule => schedule.SectionID == sectionId.Value);
+                }
+
+                query = query.Where(schedule => scheduleIds
+                    .Select(item => item.ScheduleID)
+                    .Contains(schedule.ScheduleID));
+            }
+
+            var rows = await query.ToListAsync();
+
+            return rows
+                .OrderBy(row => StudyYearOrder(row.YearName))
+                .ThenBy(row => row.BranchName)
+                .ThenBy(row => row.SectionName)
+                .ThenBy(row => row.SemesterNumber)
+                .ThenBy(row => DayOrder(row.DayOfWeek))
+                .ThenBy(row => row.StartTime)
+                .ToList();
+        }
+
         public async Task<Schedule?> GetByIdAsync(int id)
         {
             await using var context = new AppDbContext();
@@ -311,6 +371,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Faculty member does not exist.");
             }
 
+            if (!await CanFacultyTeachSubjectAsync(context, schedule.FacultyMemberID, schedule.SubjectID))
+            {
+                throw new ArgumentException("The selected faculty member is not assigned to teach this subject.");
+            }
+
             if (!await context.Classrooms.AnyAsync(c => c.ClassroomID == schedule.ClassroomID))
             {
                 throw new ArgumentException("Classroom does not exist.");
@@ -358,31 +423,45 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static async Task EnsureNoConflictsAsync(AppDbContext context, Schedule schedule, bool isUpdate)
         {
-            var classroomConflict = await context.Schedules.AnyAsync(s =>
+            if (await HasClassroomConflictAsync(context, schedule, isUpdate))
+            {
+                throw new ArgumentException("This classroom is already booked for the selected day and time slot.");
+            }
+
+            if (await HasFacultyConflictAsync(context, schedule, isUpdate))
+            {
+                throw new ArgumentException("This faculty member is already booked for the selected day and time slot.");
+            }
+
+            if (await HasSectionConflictAsync(context, schedule, isUpdate))
+            {
+                throw new ArgumentException("This study year, branch, or section already has a schedule in the selected slot.");
+            }
+        }
+
+        private static async Task<bool> HasClassroomConflictAsync(AppDbContext context, Schedule schedule, bool isUpdate)
+        {
+            return await context.Schedules.AnyAsync(s =>
                 s.ClassroomID == schedule.ClassroomID &&
                 s.SemesterNumber == schedule.SemesterNumber &&
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
+        }
 
-            if (classroomConflict)
-            {
-                throw new ArgumentException("This classroom is already booked for the selected day and time slot.");
-            }
-
-            var facultyConflict = await context.Schedules.AnyAsync(s =>
+        private static async Task<bool> HasFacultyConflictAsync(AppDbContext context, Schedule schedule, bool isUpdate)
+        {
+            return await context.Schedules.AnyAsync(s =>
                 s.FacultyMemberID == schedule.FacultyMemberID &&
                 s.SemesterNumber == schedule.SemesterNumber &&
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
+        }
 
-            if (facultyConflict)
-            {
-                throw new ArgumentException("This faculty member is already booked for the selected day and time slot.");
-            }
-
-            var cohortConflict = await context.Schedules.AnyAsync(s =>
+        private static async Task<bool> HasSectionConflictAsync(AppDbContext context, Schedule schedule, bool isUpdate)
+        {
+            return await context.Schedules.AnyAsync(s =>
                 s.StudyYearID == schedule.StudyYearID &&
                 s.BranchID == schedule.BranchID &&
                 s.SectionID == schedule.SectionID &&
@@ -390,11 +469,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 s.TimeSlotID == schedule.TimeSlotID &&
                 s.DayOfWeek == schedule.DayOfWeek &&
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
+        }
 
-            if (cohortConflict)
-            {
-                throw new ArgumentException("This study year, branch, or section already has a schedule in the selected slot.");
-            }
+        private static async Task<bool> CanFacultyTeachSubjectAsync(
+            AppDbContext context,
+            int facultyMemberId,
+            int subjectId)
+        {
+            return await context.FacultyMemberSubjects.AnyAsync(assignment =>
+                assignment.FacultyMemberID == facultyMemberId &&
+                assignment.SubjectID == subjectId);
         }
 
         private static bool HasScheduleConflict(IEnumerable<Schedule> schedules, Schedule candidate)
@@ -429,6 +513,31 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             return Math.Max(1, (int)Math.Ceiling(hours));
+        }
+
+        private static int StudyYearOrder(string yearName)
+        {
+            return yearName.Trim().ToLowerInvariant() switch
+            {
+                "first year" => 1,
+                "second year" => 2,
+                "third year" => 3,
+                "fourth year" => 4,
+                _ => 99
+            };
+        }
+
+        private static int DayOrder(string day)
+        {
+            return day.Trim().ToLowerInvariant() switch
+            {
+                "sunday" => 1,
+                "monday" => 2,
+                "tuesday" => 3,
+                "wednesday" => 4,
+                "thursday" => 5,
+                _ => 99
+            };
         }
     }
 
