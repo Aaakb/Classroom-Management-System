@@ -21,6 +21,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<StudyYear> AddAsync(StudyYear studyYear)
         {
             await using var context = new AppDbContext();
+            studyYear.StudyYearID = await AutoKeyGenerator.NextAsync(context.StudyYears.Select(sy => sy.StudyYearID));
             await ValidateAsync(context, studyYear, false);
             await context.StudyYears.AddAsync(studyYear);
             await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[StudyYears]");

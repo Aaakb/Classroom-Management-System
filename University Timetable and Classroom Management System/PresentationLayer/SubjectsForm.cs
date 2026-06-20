@@ -23,6 +23,7 @@ namespace University_Timetable_and_Classroom_Management_System
         public SubjectsForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureSubjectsGrid();
             ConfigureSubjectFilters();
@@ -54,6 +55,13 @@ namespace University_Timetable_and_Classroom_Management_System
             colPracticalHours.DataPropertyName = nameof(SubjectRow.PracticalHours);
             colCreditUnits.DataPropertyName = nameof(SubjectRow.CreditUnits);
             colRequirementType.DataPropertyName = nameof(SubjectRow.RequirementType);
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtSubjectId.ReadOnly = true;
+            txtSubjectId.TabStop = false;
+            txtSubjectId.PlaceholderText = "Auto";
         }
 
         private void ConfigureSubjectsEvents()
@@ -194,7 +202,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddSubjectAsync()
         {
-            if (!TryBuildSubject(out var subject))
+            if (!TryBuildSubject(out var subject, requireId: false))
             {
                 return;
             }
@@ -261,7 +269,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildSubject(out Subject subject)
+        private bool TryBuildSubject(out Subject subject, bool requireId = true)
         {
             subject = new Subject
             {
@@ -271,12 +279,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 RequirementType = cmbRequirementType.Text.Trim()
             };
 
-            if (!TryGetSubjectIdFromEditor(out int subjectId))
+            var subjectId = 0;
+            if (requireId && !TryGetSubjectIdFromEditor(out subjectId))
             {
                 return false;
             }
 
-            subject.SubjectID = subjectId;
+            subject.SubjectID = requireId ? subjectId : 0;
 
             if (string.IsNullOrWhiteSpace(subject.SubjectName))
             {
@@ -350,7 +359,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid subject ID.");
+            ShowInformation("Select a subject row first.");
             txtSubjectId.Focus();
             return false;
         }
@@ -434,7 +443,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearSubjectForm()
         {
-            txtSubjectId.Clear();
+            txtSubjectId.Text = "Auto";
             txtSubjectName.Clear();
             ClearCombo(cmbStudyYear);
             ClearCombo(cmbBranch);
@@ -445,8 +454,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtPracticalHours.Clear();
             txtCreditUnits.Clear();
             dgvSubjects.ClearSelection();
-            txtSubjectId.Text = GetNextAvailableSubjectId().ToString();
-            txtSubjectId.Focus();
+            txtSubjectName.Focus();
         }
 
         private void ApplyStudyYearRulesToEditor()
@@ -520,19 +528,6 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 cmbBranchFilter.SelectedIndex = 0;
             }
-        }
-
-        private int GetNextAvailableSubjectId()
-        {
-            var usedIds = subjectRows.Select(row => row.SubjectID).ToHashSet();
-            var nextId = 1;
-
-            while (usedIds.Contains(nextId))
-            {
-                nextId++;
-            }
-
-            return nextId;
         }
 
         private static void BindCombo(Guna.UI2.WinForms.Guna2ComboBox combo, IEnumerable<ComboOption> options)

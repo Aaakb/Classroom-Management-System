@@ -10,9 +10,17 @@ namespace University_Timetable_and_Classroom_Management_System
         public StudyYearsForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureStudyYearsGrid();
             ConfigureStudyYearsEvents();
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtStudyYearId.ReadOnly = true;
+            txtStudyYearId.TabStop = false;
+            txtStudyYearId.PlaceholderText = "Auto";
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -64,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddStudyYearAsync()
         {
-            if (!TryBuildStudyYear(out var studyYear))
+            if (!TryBuildStudyYear(out var studyYear, requireId: false))
             {
                 return;
             }
@@ -131,19 +139,20 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildStudyYear(out StudyYear studyYear)
+        private bool TryBuildStudyYear(out StudyYear studyYear, bool requireId = true)
         {
             studyYear = new StudyYear
             {
                 YearName = txtYearName.Text.Trim()
             };
 
-            if (!TryGetStudyYearIdFromEditor(out int studyYearId))
+            var studyYearId = 0;
+            if (requireId && !TryGetStudyYearIdFromEditor(out studyYearId))
             {
                 return false;
             }
 
-            studyYear.StudyYearID = studyYearId;
+            studyYear.StudyYearID = requireId ? studyYearId : 0;
 
             if (!string.IsNullOrWhiteSpace(studyYear.YearName))
             {
@@ -162,8 +171,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid study year ID.");
-            txtStudyYearId.Focus();
+            ShowInformation("Select a study year row first.");
             return false;
         }
 
@@ -220,10 +228,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearStudyYearForm()
         {
-            txtStudyYearId.Clear();
+            txtStudyYearId.Text = "Auto";
             txtYearName.Clear();
             dgvStudyYears.ClearSelection();
-            txtStudyYearId.Focus();
+            txtYearName.Focus();
         }
 
         private void SetStudyYearActionsEnabled(bool enabled)

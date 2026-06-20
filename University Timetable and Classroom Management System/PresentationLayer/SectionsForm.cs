@@ -15,9 +15,17 @@ namespace University_Timetable_and_Classroom_Management_System
         public SectionsForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureSectionsGrid();
             ConfigureSectionsEvents();
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtSectionId.ReadOnly = true;
+            txtSectionId.TabStop = false;
+            txtSectionId.PlaceholderText = "Auto";
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -110,7 +118,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddSectionAsync()
         {
-            if (!TryBuildSection(out var section))
+            if (!TryBuildSection(out var section, requireId: false))
             {
                 return;
             }
@@ -177,7 +185,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildSection(out Section section)
+        private bool TryBuildSection(out Section section, bool requireId = true)
         {
             section = new Section
             {
@@ -186,12 +194,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 BranchID = GetSelectedOptionalId(cmbBranch)
             };
 
-            if (!TryGetSectionIdFromEditor(out int sectionId))
+            var sectionId = 0;
+            if (requireId && !TryGetSectionIdFromEditor(out sectionId))
             {
                 return false;
             }
 
-            section.SectionID = sectionId;
+            section.SectionID = requireId ? sectionId : 0;
 
             if (string.IsNullOrWhiteSpace(section.SectionName))
             {
@@ -245,8 +254,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid section ID.");
-            txtSectionId.Focus();
+            ShowInformation("Select a section row first.");
             return false;
         }
 
@@ -312,7 +320,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearSectionForm()
         {
-            txtSectionId.Clear();
+            txtSectionId.Text = "Auto";
             txtSectionName.Clear();
             txtStudentCount.Clear();
             ClearCombo(cmbStudyYear);
@@ -320,7 +328,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbBranch.Enabled = true;
             txtSectionName.PlaceholderText = "Enter section name";
             dgvSections.ClearSelection();
-            txtSectionId.Focus();
+            txtSectionName.Focus();
         }
 
         private void ApplyStudyYearRulesToEditor()

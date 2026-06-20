@@ -29,6 +29,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<Subject> AddAsync(Subject subject)
         {
             await using var context = new AppDbContext();
+            subject.SubjectID = await AutoKeyGenerator.NextAsync(context.Subjects.Select(s => s.SubjectID));
             await ValidateAsync(context, subject, false);
             await context.Subjects.AddAsync(subject);
             await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Subjects]");

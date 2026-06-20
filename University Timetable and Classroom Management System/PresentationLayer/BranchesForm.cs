@@ -10,9 +10,17 @@ namespace University_Timetable_and_Classroom_Management_System
         public BranchesForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureBranchesGrid();
             ConfigureBranchesEvents();
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtBranchId.ReadOnly = true;
+            txtBranchId.TabStop = false;
+            txtBranchId.PlaceholderText = "Auto";
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -64,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddBranchAsync()
         {
-            if (!TryBuildBranch(out var branch))
+            if (!TryBuildBranch(out var branch, requireId: false))
             {
                 return;
             }
@@ -131,19 +139,20 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildBranch(out Branch branch)
+        private bool TryBuildBranch(out Branch branch, bool requireId = true)
         {
             branch = new Branch
             {
                 BranchName = txtBranchName.Text.Trim()
             };
 
-            if (!TryGetBranchIdFromEditor(out int branchId))
+            var branchId = 0;
+            if (requireId && !TryGetBranchIdFromEditor(out branchId))
             {
                 return false;
             }
 
-            branch.BranchID = branchId;
+            branch.BranchID = requireId ? branchId : 0;
 
             if (!string.IsNullOrWhiteSpace(branch.BranchName))
             {
@@ -162,8 +171,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid branch ID.");
-            txtBranchId.Focus();
+            ShowInformation("Select a branch row first.");
             return false;
         }
 
@@ -220,10 +228,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearBranchForm()
         {
-            txtBranchId.Clear();
+            txtBranchId.Text = "Auto";
             txtBranchName.Clear();
             dgvBranches.ClearSelection();
-            txtBranchId.Focus();
+            txtBranchName.Focus();
         }
 
         private void SetBranchActionsEnabled(bool enabled)

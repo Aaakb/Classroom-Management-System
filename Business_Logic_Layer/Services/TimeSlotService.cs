@@ -21,6 +21,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<TimeSlot> AddAsync(TimeSlot timeSlot)
         {
             await using var context = new AppDbContext();
+            timeSlot.TimeSlotID = await AutoKeyGenerator.NextAsync(context.TimeSlots.Select(t => t.TimeSlotID));
             await ValidateAsync(context, timeSlot, false);
             await context.TimeSlots.AddAsync(timeSlot);
             await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[TimeSlots]");

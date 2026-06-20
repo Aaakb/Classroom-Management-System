@@ -10,9 +10,17 @@ namespace University_Timetable_and_Classroom_Management_System
         public FacultyMembersForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureFacultyMembersGrid();
             ConfigureFacultyMembersEvents();
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtFacultyMemberId.ReadOnly = true;
+            txtFacultyMemberId.TabStop = false;
+            txtFacultyMemberId.PlaceholderText = "Auto";
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -64,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddFacultyMemberAsync()
         {
-            if (!TryBuildFacultyMember(out var facultyMember))
+            if (!TryBuildFacultyMember(out var facultyMember, requireId: false))
             {
                 return;
             }
@@ -131,7 +139,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildFacultyMember(out FacultyMember facultyMember)
+        private bool TryBuildFacultyMember(out FacultyMember facultyMember, bool requireId = true)
         {
             facultyMember = new FacultyMember
             {
@@ -139,12 +147,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 AcademicTitle = cmbAcademicTitle.Text.Trim()
             };
 
-            if (!TryGetFacultyMemberIdFromEditor(out int facultyMemberId))
+            var facultyMemberId = 0;
+            if (requireId && !TryGetFacultyMemberIdFromEditor(out facultyMemberId))
             {
                 return false;
             }
 
-            facultyMember.FacultyMemberID = facultyMemberId;
+            facultyMember.FacultyMemberID = requireId ? facultyMemberId : 0;
 
             if (string.IsNullOrWhiteSpace(facultyMember.FullName))
             {
@@ -168,8 +177,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid faculty member ID.");
-            txtFacultyMemberId.Focus();
+            ShowInformation("Select a faculty member row first.");
             return false;
         }
 
@@ -228,11 +236,11 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearFacultyMemberForm()
         {
-            txtFacultyMemberId.Clear();
+            txtFacultyMemberId.Text = "Auto";
             txtFacultyMemberFullName.Clear();
             cmbAcademicTitle.SelectedIndex = -1;
             dgvFacultyMembers.ClearSelection();
-            txtFacultyMemberId.Focus();
+            txtFacultyMemberFullName.Focus();
         }
 
         private void SetFacultyMemberActionsEnabled(bool enabled)

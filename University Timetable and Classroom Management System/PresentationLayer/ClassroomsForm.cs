@@ -10,9 +10,17 @@ namespace University_Timetable_and_Classroom_Management_System
         public ClassroomsForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureClassroomsGrid();
             ConfigureClassroomsEvents();
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtClassroomId.ReadOnly = true;
+            txtClassroomId.TabStop = false;
+            txtClassroomId.PlaceholderText = "Auto";
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -64,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddClassroomAsync()
         {
-            if (!TryBuildClassroom(out var classroom))
+            if (!TryBuildClassroom(out var classroom, requireId: false))
             {
                 return;
             }
@@ -131,7 +139,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildClassroom(out Classroom classroom)
+        private bool TryBuildClassroom(out Classroom classroom, bool requireId = true)
         {
             classroom = new Classroom
             {
@@ -139,12 +147,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 RoomType = cmbRoomType.Text.Trim()
             };
 
-            if (!TryGetClassroomIdFromEditor(out int classroomId))
+            var classroomId = 0;
+            if (requireId && !TryGetClassroomIdFromEditor(out classroomId))
             {
                 return false;
             }
 
-            classroom.ClassroomID = classroomId;
+            classroom.ClassroomID = requireId ? classroomId : 0;
 
             if (string.IsNullOrWhiteSpace(classroom.ClassroomNumber))
             {
@@ -177,8 +186,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid classroom ID.");
-            txtClassroomId.Focus();
+            ShowInformation("Select a classroom row first.");
             return false;
         }
 
@@ -239,12 +247,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearClassroomForm()
         {
-            txtClassroomId.Clear();
+            txtClassroomId.Text = "Auto";
             txtClassroomNumber.Clear();
             txtCapacity.Clear();
             cmbRoomType.SelectedIndex = -1;
             dgvClassrooms.ClearSelection();
-            txtClassroomId.Focus();
+            txtClassroomNumber.Focus();
         }
 
         private void SetClassroomActionsEnabled(bool enabled)

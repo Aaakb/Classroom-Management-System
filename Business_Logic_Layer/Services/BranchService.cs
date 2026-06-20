@@ -21,6 +21,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<Branch> AddAsync(Branch branch)
         {
             await using var context = new AppDbContext();
+            branch.BranchID = await AutoKeyGenerator.NextAsync(context.Branches.Select(b => b.BranchID));
             await ValidateAsync(context, branch, false);
             await context.Branches.AddAsync(branch);
             await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Branches]");

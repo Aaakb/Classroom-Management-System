@@ -10,9 +10,17 @@ namespace University_Timetable_and_Classroom_Management_System
         public TimeSlotsForm()
         {
             InitializeComponent();
+            ConfigureAutoIdField();
             ConfigureNavigation();
             ConfigureTimeSlotsGrid();
             ConfigureTimeSlotsEvents();
+        }
+
+        private void ConfigureAutoIdField()
+        {
+            txtTimeSlotId.ReadOnly = true;
+            txtTimeSlotId.TabStop = false;
+            txtTimeSlotId.PlaceholderText = "Auto";
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -64,7 +72,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task AddTimeSlotAsync()
         {
-            if (!TryBuildTimeSlot(out var timeSlot))
+            if (!TryBuildTimeSlot(out var timeSlot, requireId: false))
             {
                 return;
             }
@@ -131,7 +139,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
         }
 
-        private bool TryBuildTimeSlot(out TimeSlot timeSlot)
+        private bool TryBuildTimeSlot(out TimeSlot timeSlot, bool requireId = true)
         {
             timeSlot = new TimeSlot
             {
@@ -140,12 +148,13 @@ namespace University_Timetable_and_Classroom_Management_System
                 IsBreak = tglIsBreak.Checked
             };
 
-            if (!TryGetTimeSlotIdFromEditor(out int timeSlotId))
+            var timeSlotId = 0;
+            if (requireId && !TryGetTimeSlotIdFromEditor(out timeSlotId))
             {
                 return false;
             }
 
-            timeSlot.TimeSlotID = timeSlotId;
+            timeSlot.TimeSlotID = requireId ? timeSlotId : 0;
 
             if (timeSlot.EndTime > timeSlot.StartTime)
             {
@@ -164,8 +173,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Enter a valid time slot ID.");
-            txtTimeSlotId.Focus();
+            ShowInformation("Select a time slot row first.");
             return false;
         }
 
@@ -226,12 +234,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ClearTimeSlotForm()
         {
-            txtTimeSlotId.Clear();
+            txtTimeSlotId.Text = "Auto";
             dtpStartTime.Value = DateTime.Today.AddHours(8);
             dtpEndTime.Value = DateTime.Today.AddHours(9);
             tglIsBreak.Checked = false;
             dgvTimeSlots.ClearSelection();
-            txtTimeSlotId.Focus();
+            dtpStartTime.Focus();
         }
 
         private void SetTimeSlotActionsEnabled(bool enabled)
