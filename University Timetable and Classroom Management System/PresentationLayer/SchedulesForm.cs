@@ -37,6 +37,7 @@ namespace University_Timetable_and_Classroom_Management_System
             InitializeComponent();
             ConfigureSemesterFilterControl();
             ConfigureLectureTypeAndGroupControls();
+            ConfigureScheduleCommandText();
             ConfigureNavigation();
             ConfigureScheduleGrid();
             ConfigureScheduleEvents();
@@ -51,6 +52,25 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureNavigation()
         {
             FormNavigation.ConfigureSidebar(this, pnlSidebar, NavigationPage.Schedules);
+        }
+
+        private void ConfigureScheduleCommandText()
+        {
+            btnGenerateSchedule.Text = "Generate";
+            btnClearScheduleForm.Text = "Clear View";
+
+            var toolTip = new ToolTip
+            {
+                AutoPopDelay = 8000,
+                InitialDelay = 500,
+                ReshowDelay = 200,
+                ShowAlways = true
+            };
+
+            toolTip.SetToolTip(btnGenerateSchedule, "Builds a new generated timetable and replaces the current generated records.");
+            toolTip.SetToolTip(btnClearScheduleForm, "Clears the current table view only. Database records are not deleted.");
+            toolTip.SetToolTip(cmbLectureType, "Theory uses the whole section. Practical requires a group.");
+            toolTip.SetToolTip(cmbGroupName, "Available only for practical sessions in first and second year.");
         }
 
         private void ConfigureScheduleGrid()
@@ -303,10 +323,10 @@ namespace University_Timetable_and_Classroom_Management_System
             SetGridColumn(colBranch, "Branch", 92);
             SetGridColumn(colSection, "Section", 66);
             SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 58);
-            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Type", 70);
+            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Lecture Type", 82);
             SetGridColumn(colSubject, "Subject", 148);
             SetGridColumn(colFacultyMember, "Faculty", 132);
-            SetGridColumn(colClassroom, "Room", 78);
+            SetGridColumn(colClassroom, "Room/Lab", 78);
             SetGridColumn(colDayOfWeek, "Day", 74);
             SetGridColumn(colTimeSlot, "Start", 58);
             SetGridColumn(dgvSchedules.Columns["colEndTime"], "End", 58);
@@ -413,6 +433,11 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private async Task GenerateScheduleAsync()
         {
+            if (!ConfirmScheduleGeneration())
+            {
+                return;
+            }
+
             SetScheduleActionsEnabled(false);
 
             try
@@ -429,6 +454,18 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 SetScheduleActionsEnabled(true);
             }
+        }
+
+        private bool ConfirmScheduleGeneration()
+        {
+            var confirmation = MessageBox.Show(
+                this,
+                "Generating a timetable will replace the current generated schedule records. Continue?",
+                "Generate Schedule",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            return confirmation == DialogResult.Yes;
         }
 
         private static string BuildGenerationMessage(ScheduleGenerationResult result)
@@ -611,6 +648,18 @@ namespace University_Timetable_and_Classroom_Management_System
                     ? Color.FromArgb(187, 247, 208)
                     : Color.FromArgb(219, 234, 254);
                 row.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
+
+                if (row.Cells["colSubject"] is DataGridViewCell subjectCell)
+                {
+                    subjectCell.ToolTipText = scheduleRow.SubjectName;
+                }
+
+                if (row.Cells["colLectureType"] is DataGridViewCell typeCell)
+                {
+                    typeCell.ToolTipText = isPractical
+                        ? "Practical session for the selected group."
+                        : "Theory session for the whole section.";
+                }
             }
         }
 
@@ -879,7 +928,7 @@ namespace University_Timetable_and_Classroom_Management_System
             scheduleRows = [];
             ApplyScheduleFilters();
             ClearScheduleForm();
-            ShowInformation("Schedule table cleared from the current view. Database records were not deleted.");
+            ShowInformation("Schedule view cleared. Database records were not deleted.");
         }
 
         private void ClearScheduleForm()
@@ -1358,7 +1407,7 @@ namespace University_Timetable_and_Classroom_Management_System
             public string StudyYearName { get; init; } = string.Empty;
             public string BranchName { get; init; } = string.Empty;
             public string SectionName { get; init; } = string.Empty;
-            public string GroupName { get; init; } = "-";
+            public string GroupName { get; init; } = "All";
             public string LectureType { get; init; } = "Theory";
 
             public static ScheduleRow FromSchedule(Schedule schedule)
@@ -1386,7 +1435,7 @@ namespace University_Timetable_and_Classroom_Management_System
                     StudyYearName = schedule.StudyYear?.YearName ?? "-",
                     BranchName = schedule.Branch?.BranchName ?? "-",
                     SectionName = FormatScheduleSection(schedule),
-                    GroupName = string.IsNullOrWhiteSpace(schedule.GroupName) ? "-" : schedule.GroupName,
+                    GroupName = string.IsNullOrWhiteSpace(schedule.GroupName) ? "All" : schedule.GroupName,
                     LectureType = schedule.LectureType
                 };
             }
@@ -1407,7 +1456,7 @@ namespace University_Timetable_and_Classroom_Management_System
                     StudyYearName = details.YearName,
                     BranchName = string.IsNullOrWhiteSpace(details.BranchName) ? "-" : details.BranchName,
                     SectionName = details.SectionName,
-                    GroupName = string.IsNullOrWhiteSpace(details.GroupName) ? "-" : details.GroupName,
+                    GroupName = string.IsNullOrWhiteSpace(details.GroupName) ? "All" : details.GroupName,
                     LectureType = details.LectureType
                 };
             }
