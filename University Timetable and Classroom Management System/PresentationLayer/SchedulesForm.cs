@@ -853,7 +853,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private void BindSectionFilterCombo(int? studyYearId = null, int? selectedSectionId = null)
         {
             var sections = sectionsLookup
-                .Where(section => !studyYearId.HasValue || section.StudyYearID == studyYearId.Value)
+                .Where(section => SectionMatchesFilter(section, studyYearId, null))
                 .OrderBy(section => section.StudyYearID)
                 .ThenBy(section => section.BranchID ?? 0)
                 .ThenBy(section => section.SectionName)

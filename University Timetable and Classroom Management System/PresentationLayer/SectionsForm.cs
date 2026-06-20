@@ -87,12 +87,25 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             var sections = await sectionService.GetAllAsync();
             dgvSections.DataSource = sections
+                .Where(SectionShouldBeDisplayed)
                 .Select(SectionRow.FromSection)
                 .OrderBy(row => row.StudyYearID)
                 .ThenBy(row => row.BranchID ?? 0)
                 .ThenBy(row => row.SectionName)
                 .ToList();
             dgvSections.ClearSelection();
+        }
+
+        private static bool SectionShouldBeDisplayed(Section section)
+        {
+            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return !section.BranchID.HasValue &&
+                    AcademicStructureRules.GetAllowedSectionNames(section.StudyYearID)
+                        .Contains(section.SectionName.Trim(), StringComparer.OrdinalIgnoreCase);
+            }
+
+            return true;
         }
 
         private async Task AddSectionAsync()

@@ -80,6 +80,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     FROM [Schedules] schedule
                     INNER JOIN SectionMappings mapping ON mapping.[ScheduleID] = schedule.[ScheduleID];
 
+                    DELETE practicalSection
+                    FROM [Sections] practicalSection
+                    WHERE practicalSection.[StudyYearID] IN (1, 2)
+                      AND practicalSection.[BranchID] IS NULL
+                      AND practicalSection.[SectionName] IN (N'A1', N'A2', N'B1', N'B2')
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM [Schedules] schedule
+                          WHERE schedule.[SectionID] = practicalSection.[SectionID]);
+
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_ClassroomID_TimeSlotID' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_ClassroomID_TimeSlotID] ON [Schedules];
 
