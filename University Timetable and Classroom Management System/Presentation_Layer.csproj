@@ -17,4 +17,40 @@
     <ProjectReference Include="..\Business_Logic_Layer\Business_Logic_Layer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="PresentationLayer\BranchesForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\ClassroomsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\DashboardForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\FacultyMembersForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\FacultyMemberSubjectsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\MainShellForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SchedulesForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SectionsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\StudyYearsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SubjectsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\TimeSlotsForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,5 @@
 namespace University_Timetable_and_Classroom_Management_System
 {
-    [System.ComponentModel.DesignerCategory("Code")]
     public partial class MainShellForm : System.Windows.Forms.Form
     {
         private System.Windows.Forms.UserControl? activePage;

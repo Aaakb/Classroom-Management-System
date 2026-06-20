@@ -3,7 +3,6 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System
 {
-    [System.ComponentModel.DesignerCategory("Code")]
     public partial class ClassroomsForm : System.Windows.Forms.UserControl
     {
         private readonly ClassroomService classroomService = new();
