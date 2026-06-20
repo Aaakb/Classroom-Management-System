@@ -49,6 +49,14 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ConfigureScheduleGrid()
         {
             dgvSchedules.AutoGenerateColumns = false;
+            dgvSchedules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvSchedules.BackgroundColor = Color.White;
+            dgvSchedules.BorderStyle = BorderStyle.None;
+            dgvSchedules.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvSchedules.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvSchedules.ColumnHeadersHeight = 40;
+            dgvSchedules.EnableHeadersVisualStyles = false;
+            dgvSchedules.RowTemplate.Height = 36;
             dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
             colScheduleId.DataPropertyName = nameof(ScheduleRow.ScheduleID);
@@ -63,6 +71,7 @@ namespace University_Timetable_and_Classroom_Management_System
             colStudyYear.DataPropertyName = nameof(ScheduleRow.StudyYearName);
             colBranch.DataPropertyName = nameof(ScheduleRow.BranchName);
             colSection.DataPropertyName = nameof(ScheduleRow.SectionName);
+            ApplyScheduleGridColumnLayout();
         }
 
         private void ConfigureSemesterFilterControl()
@@ -190,6 +199,31 @@ namespace University_Timetable_and_Classroom_Management_System
             colDayOfWeek.DisplayIndex = 9;
             colTimeSlot.DisplayIndex = 10;
             dgvSchedules.Columns["colEndTime"].DisplayIndex = 11;
+        }
+
+        private void ApplyScheduleGridColumnLayout()
+        {
+            SetGridColumn(colStudyYear, "Year", 78);
+            SetGridColumn(colBranch, "Branch", 92);
+            SetGridColumn(colSection, "Section", 66);
+            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 58);
+            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Type", 70);
+            SetGridColumn(colSubject, "Subject", 148);
+            SetGridColumn(colFacultyMember, "Faculty", 132);
+            SetGridColumn(colClassroom, "Room", 78);
+            SetGridColumn(colDayOfWeek, "Day", 74);
+            SetGridColumn(colTimeSlot, "Start", 58);
+            SetGridColumn(dgvSchedules.Columns["colEndTime"], "End", 58);
+
+            dgvSchedules.DefaultCellStyle.Padding = new Padding(2, 0, 2, 0);
+            dgvSchedules.ColumnHeadersDefaultCellStyle.Padding = new Padding(2, 0, 2, 0);
+        }
+
+        private static void SetGridColumn(DataGridViewColumn column, string headerText, float fillWeight)
+        {
+            column.HeaderText = headerText;
+            column.FillWeight = fillWeight;
+            column.MinimumWidth = 48;
         }
 
         private void ConfigureScheduleEvents()
@@ -457,6 +491,27 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvSchedules.DataSource = GetFilteredRows().ToList();
             dgvSchedules.ClearSelection();
+            StyleScheduleRows();
+        }
+
+        private void StyleScheduleRows()
+        {
+            foreach (DataGridViewRow row in dgvSchedules.Rows)
+            {
+                if (row.DataBoundItem is not ScheduleRow scheduleRow)
+                {
+                    continue;
+                }
+
+                bool isPractical = scheduleRow.LectureType == "Practical";
+                row.DefaultCellStyle.BackColor = isPractical
+                    ? Color.FromArgb(240, 253, 244)
+                    : Color.White;
+                row.DefaultCellStyle.SelectionBackColor = isPractical
+                    ? Color.FromArgb(187, 247, 208)
+                    : Color.FromArgb(219, 234, 254);
+                row.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
+            }
         }
 
         private void ApplySectionFilterSelection()

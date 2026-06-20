@@ -48,6 +48,38 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     SET [GroupName] = NULL
                     WHERE [LectureType] = N'Theory';
 
+                    ;WITH SectionMappings AS
+                    (
+                        SELECT
+                            schedule.[ScheduleID],
+                            baseSection.[SectionID] AS [BaseSectionID],
+                            currentSection.[SectionName] AS [CurrentSectionName]
+                        FROM [Schedules] schedule
+                        INNER JOIN [Sections] currentSection ON currentSection.[SectionID] = schedule.[SectionID]
+                        INNER JOIN [Sections] baseSection ON
+                            baseSection.[StudyYearID] = schedule.[StudyYearID] AND
+                            baseSection.[BranchID] IS NULL AND
+                            baseSection.[SectionName] =
+                                CASE
+                                    WHEN currentSection.[SectionName] IN (N'A1', N'A2') THEN N'A'
+                                    WHEN currentSection.[SectionName] IN (N'B1', N'B2') THEN N'B'
+                                END
+                        WHERE schedule.[StudyYearID] IN (1, 2)
+                          AND currentSection.[BranchID] IS NULL
+                          AND currentSection.[SectionName] IN (N'A1', N'A2', N'B1', N'B2')
+                    )
+                    UPDATE schedule
+                    SET
+                        [SectionID] = mapping.[BaseSectionID],
+                        [GroupName] =
+                            CASE
+                                WHEN schedule.[LectureType] = N'Practical'
+                                    THEN COALESCE(schedule.[GroupName], mapping.[CurrentSectionName])
+                                ELSE NULL
+                            END
+                    FROM [Schedules] schedule
+                    INNER JOIN SectionMappings mapping ON mapping.[ScheduleID] = schedule.[ScheduleID];
+
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_ClassroomID_TimeSlotID' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_ClassroomID_TimeSlotID] ON [Schedules];
 
@@ -65,6 +97,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_StudyYearID_BranchID_SectionID_TimeSlotID_DayOfWeek' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_StudyYearID_BranchID_SectionID_TimeSlotID_DayOfWeek] ON [Schedules];
+
+                    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_Section_Semester_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
+                        DROP INDEX [UQ_Section_Semester_Time] ON [Schedules];
+
+                    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_Year_Branch_Section_Semester_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
+                        DROP INDEX [IX_Schedules_Year_Branch_Section_Semester_Time] ON [Schedules];
 
                     IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_Classroom_Semester_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
                         AND NOT EXISTS (
@@ -88,19 +126,19 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         AND NOT EXISTS (
                             SELECT 1
                             FROM [Schedules]
-                            GROUP BY [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID]
+                            GROUP BY [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID], [GroupName]
                             HAVING COUNT(*) > 1)
                         CREATE UNIQUE INDEX [UQ_Section_Semester_Time]
-                        ON [Schedules] ([SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID]);
+                        ON [Schedules] ([SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID], [GroupName]);
 
                     IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_Year_Branch_Section_Semester_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
                         AND NOT EXISTS (
                             SELECT 1
                             FROM [Schedules]
-                            GROUP BY [StudyYearID], [BranchID], [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID]
+                            GROUP BY [StudyYearID], [BranchID], [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID], [GroupName]
                             HAVING COUNT(*) > 1)
                         CREATE UNIQUE INDEX [IX_Schedules_Year_Branch_Section_Semester_Time]
-                        ON [Schedules] ([StudyYearID], [BranchID], [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID]);
+                        ON [Schedules] ([StudyYearID], [BranchID], [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID], [GroupName]);
 
                     EXEC(N'
                         CREATE OR ALTER VIEW [dbo].[vw_ScheduleDetails]
@@ -110,8 +148,21 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                             schedule.[SemesterNumber],
                             studyYear.[YearName],
                             branch.[BranchName],
-                            section.[SectionName],
-                            schedule.[GroupName],
+                            CASE
+                                WHEN schedule.[StudyYearID] IN (1, 2) AND section.[SectionName] IN (N''A1'', N''A2'') THEN N''A''
+                                WHEN schedule.[StudyYearID] IN (1, 2) AND section.[SectionName] IN (N''B1'', N''B2'') THEN N''B''
+                                ELSE section.[SectionName]
+                            END AS [SectionName],
+                            CASE
+                                WHEN schedule.[LectureType] = N''Practical''
+                                    THEN COALESCE(
+                                        schedule.[GroupName],
+                                        CASE
+                                            WHEN schedule.[StudyYearID] IN (1, 2) AND section.[SectionName] IN (N''A1'', N''A2'', N''B1'', N''B2'')
+                                                THEN section.[SectionName]
+                                        END)
+                                ELSE NULL
+                            END AS [GroupName],
                             schedule.[LectureType],
                             subject.[SubjectName],
                             faculty.[FullName] AS [FacultyMemberName],

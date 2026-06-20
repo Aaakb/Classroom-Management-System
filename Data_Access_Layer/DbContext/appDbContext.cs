@@ -204,11 +204,11 @@ namespace Data_Access_Layer
                     .IsUnique()
                     .HasDatabaseName("UQ_Faculty_Semester_Time");
 
-                entity.HasIndex(e => new { e.SectionID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID })
+                entity.HasIndex(e => new { e.SectionID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID, e.GroupName })
                     .IsUnique()
                     .HasDatabaseName("UQ_Section_Semester_Time");
 
-                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID })
+                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionID, e.SemesterNumber, e.DayOfWeek, e.TimeSlotID, e.GroupName })
                     .IsUnique()
                     .HasDatabaseName("IX_Schedules_Year_Branch_Section_Semester_Time");
 

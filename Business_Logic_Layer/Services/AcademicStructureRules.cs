@@ -16,9 +16,27 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         {
             return studyYearId switch
             {
-                1 => ["A1", "A2", "B1", "B2"],
-                2 => ["A", "B"],
+                1 or 2 => ["A", "B"],
                 _ => []
+            };
+        }
+
+        public static IReadOnlyList<string> GetAllowedPracticalGroupNames(int studyYearId)
+        {
+            return studyYearId is 1 or 2
+                ? ["A1", "A2", "B1", "B2"]
+                : [];
+        }
+
+        public static string GetBaseSectionName(string sectionOrGroupName)
+        {
+            string value = sectionOrGroupName.Trim();
+
+            return value.ToUpperInvariant() switch
+            {
+                "A1" or "A2" => "A",
+                "B1" or "B2" => "B",
+                _ => value
             };
         }
 
@@ -37,10 +55,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             if (UsesGeneralSections(studyYearId))
             {
                 var allowedNames = GetAllowedSectionNames(studyYearId);
+                string baseSectionName = GetBaseSectionName(sectionName);
 
                 return !subjectBranchId.HasValue &&
                     !sectionBranchId.HasValue &&
-                    allowedNames.Contains(sectionName.Trim(), StringComparer.OrdinalIgnoreCase);
+                    allowedNames.Contains(baseSectionName, StringComparer.OrdinalIgnoreCase);
             }
 
             if (UsesBranches(studyYearId))
