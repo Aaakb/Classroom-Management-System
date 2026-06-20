@@ -740,13 +740,30 @@ namespace University_Timetable_and_Classroom_Management_System
                 (string.IsNullOrWhiteSpace(lectureType) ||
                     lectureType == "All" ||
                     row.LectureType == lectureType) &&
-                (string.IsNullOrWhiteSpace(groupName) ||
-                    groupName == "All" ||
-                    row.GroupName == groupName) &&
+                RowMatchesGroupFilter(row, groupName) &&
                 RowMatchesFacultyFilter(row, facultyId) &&
                 RowMatchesSectionFilter(row, sectionId) &&
                 RowMatchesStudyYearFilter(row, studyYearId) &&
                 (string.IsNullOrWhiteSpace(day) || day == "All days" || row.DayOfWeek == day));
+        }
+
+        private static bool RowMatchesGroupFilter(ScheduleRow row, string? groupName)
+        {
+            if (string.IsNullOrWhiteSpace(groupName) || groupName == "All")
+            {
+                return true;
+            }
+
+            string normalizedGroup = groupName.Trim().ToUpperInvariant();
+
+            if (string.Equals(row.LectureType, "Practical", StringComparison.OrdinalIgnoreCase))
+            {
+                return string.Equals(row.GroupName, normalizedGroup, StringComparison.OrdinalIgnoreCase);
+            }
+
+            string baseSectionName = AcademicStructureRules.GetBaseSectionName(normalizedGroup);
+            return IsFirstOrSecondYear(row.StudyYearName) &&
+                string.Equals(row.SectionName, baseSectionName, StringComparison.OrdinalIgnoreCase);
         }
 
         private bool RowMatchesFacultyFilter(ScheduleRow row, int? facultyId)
@@ -1383,6 +1400,11 @@ namespace University_Timetable_and_Classroom_Management_System
                 "Fourth Year" => 4,
                 _ => 99
             };
+        }
+
+        private static bool IsFirstOrSecondYear(string studyYearName)
+        {
+            return StudyYearOrder(studyYearName) is 1 or 2;
         }
 
         private void ShowInformation(string message)
