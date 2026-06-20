@@ -25,11 +25,18 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSemesterFilter = null!;
         private Guna.UI2.WinForms.Guna2ComboBox cmbLectureTypeFilter = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblLectureTypeFilter = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbGroupFilter = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblGroupFilter = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbLectureType = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblLectureType = null!;
+        private Guna.UI2.WinForms.Guna2ComboBox cmbGroupName = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblGroupName = null!;
 
         public SchedulesForm()
         {
             InitializeComponent();
             ConfigureSemesterFilterControl();
+            ConfigureLectureTypeAndGroupControls();
             ConfigureNavigation();
             ConfigureScheduleGrid();
             ConfigureScheduleEvents();
@@ -81,11 +88,11 @@ namespace University_Timetable_and_Classroom_Management_System
                 BackColor = Color.Transparent,
                 Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(15, 23, 42),
-                Location = new Point(896, 14),
+                Location = new Point(984, 14),
                 Name = "lblSemesterFilter",
-                Size = new Size(83, 17),
+                Size = new Size(55, 17),
                 TabIndex = 8,
-                Text = "Semester filter"
+                Text = "Semester"
             };
 
             cmbSemesterFilter = new Guna.UI2.WinForms.Guna2ComboBox
@@ -99,10 +106,39 @@ namespace University_Timetable_and_Classroom_Management_System
                 Font = new Font("Segoe UI", 10F),
                 ForeColor = Color.FromArgb(15, 23, 42),
                 ItemHeight = 30,
-                Location = new Point(896, 36),
+                Location = new Point(984, 36),
                 Name = "cmbSemesterFilter",
-                Size = new Size(136, 36),
+                Size = new Size(92, 36),
                 TabIndex = 9
+            };
+
+            lblGroupFilter = new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                Location = new Point(896, 14),
+                Name = "lblGroupFilter",
+                Size = new Size(38, 17),
+                TabIndex = 10,
+                Text = "Group"
+            };
+
+            cmbGroupFilter = new Guna.UI2.WinForms.Guna2ComboBox
+            {
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(203, 213, 225),
+                BorderRadius = 8,
+                DrawMode = DrawMode.OwnerDrawFixed,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FocusedColor = Color.FromArgb(37, 99, 235),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                ItemHeight = 30,
+                Location = new Point(896, 36),
+                Name = "cmbGroupFilter",
+                Size = new Size(72, 36),
+                TabIndex = 11
             };
 
             lblLectureTypeFilter = new Guna.UI2.WinForms.Guna2HtmlLabel
@@ -110,11 +146,11 @@ namespace University_Timetable_and_Classroom_Management_System
                 BackColor = Color.Transparent,
                 Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(15, 23, 42),
-                Location = new Point(1052, 14),
+                Location = new Point(1092, 14),
                 Name = "lblLectureTypeFilter",
-                Size = new Size(62, 17),
-                TabIndex = 10,
-                Text = "Type filter"
+                Size = new Size(29, 17),
+                TabIndex = 12,
+                Text = "Type"
             };
 
             cmbLectureTypeFilter = new Guna.UI2.WinForms.Guna2ComboBox
@@ -128,18 +164,78 @@ namespace University_Timetable_and_Classroom_Management_System
                 Font = new Font("Segoe UI", 10F),
                 ForeColor = Color.FromArgb(15, 23, 42),
                 ItemHeight = 30,
-                Location = new Point(1052, 36),
+                Location = new Point(1092, 36),
                 Name = "cmbLectureTypeFilter",
-                Size = new Size(128, 36),
-                TabIndex = 11
+                Size = new Size(88, 36),
+                TabIndex = 13
             };
 
             cmbSemesterFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            cmbGroupFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
             cmbLectureTypeFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            pnlScheduleFilters.Controls.Add(cmbGroupFilter);
+            pnlScheduleFilters.Controls.Add(lblGroupFilter);
             pnlScheduleFilters.Controls.Add(cmbSemesterFilter);
             pnlScheduleFilters.Controls.Add(lblSemesterFilter);
             pnlScheduleFilters.Controls.Add(cmbLectureTypeFilter);
             pnlScheduleFilters.Controls.Add(lblLectureTypeFilter);
+        }
+
+        private void ConfigureLectureTypeAndGroupControls()
+        {
+            lblLectureType = CreateEditorLabel("Lecture Type", new Point(200, 119), "lblLectureType");
+            cmbLectureType = CreateEditorComboBox(new Point(200, 144), "cmbLectureType");
+            cmbLectureType.Items.AddRange(new object[] { "Theory", "Practical" });
+            cmbLectureType.SelectedIndex = 0;
+
+            lblGroupName = CreateEditorLabel("Group", new Point(376, 119), "lblGroupName");
+            cmbGroupName = CreateEditorComboBox(new Point(376, 144), "cmbGroupName");
+            cmbGroupName.Enabled = false;
+
+            pnlScheduleEditor.Controls.Add(cmbGroupName);
+            pnlScheduleEditor.Controls.Add(lblGroupName);
+            pnlScheduleEditor.Controls.Add(cmbLectureType);
+            pnlScheduleEditor.Controls.Add(lblLectureType);
+        }
+
+        private static Guna.UI2.WinForms.Guna2HtmlLabel CreateEditorLabel(
+            string text,
+            Point location,
+            string name)
+        {
+            return new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(51, 65, 85),
+                Location = location,
+                Name = name,
+                Size = new Size(90, 19),
+                Text = text
+            };
+        }
+
+        private static Guna.UI2.WinForms.Guna2ComboBox CreateEditorComboBox(Point location, string name)
+        {
+            var combo = new Guna.UI2.WinForms.Guna2ComboBox
+            {
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(203, 213, 225),
+                BorderRadius = 8,
+                DrawMode = DrawMode.OwnerDrawFixed,
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                FocusedColor = Color.FromArgb(37, 99, 235),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                HoverState = { BorderColor = Color.FromArgb(59, 130, 246) },
+                ItemHeight = 36,
+                Location = location,
+                Name = name,
+                Size = new Size(160, 42)
+            };
+
+            combo.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            return combo;
         }
 
         private void EnsureSemesterColumn()
@@ -247,6 +343,8 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbDayFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbSemesterFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbLectureTypeFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbGroupFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
+            cmbLectureType.SelectedIndexChanged += (_, _) => ApplyLectureTypeSelection();
         }
 
         private async Task RefreshSchedulesAsync()
@@ -293,6 +391,8 @@ namespace University_Timetable_and_Classroom_Management_System
             BindDayCombos();
             BindSemesterFilterCombo();
             BindLectureTypeFilterCombo();
+            BindGroupFilterCombo();
+            BindGroupNameCombo();
         }
 
         private async Task LoadSchedulesAsync()
@@ -572,6 +672,7 @@ namespace University_Timetable_and_Classroom_Management_System
             int? studyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
             int? semesterNumber = GetSelectedOptionalId(cmbSemesterFilter);
             string? lectureType = cmbLectureTypeFilter.SelectedItem is ComboOption option ? option.Text : null;
+            string? groupName = cmbGroupFilter.SelectedItem is ComboOption groupOption ? groupOption.Text : null;
             string? day = cmbDayFilter.SelectedItem as string;
 
             return scheduleRows.Where(row =>
@@ -579,6 +680,9 @@ namespace University_Timetable_and_Classroom_Management_System
                 (string.IsNullOrWhiteSpace(lectureType) ||
                     lectureType == "All" ||
                     row.LectureType == lectureType) &&
+                (string.IsNullOrWhiteSpace(groupName) ||
+                    groupName == "All" ||
+                    row.GroupName == groupName) &&
                 RowMatchesFacultyFilter(row, facultyId) &&
                 RowMatchesSectionFilter(row, sectionId) &&
                 RowMatchesStudyYearFilter(row, studyYearId) &&
@@ -650,6 +754,8 @@ namespace University_Timetable_and_Classroom_Management_System
                 FacultyMemberID = GetSelectedRequiredId(cmbFacultyMember),
                 ClassroomID = GetSelectedRequiredId(cmbClassroom),
                 TimeSlotID = GetSelectedRequiredId(cmbTimeSlot),
+                LectureType = GetSelectedPlainText(cmbLectureType) ?? "Theory",
+                GroupName = GetSelectedPlainText(cmbGroupName),
                 StudyYearID = GetSelectedOptionalId(cmbStudyYear),
                 BranchID = GetSelectedOptionalId(cmbBranch),
                 SectionID = GetSelectedOptionalId(cmbSection)
@@ -759,6 +865,8 @@ namespace University_Timetable_and_Classroom_Management_System
                 BindSectionsCombo(schedule.StudyYearID, schedule.BranchID, schedule.SectionID);
                 BindSubjectsCombo(schedule.StudyYearID, schedule.BranchID, schedule.SubjectID);
                 SelectComboValue(cmbSection, schedule.SectionID);
+                SelectComboText(cmbLectureType, schedule.LectureType);
+                BindGroupNameCombo(schedule.GroupName);
             }
             catch (Exception ex)
             {
@@ -788,6 +896,9 @@ namespace University_Timetable_and_Classroom_Management_System
             BindSectionsCombo();
             BindSubjectsCombo();
             ClearCombo(cmbSection);
+            SelectComboText(cmbLectureType, "Theory");
+            BindGroupNameCombo();
+            ClearCombo(cmbGroupName);
             dgvSchedules.ClearSelection();
         }
 
@@ -885,6 +996,27 @@ namespace University_Timetable_and_Classroom_Management_System
                 "All");
         }
 
+        private void BindGroupFilterCombo()
+        {
+            BindFilterCombo(
+                cmbGroupFilter,
+                GetPracticalGroupNames().Select(group => new ComboOption(null, group)),
+                "All");
+        }
+
+        private void BindGroupNameCombo(string? selectedGroupName = null)
+        {
+            string? currentSelection = selectedGroupName ?? GetSelectedPlainText(cmbGroupName);
+            var section = GetSelectedOptionalId(cmbSection) is int sectionId
+                ? sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId)
+                : null;
+
+            cmbGroupName.Items.Clear();
+            cmbGroupName.Items.AddRange(GetAllowedGroupsForSection(section).Cast<object>().ToArray());
+            SelectComboText(cmbGroupName, currentSelection);
+            ApplyLectureTypeSelection();
+        }
+
         private void ApplySubjectSelection()
         {
             if (isUpdatingScheduleLookups)
@@ -911,6 +1043,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             BindSectionsCombo(subject.StudyYearID, subject.BranchID);
+            BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
         }
 
@@ -939,6 +1072,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             BindSectionsCombo(studyYearId, branchId);
             BindSubjectsCombo(studyYearId, branchId);
+            BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
         }
 
@@ -962,6 +1096,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             BindSectionsCombo(studyYearId, branchId);
             BindSubjectsCombo(studyYearId, branchId);
+            BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
         }
 
@@ -989,7 +1124,23 @@ namespace University_Timetable_and_Classroom_Management_System
             SelectComboValue(cmbBranch, section.BranchID);
             BindSubjectsCombo(section.StudyYearID, section.BranchID, selectedSubjectId);
             cmbBranch.Enabled = !AcademicStructureRules.UsesGeneralSections(section.StudyYearID);
+            BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
+        }
+
+        private void ApplyLectureTypeSelection()
+        {
+            bool isPractical = string.Equals(
+                GetSelectedPlainText(cmbLectureType),
+                "Practical",
+                StringComparison.OrdinalIgnoreCase);
+
+            cmbGroupName.Enabled = isPractical && cmbGroupName.Items.Count > 0;
+
+            if (!isPractical)
+            {
+                ClearCombo(cmbGroupName);
+            }
         }
 
         private static bool SubjectMatchesFilter(Subject subject, int? studyYearId, int? branchId)
@@ -1082,6 +1233,51 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             combo.SelectedIndex = -1;
             combo.Text = string.Empty;
+        }
+
+        private static string? GetSelectedPlainText(Guna.UI2.WinForms.Guna2ComboBox combo)
+        {
+            return combo.SelectedItem?.ToString();
+        }
+
+        private static void SelectComboText(Guna.UI2.WinForms.Guna2ComboBox combo, string? text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                combo.SelectedIndex = -1;
+                return;
+            }
+
+            foreach (var item in combo.Items)
+            {
+                if (string.Equals(item?.ToString(), text, StringComparison.OrdinalIgnoreCase))
+                {
+                    combo.SelectedItem = item;
+                    return;
+                }
+            }
+
+            combo.SelectedIndex = -1;
+        }
+
+        private static IReadOnlyList<string> GetAllowedGroupsForSection(Section? section)
+        {
+            if (section is null || !AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return [];
+            }
+
+            return AcademicStructureRules.GetBaseSectionName(section.SectionName).ToUpperInvariant() switch
+            {
+                "A" => ["A1", "A2"],
+                "B" => ["B1", "B2"],
+                _ => []
+            };
+        }
+
+        private static IReadOnlyList<string> GetPracticalGroupNames()
+        {
+            return ["A1", "A2", "B1", "B2"];
         }
 
         private static string FormatTimeSlot(TimeSlot timeSlot)

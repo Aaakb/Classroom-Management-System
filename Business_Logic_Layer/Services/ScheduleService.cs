@@ -384,8 +384,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             schedule.DayOfWeek = schedule.DayOfWeek.Trim();
-            schedule.LectureType = NormalizeLectureType(schedule.LectureType);
-            schedule.GroupName = NormalizeGroupName(schedule.LectureType, schedule.GroupName);
 
             var subject = await context.Subjects
                 .AsNoTracking()
@@ -434,6 +432,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Section does not exist.");
             }
 
+            EnsureBaseSectionIsUsed(section);
+            NormalizeLectureTypeAndGroup(schedule, section);
+
             if (!IsClassroomCapacityEnough(classroom, section))
             {
                 throw new ArgumentException("The selected classroom capacity is not enough for this section.");
@@ -472,7 +473,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("This faculty member is already booked for the selected day and time slot.");
             }
 
-            if (await HasSectionConflictAsync(context, schedule, isUpdate))
+            if (await HasSectionOrGroupConflictAsync(context, schedule, isUpdate))
             {
                 throw new ArgumentException("This study year, branch, or section already has a schedule in the selected slot.");
             }
@@ -498,7 +499,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 (!isUpdate || s.ScheduleID != schedule.ScheduleID));
         }
 
-        private static async Task<bool> HasSectionConflictAsync(AppDbContext context, Schedule schedule, bool isUpdate)
+        private static async Task<bool> HasSectionOrGroupConflictAsync(AppDbContext context, Schedule schedule, bool isUpdate)
         {
             return await context.Schedules.AnyAsync(s =>
                 s.StudyYearID == schedule.StudyYearID &&
@@ -521,9 +522,76 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 assignment.SubjectID == subjectId);
         }
 
+        private static void EnsureBaseSectionIsUsed(Section section)
+        {
+            if (!AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return;
+            }
+
+            var allowedSections = AcademicStructureRules.GetAllowedSectionNames(section.StudyYearID);
+
+            if (!allowedSections.Contains(section.SectionName.Trim(), StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("A1, A2, B1, and B2 must be stored as practical groups, not as independent sections.");
+            }
+        }
+
         private static bool IsClassroomCapacityEnough(Classroom classroom, Section section)
         {
             return classroom.Capacity >= section.StudentCount;
+        }
+
+        private static void NormalizeLectureTypeAndGroup(Schedule schedule, Section section)
+        {
+            schedule.LectureType = NormalizeLectureType(schedule.LectureType);
+
+            if (schedule.LectureType == "Theory")
+            {
+                schedule.GroupName = null;
+                return;
+            }
+
+            string? normalizedGroupName = string.IsNullOrWhiteSpace(schedule.GroupName)
+                ? null
+                : schedule.GroupName.Trim().ToUpperInvariant();
+
+            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                if (!IsValidGroupForSection(section, normalizedGroupName))
+                {
+                    throw new ArgumentException("Practical sessions for first and second year must use A1/A2 for section A or B1/B2 for section B.");
+                }
+
+                schedule.GroupName = normalizedGroupName;
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(normalizedGroupName))
+            {
+                throw new ArgumentException("Practical group names A1, A2, B1, and B2 are only valid for first and second year sections.");
+            }
+
+            schedule.GroupName = null;
+        }
+
+        private static bool IsValidGroupForSection(Section section, string? groupName)
+        {
+            if (string.IsNullOrWhiteSpace(groupName))
+            {
+                return false;
+            }
+
+            string normalizedGroupName = groupName.Trim().ToUpperInvariant();
+
+            if (!AcademicStructureRules.GetAllowedPracticalGroupNames(section.StudyYearID)
+                .Contains(normalizedGroupName, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            string baseSectionName = AcademicStructureRules.GetBaseSectionName(normalizedGroupName);
+            return string.Equals(baseSectionName, section.SectionName.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         private static string NormalizeLectureType(string? lectureType)
@@ -540,18 +608,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             throw new ArgumentException("Lecture type must be Theory or Practical.");
-        }
-
-        private static string? NormalizeGroupName(string lectureType, string? groupName)
-        {
-            if (lectureType == "Theory")
-            {
-                return null;
-            }
-
-            return string.IsNullOrWhiteSpace(groupName)
-                ? null
-                : groupName.Trim();
         }
 
         private static bool HasScheduleConflict(IEnumerable<Schedule> schedules, Schedule candidate)
