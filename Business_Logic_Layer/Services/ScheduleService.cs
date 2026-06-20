@@ -114,6 +114,22 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return schedule;
         }
 
+        public bool IsClassroomCapacityEnough(int classroomId, int sectionId)
+        {
+            using var context = new AppDbContext();
+
+            var classroom = context.Classrooms
+                .AsNoTracking()
+                .FirstOrDefault(item => item.ClassroomID == classroomId);
+            var section = context.Sections
+                .AsNoTracking()
+                .FirstOrDefault(item => item.SectionID == sectionId);
+
+            return classroom is not null &&
+                section is not null &&
+                IsClassroomCapacityEnough(classroom, section);
+        }
+
         public async Task DeleteAsync(int id)
         {
             await using var context = new AppDbContext();
@@ -376,7 +392,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("The selected faculty member is not assigned to teach this subject.");
             }
 
-            if (!await context.Classrooms.AnyAsync(c => c.ClassroomID == schedule.ClassroomID))
+            var classroom = await context.Classrooms
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.ClassroomID == schedule.ClassroomID);
+
+            if (classroom is null)
             {
                 throw new ArgumentException("Classroom does not exist.");
             }
@@ -398,6 +418,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             if (section is null)
             {
                 throw new ArgumentException("Section does not exist.");
+            }
+
+            if (!IsClassroomCapacityEnough(classroom, section))
+            {
+                throw new ArgumentException("The selected classroom capacity is not enough for this section.");
             }
 
             if (section.StudyYearID != subject.StudyYearID)
@@ -479,6 +504,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return await context.FacultyMemberSubjects.AnyAsync(assignment =>
                 assignment.FacultyMemberID == facultyMemberId &&
                 assignment.SubjectID == subjectId);
+        }
+
+        private static bool IsClassroomCapacityEnough(Classroom classroom, Section section)
+        {
+            return classroom.Capacity >= section.StudentCount;
         }
 
         private static bool HasScheduleConflict(IEnumerable<Schedule> schedules, Schedule candidate)
