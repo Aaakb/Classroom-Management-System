@@ -18,7 +18,8 @@ namespace Data_Access_Layer
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                "Server=.;Database=UniversityTimetableDB;Trusted_Connection=True;TrustServerCertificate=True;");
+                DatabaseConnection.ConnectionString,
+                sqlOptions => sqlOptions.EnableRetryOnFailure());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -175,9 +176,9 @@ namespace Data_Access_Layer
             {
                 entity.ToTable("Schedules");
                 entity.HasKey(e => e.ScheduleID);
-                entity.HasIndex(e => new { e.ClassroomID, e.TimeSlotID }).IsUnique();
-                entity.HasIndex(e => new { e.FacultyMemberID, e.TimeSlotID }).IsUnique();
-                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.TimeSlotID }).IsUnique();
+                entity.HasIndex(e => new { e.ClassroomID, e.TimeSlotID, e.DayOfWeek }).IsUnique();
+                entity.HasIndex(e => new { e.FacultyMemberID, e.TimeSlotID, e.DayOfWeek }).IsUnique();
+                entity.HasIndex(e => new { e.StudyYearID, e.BranchID, e.SectionID, e.TimeSlotID, e.DayOfWeek }).IsUnique();
 
                 entity.Property(e => e.DayOfWeek)
                     .HasMaxLength(20)
