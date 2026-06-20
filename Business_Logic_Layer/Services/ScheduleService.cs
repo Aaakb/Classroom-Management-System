@@ -163,12 +163,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .AsNoTracking()
                 .ToListAsync();
 
-            var sections = await context.Sections
+            var sections = (await context.Sections
                 .AsNoTracking()
                 .OrderBy(section => section.StudyYearID)
                 .ThenBy(section => section.BranchID)
                 .ThenBy(section => section.SectionName)
-                .ToListAsync();
+                .ToListAsync())
+                .Where(IsSchedulableSection)
+                .ToList();
 
             var classrooms = await context.Classrooms
                 .AsNoTracking()
@@ -232,9 +234,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .OrderByDescending(request => request.Assignment.Subject.StudyYearID)
                 .ThenBy(request => request.Assignment.Subject.BranchID ?? request.Section.BranchID ?? 0)
                 .ThenBy(request => request.Assignment.Subject.SemesterNumber)
-                .ThenBy(request => request.Section.SectionName)
                 .ThenBy(request => request.Assignment.Subject.SubjectName)
                 .ThenBy(request => request.LessonNumber)
+                .ThenBy(request => request.Section.SectionName)
                 .ToList();
 
             foreach (var request in scheduleRequests)
@@ -535,6 +537,18 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             {
                 throw new ArgumentException("A1, A2, B1, and B2 must be stored as practical groups, not as independent sections.");
             }
+        }
+
+        private static bool IsSchedulableSection(Section section)
+        {
+            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            {
+                return !section.BranchID.HasValue &&
+                    AcademicStructureRules.GetAllowedSectionNames(section.StudyYearID)
+                        .Contains(section.SectionName.Trim(), StringComparer.OrdinalIgnoreCase);
+            }
+
+            return true;
         }
 
         private static bool IsClassroomCapacityEnough(Classroom classroom, Section section)
