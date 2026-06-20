@@ -66,9 +66,30 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Student count cannot be negative.");
             }
 
-            if (!await context.StudyYears.AnyAsync(sy => sy.StudyYearID == section.StudyYearID))
+            var studyYear = await context.StudyYears
+                .AsNoTracking()
+                .FirstOrDefaultAsync(sy => sy.StudyYearID == section.StudyYearID);
+
+            if (studyYear is null)
             {
                 throw new ArgumentException("Study year does not exist.");
+            }
+
+            var level = StudyYearRules.ResolveLevel(studyYear.YearName, studyYear.StudyYearID);
+
+            if (level == StudyYearLevel.Unknown)
+            {
+                throw new ArgumentException("Study year must be First, Second, Third, or Fourth year.");
+            }
+
+            if (StudyYearRules.UsesGeneralSections(level) && section.BranchID.HasValue)
+            {
+                throw new ArgumentException("First and second year sections must not be linked to a branch.");
+            }
+
+            if (StudyYearRules.UsesBranches(level) && !section.BranchID.HasValue)
+            {
+                throw new ArgumentException("Third and fourth year sections must be linked to a branch.");
             }
 
             if (section.BranchID.HasValue &&
@@ -78,6 +99,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             section.SectionName = section.SectionName.Trim();
+
+            var allowedSectionNames = StudyYearRules.GetAllowedSectionNames(level);
+
+            if (allowedSectionNames.Count > 0 &&
+                !allowedSectionNames.Contains(section.SectionName, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    $"Allowed section names for this study year are: {StudyYearRules.FormatAllowedSectionNames(level)}.");
+            }
+
             var exists = await context.Sections.AnyAsync(s =>
                 s.StudyYearID == section.StudyYearID &&
                 s.BranchID == section.BranchID &&

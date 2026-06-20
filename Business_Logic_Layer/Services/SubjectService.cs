@@ -76,9 +76,30 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Requirement type is required.");
             }
 
-            if (!await context.StudyYears.AnyAsync(sy => sy.StudyYearID == subject.StudyYearID))
+            var studyYear = await context.StudyYears
+                .AsNoTracking()
+                .FirstOrDefaultAsync(sy => sy.StudyYearID == subject.StudyYearID);
+
+            if (studyYear is null)
             {
                 throw new ArgumentException("Study year does not exist.");
+            }
+
+            var level = StudyYearRules.ResolveLevel(studyYear.YearName, studyYear.StudyYearID);
+
+            if (level == StudyYearLevel.Unknown)
+            {
+                throw new ArgumentException("Study year must be First, Second, Third, or Fourth year.");
+            }
+
+            if (StudyYearRules.UsesGeneralSections(level) && subject.BranchID.HasValue)
+            {
+                throw new ArgumentException("First and second year subjects must be general and not linked to a branch.");
+            }
+
+            if (StudyYearRules.UsesBranches(level) && !subject.BranchID.HasValue)
+            {
+                throw new ArgumentException("Third and fourth year subjects must be linked to a branch.");
             }
 
             if (subject.BranchID.HasValue &&

@@ -4,12 +4,17 @@ using University_Timetable_and_Classroom_Management_System.Models;
 
 namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 {
-    internal class StudyYearService
+    public class StudyYearService
     {
         public async Task<List<StudyYear>> GetAllAsync()
         {
             await using var context = new AppDbContext();
-            return await context.StudyYears.AsNoTracking().ToListAsync();
+            var studyYears = await context.StudyYears.AsNoTracking().ToListAsync();
+
+            return studyYears
+                .OrderBy(sy => StudyYearRules.GetSortOrder(StudyYearRules.ResolveLevel(sy.YearName, sy.StudyYearID)))
+                .ThenBy(sy => sy.YearName)
+                .ToList();
         }
 
         public async Task<StudyYear?> GetByIdAsync(int id)
@@ -53,7 +58,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("Study year name is required.");
             }
 
-            studyYear.YearName = studyYear.YearName.Trim();
+            var level = StudyYearRules.ResolveLevel(studyYear.YearName, studyYear.StudyYearID);
+
+            if (level == StudyYearLevel.Unknown)
+            {
+                throw new ArgumentException("Study year must be First, Second, Third, or Fourth year.");
+            }
+
+            studyYear.YearName = StudyYearRules.GetDisplayName(level);
             var exists = await context.StudyYears.AnyAsync(sy =>
                 sy.YearName == studyYear.YearName && (!isUpdate || sy.StudyYearID != studyYear.StudyYearID));
 
