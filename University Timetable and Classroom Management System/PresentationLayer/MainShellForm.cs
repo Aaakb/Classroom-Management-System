@@ -39,5 +39,120 @@ namespace University_Timetable_and_Classroom_Management_System
 
             base.OnFormClosed(e);
         }
-    }
+    
+        // Code-only UI initialization (merged from former Designer.cs).
+
+        private System.ComponentModel.IContainer components = null!;
+        private Guna.UI2.WinForms.Guna2Panel pnlSidebar;
+        private Guna.UI2.WinForms.Guna2Panel pnlPageHost;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter;
+        private Guna.UI2.WinForms.Guna2Separator separatorSidebar;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components is not null))
+            {
+                components.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            pnlSidebar = new Guna.UI2.WinForms.Guna2Panel();
+            pnlPageHost = new Guna.UI2.WinForms.Guna2Panel();
+            lblSidebarFooter = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            separatorSidebar = new Guna.UI2.WinForms.Guna2Separator();
+            lblSidebarSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            lblApplicationName = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            pnlSidebar.SuspendLayout();
+            SuspendLayout();
+            //
+            // pnlSidebar
+            //
+            pnlSidebar.BackColor = System.Drawing.Color.Transparent;
+            pnlSidebar.Controls.Add(lblSidebarFooter);
+            pnlSidebar.Controls.Add(separatorSidebar);
+            pnlSidebar.Controls.Add(lblSidebarSubtitle);
+            pnlSidebar.Controls.Add(lblApplicationName);
+            pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
+            pnlSidebar.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
+            pnlSidebar.Location = new System.Drawing.Point(0, 0);
+            pnlSidebar.Name = "pnlSidebar";
+            pnlSidebar.Size = new System.Drawing.Size(240, 800);
+            pnlSidebar.TabIndex = 0;
+            //
+            // lblSidebarFooter
+            //
+            lblSidebarFooter.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            lblSidebarFooter.BackColor = System.Drawing.Color.Transparent;
+            lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            lblSidebarFooter.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
+            lblSidebarFooter.Location = new System.Drawing.Point(24, 751);
+            lblSidebarFooter.Name = "lblSidebarFooter";
+            lblSidebarFooter.Size = new System.Drawing.Size(104, 17);
+            lblSidebarFooter.TabIndex = 3;
+            lblSidebarFooter.Text = "Academic system";
+            lblSidebarFooter.Visible = false;
+            //
+            // separatorSidebar
+            //
+            separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
+            separatorSidebar.Location = new System.Drawing.Point(24, 78);
+            separatorSidebar.Name = "separatorSidebar";
+            separatorSidebar.Size = new System.Drawing.Size(192, 10);
+            separatorSidebar.TabIndex = 2;
+            //
+            // lblSidebarSubtitle
+            //
+            lblSidebarSubtitle.BackColor = System.Drawing.Color.Transparent;
+            lblSidebarSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            lblSidebarSubtitle.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
+            lblSidebarSubtitle.Location = new System.Drawing.Point(26, 52);
+            lblSidebarSubtitle.Name = "lblSidebarSubtitle";
+            lblSidebarSubtitle.Size = new System.Drawing.Size(145, 17);
+            lblSidebarSubtitle.TabIndex = 1;
+            lblSidebarSubtitle.Text = "Classroom management";
+            lblSidebarSubtitle.Visible = false;
+            //
+            // lblApplicationName
+            //
+            lblApplicationName.BackColor = System.Drawing.Color.Transparent;
+            lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblApplicationName.ForeColor = System.Drawing.Color.White;
+            lblApplicationName.Location = new System.Drawing.Point(24, 20);
+            lblApplicationName.Name = "lblApplicationName";
+            lblApplicationName.Size = new System.Drawing.Size(188, 32);
+            lblApplicationName.TabIndex = 0;
+            lblApplicationName.Text = "Timetable Studio";
+            //
+            // pnlPageHost
+            //
+            pnlPageHost.BackColor = System.Drawing.Color.FromArgb(245, 247, 251);
+            pnlPageHost.Dock = System.Windows.Forms.DockStyle.Fill;
+            pnlPageHost.Location = new System.Drawing.Point(240, 0);
+            pnlPageHost.Name = "pnlPageHost";
+            pnlPageHost.Size = new System.Drawing.Size(1040, 800);
+            pnlPageHost.TabIndex = 1;
+            //
+            // MainShellForm
+            //
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.Color.FromArgb(245, 247, 251);
+            ClientSize = new System.Drawing.Size(1280, 800);
+            Controls.Add(pnlPageHost);
+            Controls.Add(pnlSidebar);
+            MinimumSize = new System.Drawing.Size(1100, 700);
+            Name = "MainShellForm";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Timetable Studio";
+            pnlSidebar.ResumeLayout(false);
+            pnlSidebar.PerformLayout();
+            ResumeLayout(false);
+        }
+}
 }
