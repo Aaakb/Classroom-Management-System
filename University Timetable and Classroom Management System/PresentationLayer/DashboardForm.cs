@@ -178,9 +178,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSubjectsMetric.SuspendLayout();
             pnlHeader.SuspendLayout();
             SuspendLayout();
-            // 
-            // pnlSidebar
-            // 
             pnlSidebar.BackColor = System.Drawing.Color.Transparent;
             pnlSidebar.Controls.Add(lblSidebarFooter);
             pnlSidebar.Controls.Add(separatorSidebar);
@@ -192,9 +189,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.Name = "pnlSidebar";
             pnlSidebar.Size = new System.Drawing.Size(240, 720);
             pnlSidebar.TabIndex = 0;
-            // 
-            // lblSidebarFooter
-            // 
             lblSidebarFooter.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             lblSidebarFooter.BackColor = System.Drawing.Color.Transparent;
             lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -204,17 +198,11 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarFooter.Size = new System.Drawing.Size(146, 17);
             lblSidebarFooter.TabIndex = 3;
             lblSidebarFooter.Text = "Academic Scheduling Suite";
-            // 
-            // separatorSidebar
-            // 
             separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
             separatorSidebar.Location = new System.Drawing.Point(24, 78);
             separatorSidebar.Name = "separatorSidebar";
             separatorSidebar.Size = new System.Drawing.Size(192, 10);
             separatorSidebar.TabIndex = 2;
-            // 
-            // lblSidebarSubtitle
-            // 
             lblSidebarSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblSidebarSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblSidebarSubtitle.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
@@ -223,9 +211,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarSubtitle.Size = new System.Drawing.Size(130, 17);
             lblSidebarSubtitle.TabIndex = 1;
             lblSidebarSubtitle.Text = "Classroom Management";
-            // 
-            // lblApplicationName
-            // 
             lblApplicationName.BackColor = System.Drawing.Color.Transparent;
             lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblApplicationName.ForeColor = System.Drawing.Color.White;
@@ -234,9 +219,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName.Size = new System.Drawing.Size(206, 33);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "University Timetable";
-            // 
-            // pnlMain
-            // 
             pnlMain.Controls.Add(pnlWorkspace);
             pnlMain.Controls.Add(pnlHeader);
             pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -245,9 +227,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlMain.Name = "pnlMain";
             pnlMain.Size = new System.Drawing.Size(940, 720);
             pnlMain.TabIndex = 1;
-            // 
-            // pnlWorkspace
-            // 
             pnlWorkspace.Controls.Add(pnlQuickStart);
             pnlWorkspace.Controls.Add(pnlDatabaseStatus);
             pnlWorkspace.Controls.Add(pnlSchedulesMetric);
@@ -261,9 +240,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlWorkspace.Padding = new System.Windows.Forms.Padding(28, 24, 28, 28);
             pnlWorkspace.Size = new System.Drawing.Size(940, 632);
             pnlWorkspace.TabIndex = 1;
-            // 
-            // pnlQuickStart
-            // 
             pnlQuickStart.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlQuickStart.BackColor = System.Drawing.Color.Transparent;
             pnlQuickStart.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -276,9 +252,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlQuickStart.Name = "pnlQuickStart";
             pnlQuickStart.Size = new System.Drawing.Size(544, 424);
             pnlQuickStart.TabIndex = 4;
-            // 
-            // lblQuickStartBody
-            // 
             lblQuickStartBody.BackColor = System.Drawing.Color.Transparent;
             lblQuickStartBody.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblQuickStartBody.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -287,9 +260,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblQuickStartBody.Size = new System.Drawing.Size(421, 116);
             lblQuickStartBody.TabIndex = 1;
             lblQuickStartBody.Text = "Checking schedule readiness...";
-            // 
-            // lblQuickStartTitle
-            // 
             lblQuickStartTitle.BackColor = System.Drawing.Color.Transparent;
             lblQuickStartTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblQuickStartTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -298,9 +268,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblQuickStartTitle.Size = new System.Drawing.Size(129, 25);
             lblQuickStartTitle.TabIndex = 0;
             lblQuickStartTitle.Text = "System Guide";
-            // 
-            // pnlDatabaseStatus
-            // 
             pnlDatabaseStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             pnlDatabaseStatus.BackColor = System.Drawing.Color.Transparent;
             pnlDatabaseStatus.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -313,9 +280,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlDatabaseStatus.Name = "pnlDatabaseStatus";
             pnlDatabaseStatus.Size = new System.Drawing.Size(316, 424);
             pnlDatabaseStatus.TabIndex = 5;
-            // 
-            // lblDatabaseStatusValue
-            // 
             lblDatabaseStatusValue.BackColor = System.Drawing.Color.Transparent;
             lblDatabaseStatusValue.Font = new System.Drawing.Font("Segoe UI Semibold", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblDatabaseStatusValue.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -324,9 +288,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblDatabaseStatusValue.Size = new System.Drawing.Size(168, 32);
             lblDatabaseStatusValue.TabIndex = 1;
             lblDatabaseStatusValue.Text = "Checking...";
-            // 
-            // lblDatabaseStatusTitle
-            // 
             lblDatabaseStatusTitle.BackColor = System.Drawing.Color.Transparent;
             lblDatabaseStatusTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblDatabaseStatusTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -335,9 +296,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblDatabaseStatusTitle.Size = new System.Drawing.Size(152, 25);
             lblDatabaseStatusTitle.TabIndex = 0;
             lblDatabaseStatusTitle.Text = "Database Status";
-            // 
-            // pnlSchedulesMetric
-            // 
             pnlSchedulesMetric.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlSchedulesMetric.BackColor = System.Drawing.Color.Transparent;
             pnlSchedulesMetric.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -350,9 +308,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSchedulesMetric.Name = "pnlSchedulesMetric";
             pnlSchedulesMetric.Size = new System.Drawing.Size(215, 132);
             pnlSchedulesMetric.TabIndex = 3;
-            // 
-            // lblSchedulesMetricValue
-            // 
             lblSchedulesMetricValue.BackColor = System.Drawing.Color.Transparent;
             lblSchedulesMetricValue.Font = new System.Drawing.Font("Segoe UI Semibold", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblSchedulesMetricValue.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -361,9 +316,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSchedulesMetricValue.Size = new System.Drawing.Size(31, 43);
             lblSchedulesMetricValue.TabIndex = 1;
             lblSchedulesMetricValue.Text = "--";
-            // 
-            // lblSchedulesMetricTitle
-            // 
             lblSchedulesMetricTitle.BackColor = System.Drawing.Color.Transparent;
             lblSchedulesMetricTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblSchedulesMetricTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -372,9 +324,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSchedulesMetricTitle.Size = new System.Drawing.Size(64, 19);
             lblSchedulesMetricTitle.TabIndex = 0;
             lblSchedulesMetricTitle.Text = "Schedules";
-            // 
-            // pnlClassroomsMetric
-            // 
             pnlClassroomsMetric.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlClassroomsMetric.BackColor = System.Drawing.Color.Transparent;
             pnlClassroomsMetric.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -387,9 +336,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlClassroomsMetric.Name = "pnlClassroomsMetric";
             pnlClassroomsMetric.Size = new System.Drawing.Size(199, 132);
             pnlClassroomsMetric.TabIndex = 2;
-            // 
-            // lblClassroomsMetricValue
-            // 
             lblClassroomsMetricValue.BackColor = System.Drawing.Color.Transparent;
             lblClassroomsMetricValue.Font = new System.Drawing.Font("Segoe UI Semibold", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblClassroomsMetricValue.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -398,9 +344,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblClassroomsMetricValue.Size = new System.Drawing.Size(31, 43);
             lblClassroomsMetricValue.TabIndex = 1;
             lblClassroomsMetricValue.Text = "--";
-            // 
-            // lblClassroomsMetricTitle
-            // 
             lblClassroomsMetricTitle.BackColor = System.Drawing.Color.Transparent;
             lblClassroomsMetricTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblClassroomsMetricTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -409,9 +352,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblClassroomsMetricTitle.Size = new System.Drawing.Size(74, 19);
             lblClassroomsMetricTitle.TabIndex = 0;
             lblClassroomsMetricTitle.Text = "Classrooms";
-            // 
-            // pnlFacultyMetric
-            // 
             pnlFacultyMetric.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlFacultyMetric.BackColor = System.Drawing.Color.Transparent;
             pnlFacultyMetric.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -424,9 +364,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlFacultyMetric.Name = "pnlFacultyMetric";
             pnlFacultyMetric.Size = new System.Drawing.Size(199, 132);
             pnlFacultyMetric.TabIndex = 1;
-            // 
-            // lblFacultyMetricValue
-            // 
             lblFacultyMetricValue.BackColor = System.Drawing.Color.Transparent;
             lblFacultyMetricValue.Font = new System.Drawing.Font("Segoe UI Semibold", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblFacultyMetricValue.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -435,9 +372,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblFacultyMetricValue.Size = new System.Drawing.Size(31, 43);
             lblFacultyMetricValue.TabIndex = 1;
             lblFacultyMetricValue.Text = "--";
-            // 
-            // lblFacultyMetricTitle
-            // 
             lblFacultyMetricTitle.BackColor = System.Drawing.Color.Transparent;
             lblFacultyMetricTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblFacultyMetricTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -446,9 +380,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblFacultyMetricTitle.Size = new System.Drawing.Size(48, 19);
             lblFacultyMetricTitle.TabIndex = 0;
             lblFacultyMetricTitle.Text = "Faculty";
-            // 
-            // pnlSubjectsMetric
-            // 
             pnlSubjectsMetric.BackColor = System.Drawing.Color.Transparent;
             pnlSubjectsMetric.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
             pnlSubjectsMetric.BorderRadius = 8;
@@ -460,9 +391,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSubjectsMetric.Name = "pnlSubjectsMetric";
             pnlSubjectsMetric.Size = new System.Drawing.Size(199, 132);
             pnlSubjectsMetric.TabIndex = 0;
-            // 
-            // lblSubjectsMetricValue
-            // 
             lblSubjectsMetricValue.BackColor = System.Drawing.Color.Transparent;
             lblSubjectsMetricValue.Font = new System.Drawing.Font("Segoe UI Semibold", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblSubjectsMetricValue.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -471,9 +399,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSubjectsMetricValue.Size = new System.Drawing.Size(31, 43);
             lblSubjectsMetricValue.TabIndex = 1;
             lblSubjectsMetricValue.Text = "--";
-            // 
-            // lblSubjectsMetricTitle
-            // 
             lblSubjectsMetricTitle.BackColor = System.Drawing.Color.Transparent;
             lblSubjectsMetricTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblSubjectsMetricTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -482,9 +407,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSubjectsMetricTitle.Size = new System.Drawing.Size(55, 19);
             lblSubjectsMetricTitle.TabIndex = 0;
             lblSubjectsMetricTitle.Text = "Subjects";
-            // 
-            // pnlHeader
-            // 
             pnlHeader.Controls.Add(lblPageSubtitle);
             pnlHeader.Controls.Add(lblPageTitle);
             pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
@@ -493,9 +415,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Size = new System.Drawing.Size(940, 88);
             pnlHeader.TabIndex = 0;
-            // 
-            // lblPageSubtitle
-            // 
             lblPageSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblPageSubtitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblPageSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -504,9 +423,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblPageSubtitle.Size = new System.Drawing.Size(399, 19);
             lblPageSubtitle.TabIndex = 1;
             lblPageSubtitle.Text = "Overview for timetable and classroom management workflows.";
-            // 
-            // lblPageTitle
-            // 
             lblPageTitle.BackColor = System.Drawing.Color.Transparent;
             lblPageTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblPageTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -515,9 +431,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblPageTitle.Size = new System.Drawing.Size(128, 34);
             lblPageTitle.TabIndex = 0;
             lblPageTitle.Text = "Dashboard";
-            // 
-            // DashboardForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.Color.FromArgb(245, 247, 250);

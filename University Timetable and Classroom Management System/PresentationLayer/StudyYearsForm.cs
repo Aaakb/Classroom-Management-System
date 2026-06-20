@@ -297,9 +297,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlStudyYearEditor.SuspendLayout();
             pnlHeader.SuspendLayout();
             SuspendLayout();
-            // 
-            // pnlSidebar
-            // 
             pnlSidebar.BackColor = System.Drawing.Color.Transparent;
             pnlSidebar.Controls.Add(lblSidebarFooter);
             pnlSidebar.Controls.Add(btnNavigationSchedules);
@@ -317,9 +314,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.Name = "pnlSidebar";
             pnlSidebar.Size = new System.Drawing.Size(240, 720);
             pnlSidebar.TabIndex = 0;
-            // 
-            // lblSidebarFooter
-            // 
             lblSidebarFooter.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             lblSidebarFooter.BackColor = System.Drawing.Color.Transparent;
             lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -329,9 +323,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarFooter.Size = new System.Drawing.Size(146, 17);
             lblSidebarFooter.TabIndex = 9;
             lblSidebarFooter.Text = "Academic Scheduling Suite";
-            // 
-            // btnNavigationSchedules
-            // 
             btnNavigationSchedules.BorderRadius = 8;
             btnNavigationSchedules.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationSchedules.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -345,9 +336,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSchedules.Text = "Schedules";
             btnNavigationSchedules.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationSchedules.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationFaculty
-            // 
             btnNavigationFaculty.BorderRadius = 8;
             btnNavigationFaculty.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationFaculty.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -361,9 +349,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationFaculty.Text = "Faculty Members";
             btnNavigationFaculty.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationFaculty.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationClassrooms
-            // 
             btnNavigationClassrooms.BorderRadius = 8;
             btnNavigationClassrooms.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationClassrooms.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -377,9 +362,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationClassrooms.Text = "Classrooms";
             btnNavigationClassrooms.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationClassrooms.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationStudyYears
-            // 
             btnNavigationStudyYears.BorderRadius = 8;
             btnNavigationStudyYears.Checked = true;
             btnNavigationStudyYears.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -394,9 +376,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationStudyYears.Text = "Study Years";
             btnNavigationStudyYears.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationStudyYears.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationBranches
-            // 
             btnNavigationBranches.BorderRadius = 8;
             btnNavigationBranches.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationBranches.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -410,9 +389,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationBranches.Text = "Branches";
             btnNavigationBranches.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationBranches.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationDashboard
-            // 
             btnNavigationDashboard.BorderRadius = 8;
             btnNavigationDashboard.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationDashboard.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -426,17 +402,11 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationDashboard.Text = "Dashboard";
             btnNavigationDashboard.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationDashboard.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // separatorSidebar
-            // 
             separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
             separatorSidebar.Location = new System.Drawing.Point(24, 78);
             separatorSidebar.Name = "separatorSidebar";
             separatorSidebar.Size = new System.Drawing.Size(192, 10);
             separatorSidebar.TabIndex = 2;
-            // 
-            // lblSidebarSubtitle
-            // 
             lblSidebarSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblSidebarSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblSidebarSubtitle.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
@@ -445,9 +415,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarSubtitle.Size = new System.Drawing.Size(130, 17);
             lblSidebarSubtitle.TabIndex = 1;
             lblSidebarSubtitle.Text = "Classroom Management";
-            // 
-            // lblApplicationName
-            // 
             lblApplicationName.BackColor = System.Drawing.Color.Transparent;
             lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblApplicationName.ForeColor = System.Drawing.Color.White;
@@ -456,9 +423,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName.Size = new System.Drawing.Size(206, 33);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "University Timetable";
-            // 
-            // pnlMain
-            // 
             pnlMain.Controls.Add(pnlWorkspace);
             pnlMain.Controls.Add(pnlHeader);
             pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -467,9 +431,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlMain.Name = "pnlMain";
             pnlMain.Size = new System.Drawing.Size(940, 720);
             pnlMain.TabIndex = 1;
-            // 
-            // pnlWorkspace
-            // 
             pnlWorkspace.Controls.Add(pnlStudyYearsTable);
             pnlWorkspace.Controls.Add(pnlStudyYearEditor);
             pnlWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -479,9 +440,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlWorkspace.Padding = new System.Windows.Forms.Padding(28, 24, 28, 28);
             pnlWorkspace.Size = new System.Drawing.Size(940, 632);
             pnlWorkspace.TabIndex = 1;
-            // 
-            // pnlStudyYearsTable
-            // 
             pnlStudyYearsTable.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlStudyYearsTable.BackColor = System.Drawing.Color.Transparent;
             pnlStudyYearsTable.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -495,9 +453,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlStudyYearsTable.Name = "pnlStudyYearsTable";
             pnlStudyYearsTable.Size = new System.Drawing.Size(884, 368);
             pnlStudyYearsTable.TabIndex = 1;
-            // 
-            // dgvStudyYears
-            // 
             dgvStudyYears.AllowUserToAddRows = false;
             dgvStudyYears.AllowUserToDeleteRows = false;
             dgvStudyYears.AllowUserToResizeRows = false;
@@ -542,25 +497,16 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvStudyYears.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             dgvStudyYears.Size = new System.Drawing.Size(836, 266);
             dgvStudyYears.TabIndex = 2;
-            // 
-            // colStudyYearId
-            // 
             colStudyYearId.DataPropertyName = "StudyYearID";
             colStudyYearId.FillWeight = 34F;
             colStudyYearId.HeaderText = "Study Year ID";
             colStudyYearId.Name = "colStudyYearId";
             colStudyYearId.ReadOnly = true;
-            // 
-            // colYearName
-            // 
             colYearName.DataPropertyName = "YearName";
             colYearName.FillWeight = 166F;
             colYearName.HeaderText = "Year Name";
             colYearName.Name = "colYearName";
             colYearName.ReadOnly = true;
-            // 
-            // lblTableSubtitle
-            // 
             lblTableSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblTableSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblTableSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -569,9 +515,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableSubtitle.Size = new System.Drawing.Size(229, 17);
             lblTableSubtitle.TabIndex = 1;
             lblTableSubtitle.Text = "Review and select academic year records.";
-            // 
-            // lblTableTitle
-            // 
             lblTableTitle.BackColor = System.Drawing.Color.Transparent;
             lblTableTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblTableTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -580,9 +523,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableTitle.Size = new System.Drawing.Size(131, 25);
             lblTableTitle.TabIndex = 0;
             lblTableTitle.Text = "Study Years List";
-            // 
-            // pnlStudyYearEditor
-            // 
             pnlStudyYearEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlStudyYearEditor.BackColor = System.Drawing.Color.Transparent;
             pnlStudyYearEditor.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -603,9 +543,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlStudyYearEditor.Name = "pnlStudyYearEditor";
             pnlStudyYearEditor.Size = new System.Drawing.Size(884, 190);
             pnlStudyYearEditor.TabIndex = 0;
-            // 
-            // btnClearStudyYearForm
-            // 
             btnClearStudyYearForm.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnClearStudyYearForm.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
             btnClearStudyYearForm.BorderRadius = 8;
@@ -621,9 +558,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearStudyYearForm.TabIndex = 9;
             btnClearStudyYearForm.Text = "Clear";
             btnClearStudyYearForm.Visible = false;
-            // 
-            // btnDeleteStudyYear
-            // 
             btnDeleteStudyYear.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnDeleteStudyYear.BorderRadius = 8;
             btnDeleteStudyYear.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -636,9 +570,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnDeleteStudyYear.Size = new System.Drawing.Size(108, 38);
             btnDeleteStudyYear.TabIndex = 8;
             btnDeleteStudyYear.Text = "Delete";
-            // 
-            // btnUpdateStudyYear
-            // 
             btnUpdateStudyYear.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnUpdateStudyYear.BorderRadius = 8;
             btnUpdateStudyYear.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -651,9 +582,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnUpdateStudyYear.Size = new System.Drawing.Size(108, 38);
             btnUpdateStudyYear.TabIndex = 7;
             btnUpdateStudyYear.Text = "Update";
-            // 
-            // btnAddStudyYear
-            // 
             btnAddStudyYear.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnAddStudyYear.BorderRadius = 8;
             btnAddStudyYear.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -666,9 +594,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddStudyYear.Size = new System.Drawing.Size(108, 38);
             btnAddStudyYear.TabIndex = 6;
             btnAddStudyYear.Text = "Add";
-            // 
-            // txtYearName
-            // 
             txtYearName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             txtYearName.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
             txtYearName.BorderRadius = 8;
@@ -690,9 +615,6 @@ namespace University_Timetable_and_Classroom_Management_System
             txtYearName.SelectedText = "";
             txtYearName.Size = new System.Drawing.Size(350, 42);
             txtYearName.TabIndex = 5;
-            // 
-            // lblYearName
-            // 
             lblYearName.BackColor = System.Drawing.Color.Transparent;
             lblYearName.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblYearName.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
@@ -701,9 +623,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblYearName.Size = new System.Drawing.Size(67, 19);
             lblYearName.TabIndex = 4;
             lblYearName.Text = "Year Name";
-            // 
-            // txtStudyYearId
-            // 
             txtStudyYearId.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
             txtStudyYearId.BorderRadius = 8;
             txtStudyYearId.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -724,9 +643,6 @@ namespace University_Timetable_and_Classroom_Management_System
             txtStudyYearId.SelectedText = "";
             txtStudyYearId.Size = new System.Drawing.Size(190, 42);
             txtStudyYearId.TabIndex = 3;
-            // 
-            // lblStudyYearId
-            // 
             lblStudyYearId.BackColor = System.Drawing.Color.Transparent;
             lblStudyYearId.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblStudyYearId.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
@@ -735,9 +651,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblStudyYearId.Size = new System.Drawing.Size(83, 19);
             lblStudyYearId.TabIndex = 2;
             lblStudyYearId.Text = "Study Year ID";
-            // 
-            // lblEditorSubtitle
-            // 
             lblEditorSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblEditorSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblEditorSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -746,9 +659,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEditorSubtitle.Size = new System.Drawing.Size(291, 17);
             lblEditorSubtitle.TabIndex = 1;
             lblEditorSubtitle.Text = "Prepare study year details before applying an action.";
-            // 
-            // lblEditorTitle
-            // 
             lblEditorTitle.BackColor = System.Drawing.Color.Transparent;
             lblEditorTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblEditorTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -757,9 +667,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEditorTitle.Size = new System.Drawing.Size(142, 25);
             lblEditorTitle.TabIndex = 0;
             lblEditorTitle.Text = "Study Year Details";
-            // 
-            // pnlHeader
-            // 
             pnlHeader.Controls.Add(lblPageSubtitle);
             pnlHeader.Controls.Add(lblPageTitle);
             pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
@@ -768,9 +675,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Size = new System.Drawing.Size(940, 88);
             pnlHeader.TabIndex = 0;
-            // 
-            // lblPageSubtitle
-            // 
             lblPageSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblPageSubtitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblPageSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -779,9 +683,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblPageSubtitle.Size = new System.Drawing.Size(333, 19);
             lblPageSubtitle.TabIndex = 1;
             lblPageSubtitle.Text = "Manage academic years used across schedules and sections.";
-            // 
-            // lblPageTitle
-            // 
             lblPageTitle.BackColor = System.Drawing.Color.Transparent;
             lblPageTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblPageTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -790,9 +691,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblPageTitle.Size = new System.Drawing.Size(281, 34);
             lblPageTitle.TabIndex = 0;
             lblPageTitle.Text = "Study Years Management";
-            // 
-            // StudyYearsForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.Color.FromArgb(245, 247, 250);

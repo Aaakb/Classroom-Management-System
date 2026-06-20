@@ -15,9 +15,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private static byte[] BuildPdf(IReadOnlyList<SchedulePdfRow> rows)
         {
             var objects = new List<string>();
-            AddObject(objects, string.Empty); // Catalog placeholder.
-            AddObject(objects, string.Empty); // Pages placeholder.
-            AddObject(objects, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+            int catalogObjectId = AddObject(objects, string.Empty);
+            int pagesObjectId = AddObject(objects, string.Empty);
+            int fontObjectId = AddObject(objects, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
 
             var pageObjectIds = new List<int>();
             var rowPages = rows.Count == 0
@@ -32,11 +32,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 int pageObjectId = objects.Count + 1;
                 pageObjectIds.Add(pageObjectId);
                 AddObject(objects,
-                    $"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R >> >> /Contents {contentObjectId} 0 R >>");
+                    $"<< /Type /Page /Parent {pagesObjectId} 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 {fontObjectId} 0 R >> >> /Contents {contentObjectId} 0 R >>");
             }
 
-            objects[0] = "<< /Type /Catalog /Pages 2 0 R >>";
-            objects[1] = $"<< /Type /Pages /Kids [{string.Join(" ", pageObjectIds.Select(id => $"{id} 0 R"))}] /Count {pageObjectIds.Count} >>";
+            objects[catalogObjectId - 1] = $"<< /Type /Catalog /Pages {pagesObjectId} 0 R >>";
+            objects[pagesObjectId - 1] = $"<< /Type /Pages /Kids [{string.Join(" ", pageObjectIds.Select(id => $"{id} 0 R"))}] /Count {pageObjectIds.Count} >>";
 
             return WritePdf(objects);
         }

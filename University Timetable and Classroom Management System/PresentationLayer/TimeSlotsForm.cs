@@ -318,9 +318,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlTimeSlotEditor.SuspendLayout();
             pnlHeader.SuspendLayout();
             SuspendLayout();
-            // 
-            // pnlSidebar
-            // 
             pnlSidebar.BackColor = System.Drawing.Color.Transparent;
             pnlSidebar.Controls.Add(lblSidebarFooter);
             pnlSidebar.Controls.Add(btnNavigationSchedules);
@@ -340,9 +337,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.Name = "pnlSidebar";
             pnlSidebar.Size = new System.Drawing.Size(240, 720);
             pnlSidebar.TabIndex = 0;
-            // 
-            // lblSidebarFooter
-            // 
             lblSidebarFooter.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             lblSidebarFooter.BackColor = System.Drawing.Color.Transparent;
             lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -352,9 +346,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarFooter.Size = new System.Drawing.Size(146, 17);
             lblSidebarFooter.TabIndex = 11;
             lblSidebarFooter.Text = "Academic Scheduling Suite";
-            // 
-            // btnNavigationSchedules
-            // 
             btnNavigationSchedules.BorderRadius = 8;
             btnNavigationSchedules.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationSchedules.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -368,9 +359,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSchedules.Text = "Schedules";
             btnNavigationSchedules.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationSchedules.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationFaculty
-            // 
             btnNavigationFaculty.BorderRadius = 8;
             btnNavigationFaculty.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationFaculty.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -384,9 +372,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationFaculty.Text = "Faculty Members";
             btnNavigationFaculty.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationFaculty.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationTimeSlots
-            // 
             btnNavigationTimeSlots.BorderRadius = 8;
             btnNavigationTimeSlots.Checked = true;
             btnNavigationTimeSlots.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -402,9 +387,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationTimeSlots.Text = "Time Slots";
             btnNavigationTimeSlots.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationTimeSlots.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationClassrooms
-            // 
             btnNavigationClassrooms.BorderRadius = 8;
             btnNavigationClassrooms.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationClassrooms.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -418,9 +400,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationClassrooms.Text = "Classrooms";
             btnNavigationClassrooms.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationClassrooms.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationSubjects
-            // 
             btnNavigationSubjects.BorderRadius = 8;
             btnNavigationSubjects.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationSubjects.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -434,9 +413,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSubjects.Text = "Subjects";
             btnNavigationSubjects.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationSubjects.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationStudyYears
-            // 
             btnNavigationStudyYears.BorderRadius = 8;
             btnNavigationStudyYears.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationStudyYears.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -450,9 +426,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationStudyYears.Text = "Study Years";
             btnNavigationStudyYears.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationStudyYears.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationBranches
-            // 
             btnNavigationBranches.BorderRadius = 8;
             btnNavigationBranches.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationBranches.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -466,9 +439,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationBranches.Text = "Branches";
             btnNavigationBranches.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationBranches.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // btnNavigationDashboard
-            // 
             btnNavigationDashboard.BorderRadius = 8;
             btnNavigationDashboard.Cursor = System.Windows.Forms.Cursors.Hand;
             btnNavigationDashboard.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
@@ -482,17 +452,11 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationDashboard.Text = "Dashboard";
             btnNavigationDashboard.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationDashboard.TextOffset = new System.Drawing.Point(14, 0);
-            // 
-            // separatorSidebar
-            // 
             separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
             separatorSidebar.Location = new System.Drawing.Point(24, 78);
             separatorSidebar.Name = "separatorSidebar";
             separatorSidebar.Size = new System.Drawing.Size(192, 10);
             separatorSidebar.TabIndex = 2;
-            // 
-            // lblSidebarSubtitle
-            // 
             lblSidebarSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblSidebarSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblSidebarSubtitle.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
@@ -501,9 +465,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarSubtitle.Size = new System.Drawing.Size(130, 17);
             lblSidebarSubtitle.TabIndex = 1;
             lblSidebarSubtitle.Text = "Classroom Management";
-            // 
-            // lblApplicationName
-            // 
             lblApplicationName.BackColor = System.Drawing.Color.Transparent;
             lblApplicationName.Font = new System.Drawing.Font("Segoe UI Semibold", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblApplicationName.ForeColor = System.Drawing.Color.White;
@@ -512,9 +473,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName.Size = new System.Drawing.Size(206, 33);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "University Timetable";
-            // 
-            // pnlMain
-            // 
             pnlMain.Controls.Add(pnlWorkspace);
             pnlMain.Controls.Add(pnlHeader);
             pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -523,9 +481,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlMain.Name = "pnlMain";
             pnlMain.Size = new System.Drawing.Size(940, 720);
             pnlMain.TabIndex = 1;
-            // 
-            // pnlWorkspace
-            // 
             pnlWorkspace.Controls.Add(pnlTimeSlotsTable);
             pnlWorkspace.Controls.Add(pnlTimeSlotEditor);
             pnlWorkspace.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -535,9 +490,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlWorkspace.Padding = new System.Windows.Forms.Padding(28, 24, 28, 28);
             pnlWorkspace.Size = new System.Drawing.Size(940, 632);
             pnlWorkspace.TabIndex = 1;
-            // 
-            // pnlTimeSlotsTable
-            // 
             pnlTimeSlotsTable.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlTimeSlotsTable.BackColor = System.Drawing.Color.Transparent;
             pnlTimeSlotsTable.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -551,9 +503,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlTimeSlotsTable.Name = "pnlTimeSlotsTable";
             pnlTimeSlotsTable.Size = new System.Drawing.Size(884, 356);
             pnlTimeSlotsTable.TabIndex = 1;
-            // 
-            // dgvTimeSlots
-            // 
             dgvTimeSlots.AllowUserToAddRows = false;
             dgvTimeSlots.AllowUserToDeleteRows = false;
             dgvTimeSlots.AllowUserToResizeRows = false;
@@ -598,41 +547,26 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvTimeSlots.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             dgvTimeSlots.Size = new System.Drawing.Size(836, 254);
             dgvTimeSlots.TabIndex = 2;
-            // 
-            // colTimeSlotId
-            // 
             colTimeSlotId.DataPropertyName = "TimeSlotID";
             colTimeSlotId.FillWeight = 45F;
             colTimeSlotId.HeaderText = "Time Slot ID";
             colTimeSlotId.Name = "colTimeSlotId";
             colTimeSlotId.ReadOnly = true;
-            // 
-            // colStartTime
-            // 
             colStartTime.DataPropertyName = "StartTime";
             colStartTime.FillWeight = 85F;
             colStartTime.HeaderText = "Start Time";
             colStartTime.Name = "colStartTime";
             colStartTime.ReadOnly = true;
-            // 
-            // colEndTime
-            // 
             colEndTime.DataPropertyName = "EndTime";
             colEndTime.FillWeight = 85F;
             colEndTime.HeaderText = "End Time";
             colEndTime.Name = "colEndTime";
             colEndTime.ReadOnly = true;
-            // 
-            // colIsBreak
-            // 
             colIsBreak.DataPropertyName = "IsBreak";
             colIsBreak.FillWeight = 65F;
             colIsBreak.HeaderText = "Break";
             colIsBreak.Name = "colIsBreak";
             colIsBreak.ReadOnly = true;
-            // 
-            // lblTableSubtitle
-            // 
             lblTableSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblTableSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblTableSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -641,9 +575,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableSubtitle.Size = new System.Drawing.Size(286, 17);
             lblTableSubtitle.TabIndex = 1;
             lblTableSubtitle.Text = "Review lecture and break time slot records.";
-            // 
-            // lblTableTitle
-            // 
             lblTableTitle.BackColor = System.Drawing.Color.Transparent;
             lblTableTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblTableTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -652,9 +583,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableTitle.Size = new System.Drawing.Size(119, 25);
             lblTableTitle.TabIndex = 0;
             lblTableTitle.Text = "Time Slots List";
-            // 
-            // pnlTimeSlotEditor
-            // 
             pnlTimeSlotEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             pnlTimeSlotEditor.BackColor = System.Drawing.Color.Transparent;
             pnlTimeSlotEditor.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
@@ -679,9 +607,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlTimeSlotEditor.Name = "pnlTimeSlotEditor";
             pnlTimeSlotEditor.Size = new System.Drawing.Size(884, 202);
             pnlTimeSlotEditor.TabIndex = 0;
-            // 
-            // btnClearTimeSlotForm
-            // 
             btnClearTimeSlotForm.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnClearTimeSlotForm.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
             btnClearTimeSlotForm.BorderRadius = 8;
@@ -697,9 +622,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnClearTimeSlotForm.TabIndex = 13;
             btnClearTimeSlotForm.Text = "Clear";
             btnClearTimeSlotForm.Visible = false;
-            // 
-            // btnDeleteTimeSlot
-            // 
             btnDeleteTimeSlot.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnDeleteTimeSlot.BorderRadius = 8;
             btnDeleteTimeSlot.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -712,9 +634,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnDeleteTimeSlot.Size = new System.Drawing.Size(108, 38);
             btnDeleteTimeSlot.TabIndex = 12;
             btnDeleteTimeSlot.Text = "Delete";
-            // 
-            // btnUpdateTimeSlot
-            // 
             btnUpdateTimeSlot.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnUpdateTimeSlot.BorderRadius = 8;
             btnUpdateTimeSlot.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -727,9 +646,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnUpdateTimeSlot.Size = new System.Drawing.Size(108, 38);
             btnUpdateTimeSlot.TabIndex = 11;
             btnUpdateTimeSlot.Text = "Update";
-            // 
-            // btnAddTimeSlot
-            // 
             btnAddTimeSlot.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnAddTimeSlot.BorderRadius = 8;
             btnAddTimeSlot.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -742,9 +658,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnAddTimeSlot.Size = new System.Drawing.Size(108, 38);
             btnAddTimeSlot.TabIndex = 10;
             btnAddTimeSlot.Text = "Add";
-            // 
-            // tglIsBreak
-            // 
             tglIsBreak.CheckedState.BorderColor = System.Drawing.Color.FromArgb(37, 99, 235);
             tglIsBreak.CheckedState.FillColor = System.Drawing.Color.FromArgb(37, 99, 235);
             tglIsBreak.CheckedState.InnerBorderColor = System.Drawing.Color.White;
@@ -757,9 +670,6 @@ namespace University_Timetable_and_Classroom_Management_System
             tglIsBreak.UncheckedState.FillColor = System.Drawing.Color.FromArgb(203, 213, 225);
             tglIsBreak.UncheckedState.InnerBorderColor = System.Drawing.Color.White;
             tglIsBreak.UncheckedState.InnerColor = System.Drawing.Color.White;
-            // 
-            // lblIsBreak
-            // 
             lblIsBreak.BackColor = System.Drawing.Color.Transparent;
             lblIsBreak.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblIsBreak.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
@@ -768,9 +678,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblIsBreak.Size = new System.Drawing.Size(50, 19);
             lblIsBreak.TabIndex = 8;
             lblIsBreak.Text = "Is Break";
-            // 
-            // dtpEndTime
-            // 
             dtpEndTime.BorderRadius = 8;
             dtpEndTime.Checked = true;
             dtpEndTime.CustomFormat = "HH:mm";
@@ -782,9 +689,6 @@ namespace University_Timetable_and_Classroom_Management_System
             dtpEndTime.ShowUpDown = true;
             dtpEndTime.Size = new System.Drawing.Size(96, 42);
             dtpEndTime.TabIndex = 7;
-            // 
-            // lblEndTime
-            // 
             lblEndTime.BackColor = System.Drawing.Color.Transparent;
             lblEndTime.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblEndTime.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
@@ -793,9 +697,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEndTime.Size = new System.Drawing.Size(60, 19);
             lblEndTime.TabIndex = 6;
             lblEndTime.Text = "End Time";
-            // 
-            // dtpStartTime
-            // 
             dtpStartTime.BorderRadius = 8;
             dtpStartTime.Checked = true;
             dtpStartTime.CustomFormat = "HH:mm";
@@ -807,9 +708,6 @@ namespace University_Timetable_and_Classroom_Management_System
             dtpStartTime.ShowUpDown = true;
             dtpStartTime.Size = new System.Drawing.Size(96, 42);
             dtpStartTime.TabIndex = 5;
-            // 
-            // lblStartTime
-            // 
             lblStartTime.BackColor = System.Drawing.Color.Transparent;
             lblStartTime.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblStartTime.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
@@ -818,9 +716,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblStartTime.Size = new System.Drawing.Size(64, 19);
             lblStartTime.TabIndex = 4;
             lblStartTime.Text = "Start Time";
-            // 
-            // txtTimeSlotId
-            // 
             txtTimeSlotId.BorderColor = System.Drawing.Color.FromArgb(226, 232, 240);
             txtTimeSlotId.BorderRadius = 8;
             txtTimeSlotId.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -841,9 +736,6 @@ namespace University_Timetable_and_Classroom_Management_System
             txtTimeSlotId.SelectedText = "";
             txtTimeSlotId.Size = new System.Drawing.Size(132, 42);
             txtTimeSlotId.TabIndex = 3;
-            // 
-            // lblTimeSlotId
-            // 
             lblTimeSlotId.BackColor = System.Drawing.Color.Transparent;
             lblTimeSlotId.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblTimeSlotId.ForeColor = System.Drawing.Color.FromArgb(51, 65, 85);
@@ -852,9 +744,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTimeSlotId.Size = new System.Drawing.Size(76, 19);
             lblTimeSlotId.TabIndex = 2;
             lblTimeSlotId.Text = "Time Slot ID";
-            // 
-            // lblEditorSubtitle
-            // 
             lblEditorSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblEditorSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblEditorSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -863,9 +752,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEditorSubtitle.Size = new System.Drawing.Size(288, 17);
             lblEditorSubtitle.TabIndex = 1;
             lblEditorSubtitle.Text = "Prepare time slot details before applying an action.";
-            // 
-            // lblEditorTitle
-            // 
             lblEditorTitle.BackColor = System.Drawing.Color.Transparent;
             lblEditorTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblEditorTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -874,9 +760,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEditorTitle.Size = new System.Drawing.Size(141, 25);
             lblEditorTitle.TabIndex = 0;
             lblEditorTitle.Text = "Time Slot Details";
-            // 
-            // pnlHeader
-            // 
             pnlHeader.Controls.Add(lblPageSubtitle);
             pnlHeader.Controls.Add(lblPageTitle);
             pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
@@ -885,9 +768,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Size = new System.Drawing.Size(940, 88);
             pnlHeader.TabIndex = 0;
-            // 
-            // lblPageSubtitle
-            // 
             lblPageSubtitle.BackColor = System.Drawing.Color.Transparent;
             lblPageSubtitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             lblPageSubtitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
@@ -896,9 +776,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblPageSubtitle.Size = new System.Drawing.Size(333, 19);
             lblPageSubtitle.TabIndex = 1;
             lblPageSubtitle.Text = "Manage lecture and break time ranges used by schedules.";
-            // 
-            // lblPageTitle
-            // 
             lblPageTitle.BackColor = System.Drawing.Color.Transparent;
             lblPageTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             lblPageTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
@@ -907,9 +784,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblPageTitle.Size = new System.Drawing.Size(296, 34);
             lblPageTitle.TabIndex = 0;
             lblPageTitle.Text = "Time Slots Management";
-            // 
-            // TimeSlotsForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
