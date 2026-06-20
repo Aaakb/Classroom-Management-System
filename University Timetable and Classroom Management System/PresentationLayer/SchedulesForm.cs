@@ -37,7 +37,7 @@ namespace University_Timetable_and_Classroom_Management_System
             InitializeComponent();
             ConfigureSemesterFilterControl();
             ConfigureLectureTypeAndGroupControls();
-            ConfigureScheduleCommandText();
+            ConfigureScheduleCommands();
             ConfigureNavigation();
             ConfigureScheduleGrid();
             ConfigureScheduleEvents();
@@ -54,10 +54,16 @@ namespace University_Timetable_and_Classroom_Management_System
             FormNavigation.ConfigureSidebar(this, pnlSidebar, NavigationPage.Schedules);
         }
 
-        private void ConfigureScheduleCommandText()
+        private void ConfigureScheduleCommands()
         {
             btnGenerateSchedule.Text = "Generate";
-            btnClearScheduleForm.Text = "Clear View";
+            btnGenerateSchedule.Location = new Point(24, 204);
+            btnExportSchedulePdf.Location = new Point(168, 204);
+
+            HideUnusedCommandButton(btnAddSchedule);
+            HideUnusedCommandButton(btnUpdateSchedule);
+            HideUnusedCommandButton(btnDeleteSchedule);
+            HideUnusedCommandButton(btnClearScheduleForm);
 
             var toolTip = new ToolTip
             {
@@ -68,9 +74,15 @@ namespace University_Timetable_and_Classroom_Management_System
             };
 
             toolTip.SetToolTip(btnGenerateSchedule, "Builds a new generated timetable and replaces the current generated records.");
-            toolTip.SetToolTip(btnClearScheduleForm, "Clears the current table view only. Database records are not deleted.");
             toolTip.SetToolTip(cmbLectureType, "Theory uses the whole section. Practical requires a group.");
             toolTip.SetToolTip(cmbGroupName, "Available only for practical sessions in first and second year.");
+        }
+
+        private static void HideUnusedCommandButton(Control button)
+        {
+            button.Visible = false;
+            button.Enabled = false;
+            button.TabStop = false;
         }
 
         private void ConfigureScheduleGrid()
@@ -346,10 +358,6 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             btnRefreshSchedule.Click += async (_, _) => await RefreshSchedulesAsync();
             btnGenerateSchedule.Click += async (_, _) => await GenerateScheduleAsync();
-            btnAddSchedule.Click += async (_, _) => await AddScheduleAsync();
-            btnUpdateSchedule.Click += async (_, _) => await UpdateScheduleAsync();
-            btnDeleteSchedule.Click += async (_, _) => await DeleteScheduleAsync();
-            btnClearScheduleForm.Click += (_, _) => ClearGeneratedScheduleTable();
             btnExportSchedulePdf.Click += async (_, _) => await ExportSchedulePdfAsync();
 
             dgvSchedules.SelectionChanged += async (_, _) => await PopulateScheduleEditorFromSelectionAsync();
@@ -955,10 +963,6 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             btnRefreshSchedule.Enabled = enabled;
             btnGenerateSchedule.Enabled = enabled;
-            btnAddSchedule.Enabled = enabled;
-            btnUpdateSchedule.Enabled = enabled;
-            btnDeleteSchedule.Enabled = enabled;
-            btnClearScheduleForm.Enabled = enabled;
             btnExportSchedulePdf.Enabled = enabled;
             dgvSchedules.Enabled = enabled;
         }
