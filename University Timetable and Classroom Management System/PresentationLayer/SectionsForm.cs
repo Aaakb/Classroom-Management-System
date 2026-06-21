@@ -43,7 +43,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvSections.AutoGenerateColumns = false;
             dgvSections.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
+            GridStyle.Apply(dgvSections);
             colSectionId.DataPropertyName = nameof(SectionRow.SectionID);
             colSectionName.DataPropertyName = nameof(SectionRow.SectionName);
             colStudentCount.DataPropertyName = nameof(SectionRow.StudentCount);

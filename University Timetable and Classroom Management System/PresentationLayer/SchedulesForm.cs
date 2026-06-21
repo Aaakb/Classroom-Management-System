@@ -85,7 +85,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.EnableHeadersVisualStyles = false;
             dgvSchedules.RowTemplate.Height = 38;
             dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
+            GridStyle.Apply(dgvSchedules);
             colScheduleId.DataPropertyName = nameof(ScheduleRow.ScheduleID);
             colScheduleId.Visible = false;
             EnsureSemesterColumn();

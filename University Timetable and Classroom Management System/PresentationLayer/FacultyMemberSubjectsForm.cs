@@ -35,7 +35,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvFacultyMemberSubjects.AutoGenerateColumns = false;
             dgvFacultyMemberSubjects.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
+            GridStyle.Apply(dgvFacultyMemberSubjects);
             colFacultyMemberId.DataPropertyName = nameof(AssignmentRow.FacultyMemberID);
             colFacultyMember.DataPropertyName = nameof(AssignmentRow.FacultyMemberName);
             colSubjectId.DataPropertyName = nameof(AssignmentRow.SubjectID);

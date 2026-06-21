@@ -39,6 +39,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvClassrooms.AutoGenerateColumns = false;
             dgvClassrooms.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            GridStyle.Apply(dgvClassrooms);
         }
 
         private void ConfigureClassroomsEvents()

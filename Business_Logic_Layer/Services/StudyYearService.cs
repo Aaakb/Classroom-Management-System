@@ -9,7 +9,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<List<StudyYear>> GetAllAsync()
         {
             await using var context = new AppDbContext();
-            return await context.StudyYears.AsNoTracking().ToListAsync();
+            var studyYears = await context.StudyYears.AsNoTracking().ToListAsync();
+
+            return studyYears
+                .OrderBy(studyYear => AcademicStructureRules.GetStudyYearOrder(studyYear.YearName))
+                .ThenBy(studyYear => studyYear.StudyYearID)
+                .ToList();
         }
 
         public async Task<StudyYear?> GetByIdAsync(int id)

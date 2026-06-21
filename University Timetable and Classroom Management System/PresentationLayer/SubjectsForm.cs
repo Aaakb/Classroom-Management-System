@@ -45,7 +45,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvSubjects.AutoGenerateColumns = false;
             dgvSubjects.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
+            GridStyle.Apply(dgvSubjects);
             colSubjectId.DataPropertyName = nameof(SubjectRow.SubjectID);
             colSubjectName.DataPropertyName = nameof(SubjectRow.SubjectName);
             colStudyYear.DataPropertyName = nameof(SubjectRow.StudyYearName);
@@ -157,9 +157,10 @@ namespace University_Timetable_and_Classroom_Management_System
             var subjects = await subjectService.GetAllAsync();
             subjectRows = subjects
                 .Select(SubjectRow.FromSubject)
-                .OrderBy(row => row.StudyYearID)
+                .OrderBy(row => AcademicStructureRules.GetStudyYearOrder(row.StudyYearName))
                 .ThenBy(row => row.BranchID ?? 0)
                 .ThenBy(row => row.SemesterNumber)
+                .ThenBy(row => row.SubjectID)
                 .ThenBy(row => row.SubjectName)
                 .ToList();
 

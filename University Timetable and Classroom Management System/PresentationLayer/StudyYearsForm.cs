@@ -39,6 +39,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvStudyYears.AutoGenerateColumns = false;
             dgvStudyYears.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            GridStyle.Apply(dgvStudyYears);
         }
 
         private void ConfigureStudyYearsEvents()

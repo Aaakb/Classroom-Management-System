@@ -39,6 +39,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             dgvTimeSlots.AutoGenerateColumns = false;
             dgvTimeSlots.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            GridStyle.Apply(dgvTimeSlots);
             dgvTimeSlots.CellFormatting += FormatTimeSlotCell;
             dgvTimeSlots.DataBindingComplete += (_, _) => ApplyTimeSlotRowStyles();
         }
@@ -302,8 +303,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
                 row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255, 251, 235);
                 row.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(120, 53, 15);
-                row.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(251, 191, 36);
-                row.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+                row.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+                row.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
             }
         }
 

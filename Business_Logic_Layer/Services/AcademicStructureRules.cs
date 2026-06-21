@@ -12,6 +12,18 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return studyYearId >= 3;
         }
 
+        public static int GetStudyYearOrder(string yearName)
+        {
+            return yearName.Trim().ToLowerInvariant() switch
+            {
+                "first year" => 1,
+                "second year" => 2,
+                "third year" => 3,
+                "fourth year" => 4,
+                _ => 99
+            };
+        }
+
         public static IReadOnlyList<string> GetAllowedSectionNames(int studyYearId)
         {
             return studyYearId switch

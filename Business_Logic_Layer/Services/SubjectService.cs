@@ -9,11 +9,18 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<List<Subject>> GetAllAsync()
         {
             await using var context = new AppDbContext();
-            return await context.Subjects
+            var subjects = await context.Subjects
                 .Include(s => s.StudyYear)
                 .Include(s => s.Branch)
                 .AsNoTracking()
                 .ToListAsync();
+
+            return subjects
+                .OrderBy(subject => AcademicStructureRules.GetStudyYearOrder(subject.StudyYear.YearName))
+                .ThenBy(subject => subject.Branch?.BranchName ?? string.Empty)
+                .ThenBy(subject => subject.SemesterNumber)
+                .ThenBy(subject => subject.SubjectID)
+                .ToList();
         }
 
         public async Task<Subject?> GetByIdAsync(int id)
@@ -29,7 +36,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<Subject> AddAsync(Subject subject)
         {
             await using var context = new AppDbContext();
-            subject.SubjectID = await AutoKeyGenerator.NextAsync(context.Subjects.Select(s => s.SubjectID));
+            subject.SubjectID = await AutoKeyGenerator.FirstAvailableAsync(context.Subjects.Select(s => s.SubjectID));
             await ValidateAsync(context, subject, false);
             await context.Subjects.AddAsync(subject);
             await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[Subjects]");
