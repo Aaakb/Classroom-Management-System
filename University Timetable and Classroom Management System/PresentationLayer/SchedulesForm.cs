@@ -1359,13 +1359,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private static string FormatTimeSlot(TimeSlot timeSlot)
         {
-            string label = $"{timeSlot.StartTime:hh\\:mm} - {timeSlot.EndTime:hh\\:mm}";
-            return timeSlot.IsBreak ? $"{label} (Break)" : label;
+            return TimeDisplay.FormatRange(timeSlot.StartTime, timeSlot.EndTime);
         }
 
         private static string FormatTimeSlot(TimeSpan startTime, TimeSpan endTime)
         {
-            return $"{startTime:hh\\:mm} - {endTime:hh\\:mm}";
+            return TimeDisplay.FormatRange(startTime, endTime);
         }
 
         private static string FormatSection(Section section)
@@ -1463,8 +1462,8 @@ namespace University_Timetable_and_Classroom_Management_System
                     FacultyMemberName = schedule.FacultyMember?.FullName ?? "-",
                     ClassroomName = schedule.Classroom?.ClassroomNumber ?? "-",
                     TimeSlotName = timeSlotName,
-                    StartTimeText = schedule.TimeSlot is null ? "-" : $"{schedule.TimeSlot.StartTime:hh\\:mm}",
-                    EndTimeText = schedule.TimeSlot is null ? "-" : $"{schedule.TimeSlot.EndTime:hh\\:mm}",
+                    StartTimeText = schedule.TimeSlot is null ? "-" : TimeDisplay.Format(schedule.TimeSlot.StartTime),
+                    EndTimeText = schedule.TimeSlot is null ? "-" : TimeDisplay.Format(schedule.TimeSlot.EndTime),
                     StudyYearName = schedule.StudyYear?.YearName ?? "-",
                     BranchName = schedule.Branch?.BranchName ?? "-",
                     SectionName = FormatScheduleSection(schedule),
@@ -1484,8 +1483,8 @@ namespace University_Timetable_and_Classroom_Management_System
                     FacultyMemberName = details.FacultyMemberName,
                     ClassroomName = details.ClassroomNumber,
                     TimeSlotName = FormatTimeSlot(details.StartTime, details.EndTime),
-                    StartTimeText = $"{details.StartTime:hh\\:mm}",
-                    EndTimeText = $"{details.EndTime:hh\\:mm}",
+                    StartTimeText = TimeDisplay.Format(details.StartTime),
+                    EndTimeText = TimeDisplay.Format(details.EndTime),
                     StudyYearName = details.YearName,
                     BranchName = string.IsNullOrWhiteSpace(details.BranchName) ? "-" : details.BranchName,
                     SectionName = details.SectionName,

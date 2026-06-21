@@ -6,21 +6,30 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 {
     public class TimeSlotService
     {
+        private static readonly TimeSpan LectureGap = TimeSpan.FromMinutes(10);
+
         public async Task<List<TimeSlot>> GetAllAsync()
         {
             await using var context = new AppDbContext();
-            return await context.TimeSlots.AsNoTracking().ToListAsync();
+            return await context.TimeSlots
+                .AsNoTracking()
+                .Where(t => !t.IsBreak)
+                .OrderBy(t => t.StartTime)
+                .ToListAsync();
         }
 
         public async Task<TimeSlot?> GetByIdAsync(int id)
         {
             await using var context = new AppDbContext();
-            return await context.TimeSlots.AsNoTracking().FirstOrDefaultAsync(t => t.TimeSlotID == id);
+            return await context.TimeSlots
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.TimeSlotID == id && !t.IsBreak);
         }
 
         public async Task<TimeSlot> AddAsync(TimeSlot timeSlot)
         {
             await using var context = new AppDbContext();
+            timeSlot.IsBreak = false;
             timeSlot.TimeSlotID = await AutoKeyGenerator.NextAsync(context.TimeSlots.Select(t => t.TimeSlotID));
             await ValidateAsync(context, timeSlot, false);
             await context.TimeSlots.AddAsync(timeSlot);
@@ -31,6 +40,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<TimeSlot> UpdateAsync(TimeSlot timeSlot)
         {
             await using var context = new AppDbContext();
+            timeSlot.IsBreak = false;
             await ValidateAsync(context, timeSlot, true);
             context.TimeSlots.Update(timeSlot);
             await context.SaveChangesAsync();
@@ -80,6 +90,26 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             if (exists)
             {
                 throw new ArgumentException("Time slot already exists.");
+            }
+
+            if (timeSlot.IsBreak)
+            {
+                return;
+            }
+
+            var lectureSlots = await context.TimeSlots
+                .AsNoTracking()
+                .Where(t => !t.IsBreak && (!isUpdate || t.TimeSlotID != timeSlot.TimeSlotID))
+                .Select(t => new { t.StartTime, t.EndTime })
+                .ToListAsync();
+
+            bool tooCloseToAnotherLecture = lectureSlots.Any(t =>
+                timeSlot.StartTime < t.EndTime + LectureGap &&
+                timeSlot.EndTime + LectureGap > t.StartTime);
+
+            if (tooCloseToAnotherLecture)
+            {
+                throw new ArgumentException("Keep at least 10 minutes between lecture time slots.");
             }
         }
     }
