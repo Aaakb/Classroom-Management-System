@@ -474,7 +474,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteScheduleActionAsync(
                 async () => await scheduleService.AddAsync(schedule),
-                "Schedule added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateScheduleAsync()
@@ -489,7 +489,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteScheduleActionAsync(
                 async () => await scheduleService.UpdateAsync(schedule),
-                "Schedule updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteScheduleAsync()
@@ -502,7 +502,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected schedule?",
+                UiMessages.ConfirmDelete,
                 "Delete Schedule",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -514,7 +514,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteScheduleActionAsync(
                 async () => await scheduleService.DeleteAsync(scheduleId),
-                "Schedule deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteScheduleActionAsync(Func<Task> action, string successMessage)
@@ -719,7 +719,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             if (string.IsNullOrWhiteSpace(schedule.DayOfWeek))
             {
-                ShowInformation("Select a day.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbDayOfWeek.Focus();
                 return false;
             }
@@ -727,13 +727,13 @@ namespace University_Timetable_and_Classroom_Management_System
             if (schedule.SubjectID <= 0 || schedule.FacultyMemberID <= 0 ||
                 schedule.ClassroomID <= 0 || schedule.TimeSlotID <= 0)
             {
-                ShowInformation("Subject, faculty, classroom, and time slot are required.");
+                ShowInformation(UiMessages.RequiredFields);
                 return false;
             }
 
             if (!schedule.SectionID.HasValue)
             {
-                ShowInformation("Section is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbSection.Focus();
                 return false;
             }
@@ -2227,3 +2227,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colSection = null!;
 }
 }
+

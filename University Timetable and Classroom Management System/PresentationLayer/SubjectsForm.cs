@@ -210,7 +210,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteSubjectActionAsync(
                 async () => await subjectService.AddAsync(subject),
-                "Subject added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateSubjectAsync()
@@ -222,7 +222,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteSubjectActionAsync(
                 async () => await subjectService.UpdateAsync(subject),
-                "Subject updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteSubjectAsync()
@@ -234,7 +234,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected subject?",
+                UiMessages.ConfirmDelete,
                 "Delete Subject",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -246,7 +246,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteSubjectActionAsync(
                 async () => await subjectService.DeleteAsync(subjectId),
-                "Subject deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteSubjectActionAsync(Func<Task> action, string successMessage)
@@ -290,14 +290,14 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (string.IsNullOrWhiteSpace(subject.SubjectName))
             {
-                ShowInformation("Subject name is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 txtSubjectName.Focus();
                 return false;
             }
 
             if (subject.StudyYearID <= 0)
             {
-                ShowInformation("Study year is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbStudyYear.Focus();
                 return false;
             }
@@ -309,21 +309,21 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (AcademicStructureRules.UsesBranches(subject.StudyYearID) && !subject.BranchID.HasValue)
             {
-                ShowInformation("Branch is required for third and fourth year subjects.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbBranch.Focus();
                 return false;
             }
 
             if (!int.TryParse(cmbSemester.Text, out int semester) || semester <= 0)
             {
-                ShowInformation("Semester is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbSemester.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(subject.RequirementType))
             {
-                ShowInformation("Requirement type is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbRequirementType.Focus();
                 return false;
             }
@@ -1412,3 +1412,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colRequirementType = null!;
 }
 }
+

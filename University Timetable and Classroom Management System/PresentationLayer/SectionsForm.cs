@@ -125,7 +125,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteSectionActionAsync(
                 async () => await sectionService.AddAsync(section),
-                "Section added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateSectionAsync()
@@ -137,7 +137,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteSectionActionAsync(
                 async () => await sectionService.UpdateAsync(section),
-                "Section updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteSectionAsync()
@@ -149,7 +149,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected section?",
+                UiMessages.ConfirmDelete,
                 "Delete Section",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -161,7 +161,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteSectionActionAsync(
                 async () => await sectionService.DeleteAsync(sectionId),
-                "Section deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteSectionActionAsync(Func<Task> action, string successMessage)
@@ -204,7 +204,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (string.IsNullOrWhiteSpace(section.SectionName))
             {
-                ShowInformation("Section name is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 txtSectionName.Focus();
                 return false;
             }
@@ -218,7 +218,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (section.StudyYearID <= 0)
             {
-                ShowInformation("Study year is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbStudyYear.Focus();
                 return false;
             }
@@ -238,7 +238,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (AcademicStructureRules.UsesBranches(section.StudyYearID) && !section.BranchID.HasValue)
             {
-                ShowInformation("Branch is required for third and fourth year sections.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbBranch.Focus();
                 return false;
             }
@@ -1117,3 +1117,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colBranch = null!;
 }
 }
+

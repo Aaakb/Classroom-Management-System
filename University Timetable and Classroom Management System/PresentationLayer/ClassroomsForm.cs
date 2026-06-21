@@ -80,7 +80,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteClassroomActionAsync(
                 async () => await classroomService.AddAsync(classroom),
-                "Classroom added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateClassroomAsync()
@@ -92,7 +92,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteClassroomActionAsync(
                 async () => await classroomService.UpdateAsync(classroom),
-                "Classroom updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteClassroomAsync()
@@ -104,7 +104,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected classroom?",
+                UiMessages.ConfirmDelete,
                 "Delete Classroom",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -116,7 +116,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteClassroomActionAsync(
                 async () => await classroomService.DeleteAsync(classroomId),
-                "Classroom deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteClassroomActionAsync(Func<Task> action, string successMessage)
@@ -158,7 +158,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (string.IsNullOrWhiteSpace(classroom.ClassroomNumber))
             {
-                ShowInformation("Classroom number is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 txtClassroomNumber.Focus();
                 return false;
             }
@@ -869,3 +869,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colRoomType = null!;
 }
 }
+

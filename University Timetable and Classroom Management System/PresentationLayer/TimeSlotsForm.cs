@@ -81,7 +81,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteTimeSlotActionAsync(
                 async () => await timeSlotService.AddAsync(timeSlot),
-                "Time slot added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateTimeSlotAsync()
@@ -93,7 +93,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteTimeSlotActionAsync(
                 async () => await timeSlotService.UpdateAsync(timeSlot),
-                "Time slot updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteTimeSlotAsync()
@@ -105,7 +105,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected time slot?",
+                UiMessages.ConfirmDelete,
                 "Delete Time Slot",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -117,7 +117,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteTimeSlotActionAsync(
                 async () => await timeSlotService.DeleteAsync(timeSlotId),
-                "Time slot deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteTimeSlotActionAsync(Func<Task> action, string successMessage)
@@ -571,3 +571,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private DataGridViewTextBoxColumn colEndTime = null!;
     }
 }
+

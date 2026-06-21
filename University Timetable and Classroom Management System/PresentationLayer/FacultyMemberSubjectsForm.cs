@@ -110,7 +110,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteAssignmentActionAsync(
                 async () => await assignmentService.AddAsync(assignment),
-                "Teaching assignment added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateAssignmentAsync()
@@ -131,7 +131,7 @@ namespace University_Timetable_and_Classroom_Management_System
                     selectedFacultyMemberId.Value,
                     selectedSubjectId.Value,
                     assignment),
-                "Teaching assignment updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteAssignmentAsync()
@@ -144,7 +144,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected teaching assignment?",
+                UiMessages.ConfirmDelete,
                 "Delete Teaching Assignment",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -156,7 +156,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteAssignmentActionAsync(
                 async () => await assignmentService.DeleteAsync(selectedFacultyMemberId.Value, selectedSubjectId.Value),
-                "Teaching assignment deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteAssignmentActionAsync(Func<Task> action, string successMessage)
@@ -190,14 +190,14 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (assignment.FacultyMemberID <= 0)
             {
-                ShowInformation("Faculty member is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbFacultyMember.Focus();
                 return false;
             }
 
             if (assignment.SubjectID <= 0)
             {
-                ShowInformation("Subject is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 cmbSubject.Focus();
                 return false;
             }
@@ -860,3 +860,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colSubject = null!;
 }
 }
+

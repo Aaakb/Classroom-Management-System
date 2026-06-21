@@ -80,7 +80,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteStudyYearActionAsync(
                 async () => await studyYearService.AddAsync(studyYear),
-                "Study year added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateStudyYearAsync()
@@ -92,7 +92,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteStudyYearActionAsync(
                 async () => await studyYearService.UpdateAsync(studyYear),
-                "Study year updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteStudyYearAsync()
@@ -104,7 +104,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected study year?",
+                UiMessages.ConfirmDelete,
                 "Delete Study Year",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -116,7 +116,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteStudyYearActionAsync(
                 async () => await studyYearService.DeleteAsync(studyYearId),
-                "Study year deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteStudyYearActionAsync(Func<Task> action, string successMessage)
@@ -160,7 +160,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Study year name is required.");
+            ShowInformation(UiMessages.RequiredFields);
             txtYearName.Focus();
             return false;
         }
@@ -734,3 +734,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colYearName = null!;
 }
 }
+

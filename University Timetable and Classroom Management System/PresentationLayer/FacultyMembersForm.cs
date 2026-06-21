@@ -80,7 +80,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteFacultyMemberActionAsync(
                 async () => await facultyMemberService.AddAsync(facultyMember),
-                "Faculty member added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateFacultyMemberAsync()
@@ -92,7 +92,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteFacultyMemberActionAsync(
                 async () => await facultyMemberService.UpdateAsync(facultyMember),
-                "Faculty member updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteFacultyMemberAsync()
@@ -104,7 +104,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected faculty member?",
+                UiMessages.ConfirmDelete,
                 "Delete Faculty Member",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -116,7 +116,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteFacultyMemberActionAsync(
                 async () => await facultyMemberService.DeleteAsync(facultyMemberId),
-                "Faculty member deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteFacultyMemberActionAsync(Func<Task> action, string successMessage)
@@ -158,7 +158,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (string.IsNullOrWhiteSpace(facultyMember.FullName))
             {
-                ShowInformation("Faculty member full name is required.");
+                ShowInformation(UiMessages.RequiredFields);
                 txtFacultyMemberFullName.Focus();
                 return false;
             }
@@ -780,3 +780,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colAcademicTitle = null!;
 }
 }
+

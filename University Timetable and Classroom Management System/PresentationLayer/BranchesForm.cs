@@ -80,7 +80,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteBranchActionAsync(
                 async () => await branchService.AddAsync(branch),
-                "Branch added successfully.");
+                UiMessages.RecordAdded);
         }
 
         private async Task UpdateBranchAsync()
@@ -92,7 +92,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteBranchActionAsync(
                 async () => await branchService.UpdateAsync(branch),
-                "Branch updated successfully.");
+                UiMessages.RecordUpdated);
         }
 
         private async Task DeleteBranchAsync()
@@ -104,7 +104,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var confirmation = MessageBox.Show(
                 this,
-                "Are you sure you want to delete the selected branch?",
+                UiMessages.ConfirmDelete,
                 "Delete Branch",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -116,7 +116,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             await ExecuteBranchActionAsync(
                 async () => await branchService.DeleteAsync(branchId),
-                "Branch deleted successfully.");
+                UiMessages.RecordDeleted);
         }
 
         private async Task ExecuteBranchActionAsync(Func<Task> action, string successMessage)
@@ -160,7 +160,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return true;
             }
 
-            ShowInformation("Branch name is required.");
+            ShowInformation(UiMessages.RequiredFields);
             txtBranchName.Focus();
             return false;
         }
@@ -739,3 +739,4 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colBranchName = null!;
 }
 }
+
