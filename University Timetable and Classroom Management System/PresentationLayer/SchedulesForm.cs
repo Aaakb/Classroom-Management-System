@@ -33,12 +33,19 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2HtmlLabel lblLectureType = null!;
         private Guna.UI2.WinForms.Guna2ComboBox cmbGroupName = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblGroupName = null!;
+        private Guna.UI2.WinForms.Guna2TextBox txtScheduleSearch = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTotalSessionsValue = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblTheorySessionsValue = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblPracticalSessionsValue = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblConflictSessionsValue = null!;
+        private Guna.UI2.WinForms.Guna2HtmlLabel lblConflictStatus = null!;
 
         public SchedulesForm()
         {
             InitializeComponent();
             ConfigureSemesterFilterControl();
             ConfigureLectureTypeAndGroupControls();
+            ConfigureScheduleLayoutEnhancements();
             ConfigureScheduleCommands();
             ConfigureNavigation();
             ConfigureScheduleGrid();
@@ -63,7 +70,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureScheduleCommands()
         {
-            btnGenerateSchedule.Text = "Generate";
+            btnGenerateSchedule.Text = "Generate Timetable";
             btnClearScheduleForm.Text = "Clear View";
 
             var toolTip = new ToolTip
@@ -78,6 +85,8 @@ namespace University_Timetable_and_Classroom_Management_System
             toolTip.SetToolTip(btnClearScheduleForm, "Clears the current table view only. Database records are not deleted.");
             toolTip.SetToolTip(cmbLectureType, "Theory uses the whole section. Practical requires a group.");
             toolTip.SetToolTip(cmbGroupName, "Available only for practical sessions in first and second year.");
+            toolTip.SetToolTip(txtScheduleSearch, "Search the currently loaded schedule view.");
+            toolTip.SetToolTip(lblConflictStatus, "Shows conflicts found in the currently visible rows.");
         }
 
         private void ConfigureScheduleGrid()
@@ -101,8 +110,8 @@ namespace University_Timetable_and_Classroom_Management_System
             colSubject.DataPropertyName = nameof(ScheduleRow.SubjectName);
             colFacultyMember.DataPropertyName = nameof(ScheduleRow.FacultyMemberName);
             colClassroom.DataPropertyName = nameof(ScheduleRow.ClassroomName);
-            colTimeSlot.DataPropertyName = nameof(ScheduleRow.StartTimeText);
-            colTimeSlot.HeaderText = "Start";
+            colTimeSlot.DataPropertyName = nameof(ScheduleRow.TimeSlotName);
+            colTimeSlot.HeaderText = "Time";
             colStudyYear.DataPropertyName = nameof(ScheduleRow.StudyYearName);
             colBranch.DataPropertyName = nameof(ScheduleRow.BranchName);
             colSection.DataPropertyName = nameof(ScheduleRow.SectionName);
@@ -226,6 +235,245 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlScheduleEditor.Controls.Add(lblLectureType);
         }
 
+        private void ConfigureScheduleLayoutEnhancements()
+        {
+            pnlScheduleEditor.Size = new Size(pnlScheduleEditor.Width, 292);
+            pnlScheduleFilters.Location = new Point(28, 330);
+            pnlScheduleFilters.Size = new Size(pnlScheduleFilters.Width, 124);
+            pnlSchedulesTable.Location = new Point(28, 472);
+            pnlSchedulesTable.Size = new Size(pnlSchedulesTable.Width, 232);
+
+            lblEditorTitle.Location = new Point(24, 10);
+            lblEditorSubtitle.Location = new Point(24, 36);
+
+            var basicGroup = CreateScheduleGroupPanel(
+                "Basic Schedule Info",
+                new Point(24, 62),
+                new Size(1156, 84));
+
+            var timeRoomGroup = CreateScheduleGroupPanel(
+                "Time & Room Info",
+                new Point(24, 154),
+                new Size(1156, 74));
+
+            var commandGroup = CreateCommandGroupPanel(new Point(24, 236), new Size(1156, 42));
+
+            pnlScheduleEditor.Controls.Add(basicGroup);
+            pnlScheduleEditor.Controls.Add(timeRoomGroup);
+            pnlScheduleEditor.Controls.Add(commandGroup);
+
+            MoveEditorField(basicGroup, lblSubject, cmbSubject, 16, 24, 188);
+            MoveEditorField(basicGroup, lblFacultyMember, cmbFacultyMember, 216, 24, 188);
+            MoveEditorField(basicGroup, lblStudyYear, cmbStudyYear, 416, 24, 138);
+            MoveEditorField(basicGroup, lblBranch, cmbBranch, 566, 24, 132);
+            MoveEditorField(basicGroup, lblSection, cmbSection, 710, 24, 164);
+            MoveEditorField(basicGroup, lblLectureType, cmbLectureType, 886, 24, 134);
+            MoveEditorField(basicGroup, lblGroupName, cmbGroupName, 1032, 24, 106);
+
+            MoveEditorField(timeRoomGroup, lblDayOfWeek, cmbDayOfWeek, 16, 22, 190);
+            MoveEditorField(timeRoomGroup, lblTimeSlot, cmbTimeSlot, 226, 22, 220);
+            MoveEditorField(timeRoomGroup, lblClassroom, cmbClassroom, 466, 22, 220);
+
+            MoveActionButton(commandGroup, btnAddSchedule, 0, "Operations");
+            MoveActionButton(commandGroup, btnUpdateSchedule, 110);
+            MoveActionButton(commandGroup, btnDeleteSchedule, 220);
+            MoveActionButton(commandGroup, btnClearScheduleForm, 330);
+            MoveActionButton(commandGroup, btnGenerateSchedule, 520, "Tools", 166);
+            MoveActionButton(commandGroup, btnExportSchedulePdf, 698, width: 128);
+            MoveActionButton(commandGroup, btnRefreshSchedule, 838, width: 112);
+
+            lblConflictStatus = new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(22, 101, 52),
+                Location = new Point(970, 14),
+                Name = "lblConflictStatus",
+                Size = new Size(150, 19),
+                Text = "No visible conflicts"
+            };
+            commandGroup.Controls.Add(lblConflictStatus);
+
+            ConfigureFilterLayout();
+            ConfigureScheduleTableHeader();
+        }
+
+        private static Guna.UI2.WinForms.Guna2Panel CreateScheduleGroupPanel(string title, Point location, Size size)
+        {
+            var panel = new Guna.UI2.WinForms.Guna2Panel
+            {
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(226, 232, 240),
+                BorderRadius = 8,
+                BorderThickness = 1,
+                FillColor = Color.FromArgb(248, 250, 252),
+                Location = location,
+                Size = size
+            };
+
+            panel.Controls.Add(new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(24, 38, 62),
+                Location = new Point(16, 5),
+                Text = title
+            });
+
+            return panel;
+        }
+
+        private static Guna.UI2.WinForms.Guna2Panel CreateCommandGroupPanel(Point location, Size size)
+        {
+            return new Guna.UI2.WinForms.Guna2Panel
+            {
+                BackColor = Color.Transparent,
+                FillColor = Color.Transparent,
+                Location = location,
+                Size = size
+            };
+        }
+
+        private static void MoveEditorField(
+            Control parent,
+            Guna.UI2.WinForms.Guna2HtmlLabel label,
+            Guna.UI2.WinForms.Guna2ComboBox combo,
+            int x,
+            int y,
+            int width)
+        {
+            label.Location = new Point(x, y);
+            combo.Location = new Point(x, y + 20);
+            combo.Size = new Size(width, 34);
+            combo.ItemHeight = 28;
+            parent.Controls.Add(label);
+            parent.Controls.Add(combo);
+        }
+
+        private static void MoveActionButton(
+            Control parent,
+            Guna.UI2.WinForms.Guna2Button button,
+            int x,
+            string? groupTitle = null,
+            int width = 100)
+        {
+            if (!string.IsNullOrWhiteSpace(groupTitle))
+            {
+                parent.Controls.Add(new Guna.UI2.WinForms.Guna2HtmlLabel
+                {
+                    BackColor = Color.Transparent,
+                    Font = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(100, 116, 139),
+                    Location = new Point(x, -1),
+                    Text = groupTitle
+                });
+            }
+
+            button.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            button.Location = new Point(x, 16);
+            button.Size = new Size(width, 30);
+            parent.Controls.Add(button);
+        }
+
+        private void ConfigureFilterLayout()
+        {
+            MoveFilterField(lblFacultyFilter, cmbFacultyFilter, 24, 12, 260);
+            MoveFilterField(lblSectionFilter, cmbSectionFilter, 308, 12, 280);
+            MoveFilterField(lblStudyYearFilter, cmbStudyYearFilter, 612, 12, 220);
+            MoveFilterField(lblDayFilter, cmbDayFilter, 24, 68, 220);
+            MoveFilterField(lblGroupFilter, cmbGroupFilter, 268, 68, 160);
+            MoveFilterField(lblSemesterFilter, cmbSemesterFilter, 452, 68, 180);
+            MoveFilterField(lblLectureTypeFilter, cmbLectureTypeFilter, 656, 68, 180);
+        }
+
+        private static void MoveFilterField(
+            Guna.UI2.WinForms.Guna2HtmlLabel label,
+            Guna.UI2.WinForms.Guna2ComboBox combo,
+            int x,
+            int y,
+            int width)
+        {
+            label.Location = new Point(x, y);
+            combo.Location = new Point(x, y + 21);
+            combo.Size = new Size(width, 34);
+            combo.ItemHeight = 28;
+        }
+
+        private void ConfigureScheduleTableHeader()
+        {
+            lblTableTitle.Location = new Point(24, 14);
+            lblTableSubtitle.Location = new Point(24, 39);
+
+            txtScheduleSearch = new Guna.UI2.WinForms.Guna2TextBox
+            {
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BorderColor = Color.FromArgb(203, 213, 225),
+                BorderRadius = 8,
+                Cursor = Cursors.IBeam,
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                Location = new Point(886, 18),
+                Name = "txtScheduleSearch",
+                PlaceholderForeColor = Color.FromArgb(148, 163, 184),
+                PlaceholderText = "Search schedule...",
+                Size = new Size(294, 36)
+            };
+            txtScheduleSearch.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
+            pnlSchedulesTable.Controls.Add(txtScheduleSearch);
+
+            var totalCard = CreateSummaryCard("Total Sessions", out lblTotalSessionsValue, new Point(24, 68));
+            var theoryCard = CreateSummaryCard("Theory", out lblTheorySessionsValue, new Point(210, 68));
+            var practicalCard = CreateSummaryCard("Practical", out lblPracticalSessionsValue, new Point(396, 68));
+            var conflictsCard = CreateSummaryCard("Conflicts", out lblConflictSessionsValue, new Point(582, 68));
+
+            pnlSchedulesTable.Controls.Add(totalCard);
+            pnlSchedulesTable.Controls.Add(theoryCard);
+            pnlSchedulesTable.Controls.Add(practicalCard);
+            pnlSchedulesTable.Controls.Add(conflictsCard);
+
+            dgvSchedules.Location = new Point(24, 128);
+            dgvSchedules.Size = new Size(1156, 80);
+        }
+
+        private static Guna.UI2.WinForms.Guna2Panel CreateSummaryCard(
+            string title,
+            out Guna.UI2.WinForms.Guna2HtmlLabel valueLabel,
+            Point location)
+        {
+            var panel = new Guna.UI2.WinForms.Guna2Panel
+            {
+                BackColor = Color.Transparent,
+                BorderColor = Color.FromArgb(226, 232, 240),
+                BorderRadius = 8,
+                BorderThickness = 1,
+                FillColor = Color.White,
+                Location = location,
+                Size = new Size(166, 44)
+            };
+
+            valueLabel = new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(15, 23, 42),
+                Location = new Point(14, 5),
+                Text = "0"
+            };
+
+            panel.Controls.Add(valueLabel);
+            panel.Controls.Add(new Guna.UI2.WinForms.Guna2HtmlLabel
+            {
+                BackColor = Color.Transparent,
+                Font = new Font("Segoe UI", 8.5F),
+                ForeColor = Color.FromArgb(100, 116, 139),
+                Location = new Point(60, 14),
+                Text = title
+            });
+
+            return panel;
+        }
+
         private static Guna.UI2.WinForms.Guna2HtmlLabel CreateEditorLabel(
             string text,
             Point location,
@@ -302,52 +550,42 @@ namespace University_Timetable_and_Classroom_Management_System
                 ReadOnly = true
             });
 
-            dgvSchedules.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                DataPropertyName = nameof(ScheduleRow.EndTimeText),
-                FillWeight = 60F,
-                HeaderText = "End",
-                Name = "colEndTime",
-                ReadOnly = true
-            });
-
             colDayOfWeek.DisplayIndex = 0;
             colTimeSlot.DisplayIndex = 1;
-            dgvSchedules.Columns["colEndTime"].DisplayIndex = 2;
-            colSubject.DisplayIndex = 3;
-            colFacultyMember.DisplayIndex = 4;
-            colClassroom.DisplayIndex = 5;
-            dgvSchedules.Columns["colLectureType"].DisplayIndex = 6;
-            dgvSchedules.Columns["colGroupName"].DisplayIndex = 7;
-            colStudyYear.DisplayIndex = 8;
-            colBranch.DisplayIndex = 9;
-            colSection.DisplayIndex = 10;
-            column.DisplayIndex = 11;
+            colSubject.DisplayIndex = 2;
+            colFacultyMember.DisplayIndex = 3;
+            colClassroom.DisplayIndex = 4;
+            dgvSchedules.Columns["colLectureType"].DisplayIndex = 5;
+            colStudyYear.DisplayIndex = 6;
+            colBranch.DisplayIndex = 7;
+            colSection.DisplayIndex = 8;
+            dgvSchedules.Columns["colGroupName"].DisplayIndex = 9;
+            column.DisplayIndex = 10;
         }
 
         private void ApplyScheduleGridColumnLayout()
         {
-            SetGridColumn(colDayOfWeek, "Day", 78);
-            SetGridColumn(colTimeSlot, "Start", 62);
-            SetGridColumn(dgvSchedules.Columns["colEndTime"], "End", 62);
-            SetGridColumn(colSubject, "Subject", 160);
-            SetGridColumn(colFacultyMember, "Faculty", 132);
-            SetGridColumn(colClassroom, "Room/Lab", 76);
-            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Lecture Type", 82);
-            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 58);
-            SetGridColumn(colStudyYear, "Year", 78);
-            SetGridColumn(colBranch, "Branch", 92);
-            SetGridColumn(colSection, "Section", 66);
-            SetGridColumn(dgvSchedules.Columns["colSemester"], "Semester", 58);
+            SetGridColumn(colDayOfWeek, "Day", 76);
+            SetGridColumn(colTimeSlot, "Time", 120);
+            SetGridColumn(colSubject, "Subject", 168);
+            SetGridColumn(colFacultyMember, "Faculty", 140);
+            SetGridColumn(colClassroom, "Room/Lab", 86);
+            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Lecture Type", 86);
+            SetGridColumn(colStudyYear, "Year", 90);
+            SetGridColumn(colBranch, "Branch", 105);
+            SetGridColumn(colSection, "Section", 82);
+            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 64);
+            SetGridColumn(dgvSchedules.Columns["colSemester"], "Semester", 70);
 
             dgvSchedules.DefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
             dgvSchedules.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
-            dgvSchedules.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F);
-            dgvSchedules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            dgvSchedules.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
+            dgvSchedules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
             dgvSchedules.RowsDefaultCellStyle.BackColor = Color.White;
             dgvSchedules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
-            dgvSchedules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
-            dgvSchedules.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
+            dgvSchedules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(37, 99, 235);
+            dgvSchedules.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvSchedules.RowTemplate.Height = 40;
         }
 
         private static void SetGridColumn(DataGridViewColumn column, string headerText, float fillWeight)
@@ -380,6 +618,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbLectureTypeFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbGroupFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbLectureType.SelectedIndexChanged += (_, _) => ApplyLectureTypeSelection();
+            txtScheduleSearch.TextChanged += (_, _) => ApplyScheduleFilters();
         }
 
         private async Task GenerateScheduleAsync()
@@ -411,8 +650,8 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             var confirmation = MessageBox.Show(
                 this,
-                "Generating a timetable will replace the current generated schedule records. Continue?",
-                "Generate Schedule",
+                "This will generate schedule records automatically. Continue?",
+                "Generate Timetable",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
@@ -581,13 +820,17 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ApplyScheduleFilters()
         {
-            scheduleBindingSource.DataSource = GetFilteredRows().ToList();
+            var visibleRows = GetFilteredRows().ToList();
+            scheduleBindingSource.DataSource = visibleRows;
             dgvSchedules.ClearSelection();
-            StyleScheduleRows();
+            UpdateScheduleSummary(visibleRows);
+            StyleScheduleRows(visibleRows);
         }
 
-        private void StyleScheduleRows()
+        private void StyleScheduleRows(IReadOnlyCollection<ScheduleRow> visibleRows)
         {
+            var conflictingScheduleIds = GetConflictingScheduleIds(visibleRows);
+
             foreach (DataGridViewRow row in dgvSchedules.Rows)
             {
                 if (row.DataBoundItem is not ScheduleRow scheduleRow)
@@ -596,17 +839,17 @@ namespace University_Timetable_and_Classroom_Management_System
                 }
 
                 bool isPractical = scheduleRow.LectureType == "Practical";
-                row.DefaultCellStyle.BackColor = isPractical
-                    ? Color.FromArgb(240, 253, 244)
-                    : Color.White;
-                row.DefaultCellStyle.SelectionBackColor = isPractical
-                    ? Color.FromArgb(187, 247, 208)
-                    : Color.FromArgb(219, 234, 254);
-                row.DefaultCellStyle.SelectionForeColor = Color.FromArgb(15, 23, 42);
+                bool hasConflict = conflictingScheduleIds.Contains(scheduleRow.ScheduleID);
+                row.DefaultCellStyle.BackColor = hasConflict
+                    ? Color.FromArgb(254, 242, 242)
+                    : isPractical
+                        ? Color.FromArgb(240, 253, 244)
+                        : Color.White;
+                row.DefaultCellStyle.SelectionBackColor = Color.FromArgb(37, 99, 235);
+                row.DefaultCellStyle.SelectionForeColor = Color.White;
 
                 row.Cells["colDayOfWeek"].Style.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
                 row.Cells["colTimeSlot"].Style.ForeColor = Color.FromArgb(37, 99, 235);
-                row.Cells["colEndTime"].Style.ForeColor = Color.FromArgb(37, 99, 235);
 
                 if (row.Cells["colSubject"] is DataGridViewCell subjectCell)
                 {
@@ -686,7 +929,119 @@ namespace University_Timetable_and_Classroom_Management_System
                 DayOfWeek = cmbDayFilter.SelectedItem as string
             };
 
-            return scheduleFilterService.Apply(scheduleRows, criteria);
+            var filteredRows = scheduleFilterService.Apply(scheduleRows, criteria);
+            string searchText = txtScheduleSearch?.Text.Trim() ?? string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                filteredRows = filteredRows.Where(row => RowMatchesSearch(row, searchText));
+            }
+
+            return filteredRows;
+        }
+
+        private static bool RowMatchesSearch(ScheduleRow row, string searchText)
+        {
+            return ContainsSearch(row.DayOfWeek, searchText) ||
+                ContainsSearch(row.TimeSlotName, searchText) ||
+                ContainsSearch(row.SubjectName, searchText) ||
+                ContainsSearch(row.FacultyMemberName, searchText) ||
+                ContainsSearch(row.ClassroomName, searchText) ||
+                ContainsSearch(row.LectureType, searchText) ||
+                ContainsSearch(row.StudyYearName, searchText) ||
+                ContainsSearch(row.BranchName, searchText) ||
+                ContainsSearch(row.SectionName, searchText) ||
+                ContainsSearch(row.GroupName, searchText) ||
+                row.SemesterNumber.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool ContainsSearch(string value, string searchText)
+        {
+            return value.Contains(searchText, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void UpdateScheduleSummary(IReadOnlyCollection<ScheduleRow> visibleRows)
+        {
+            int theoryCount = visibleRows.Count(row =>
+                string.Equals(row.LectureType, "Theory", StringComparison.OrdinalIgnoreCase));
+            int practicalCount = visibleRows.Count(row =>
+                string.Equals(row.LectureType, "Practical", StringComparison.OrdinalIgnoreCase));
+            int conflictCount = GetConflictingScheduleIds(visibleRows).Count;
+
+            lblTotalSessionsValue.Text = visibleRows.Count.ToString();
+            lblTheorySessionsValue.Text = theoryCount.ToString();
+            lblPracticalSessionsValue.Text = practicalCount.ToString();
+            lblConflictSessionsValue.Text = conflictCount.ToString();
+            lblConflictSessionsValue.ForeColor = conflictCount > 0
+                ? Color.FromArgb(220, 38, 38)
+                : Color.FromArgb(15, 23, 42);
+
+            lblConflictStatus.Text = conflictCount > 0
+                ? $"Conflict detected: {conflictCount} visible row(s)."
+                : "No visible conflicts";
+            lblConflictStatus.ForeColor = conflictCount > 0
+                ? Color.FromArgb(185, 28, 28)
+                : Color.FromArgb(22, 101, 52);
+        }
+
+        private static HashSet<int> GetConflictingScheduleIds(IReadOnlyCollection<ScheduleRow> rows)
+        {
+            var conflicts = new HashSet<int>();
+            var rowList = rows.ToList();
+
+            for (int i = 0; i < rowList.Count; i++)
+            {
+                for (int j = i + 1; j < rowList.Count; j++)
+                {
+                    if (!RowsOverlap(rowList[i], rowList[j]))
+                    {
+                        continue;
+                    }
+
+                    conflicts.Add(rowList[i].ScheduleID);
+                    conflicts.Add(rowList[j].ScheduleID);
+                }
+            }
+
+            return conflicts;
+        }
+
+        private static bool RowsOverlap(ScheduleRow first, ScheduleRow second)
+        {
+            if (first.SemesterNumber != second.SemesterNumber ||
+                first.TimeSlotID != second.TimeSlotID ||
+                !string.Equals(first.DayOfWeek, second.DayOfWeek, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return first.ClassroomID == second.ClassroomID ||
+                first.FacultyMemberID == second.FacultyMemberID ||
+                HasSectionOrGroupOverlap(first, second);
+        }
+
+        private static bool HasSectionOrGroupOverlap(ScheduleRow first, ScheduleRow second)
+        {
+            if (!first.SectionID.HasValue ||
+                !second.SectionID.HasValue ||
+                first.SectionID.Value != second.SectionID.Value)
+            {
+                return false;
+            }
+
+            if (IsWholeSection(first) || IsWholeSection(second))
+            {
+                return true;
+            }
+
+            return string.Equals(first.GroupName, second.GroupName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsWholeSection(ScheduleRow row)
+        {
+            return string.Equals(row.LectureType, "Theory", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(row.GroupName, "All", StringComparison.OrdinalIgnoreCase) ||
+                string.IsNullOrWhiteSpace(row.GroupName);
         }
 
         private bool TryBuildSchedule(out Schedule schedule)
