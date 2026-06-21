@@ -10,6 +10,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private const int SaltSize = 16;
         private const int HashSize = 32;
         private const int Iterations = 100_000;
+        private const int MinimumPasswordLength = 4;
 
         public async Task<AuthResult> SignInAsync(string userName, string password)
         {
@@ -98,9 +99,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 return "User name must be at least 3 characters.";
             }
 
-            if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
+            if (string.IsNullOrWhiteSpace(password) || password.Length < MinimumPasswordLength)
             {
-                return "Password must be at least 6 characters.";
+                return $"Password must be at least {MinimumPasswordLength} characters.";
             }
 
             if (password != confirmPassword)

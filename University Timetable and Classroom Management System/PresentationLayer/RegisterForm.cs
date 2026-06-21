@@ -205,7 +205,7 @@ namespace University_Timetable_and_Classroom_Management_System
             txtPassword.ForeColor = Color.FromArgb(15, 23, 42);
             txtPassword.Location = new Point(32, 306);
             txtPassword.PasswordChar = '*';
-            txtPassword.PlaceholderText = "At least 6 characters";
+            txtPassword.PlaceholderText = "At least 4 characters";
             txtPassword.Size = new Size(306, 42);
 
             btnTogglePassword.BorderColor = Color.FromArgb(203, 213, 225);
