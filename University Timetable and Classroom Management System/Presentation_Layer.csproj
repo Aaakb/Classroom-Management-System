@@ -24,9 +24,6 @@
     <Compile Update="PresentationLayer\ClassroomsForm.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="PresentationLayer\DashboardForm.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="PresentationLayer\FacultyMembersForm.cs">
       <SubType>Code</SubType>
     </Compile>

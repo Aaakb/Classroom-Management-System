@@ -10,7 +10,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             InitializeComponent();
             Current = this;
-            ShowPage(NavigationPage.Dashboard);
+            ShowPage(NavigationPage.Branches);
         }
 
         internal void ShowPage(NavigationPage page)

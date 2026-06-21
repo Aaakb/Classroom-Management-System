@@ -2,7 +2,6 @@ namespace University_Timetable_and_Classroom_Management_System
 {
     internal enum NavigationPage
     {
-        Dashboard,
         Branches,
         StudyYears,
         Sections,
@@ -18,7 +17,6 @@ namespace University_Timetable_and_Classroom_Management_System
     {
         private static readonly IReadOnlyList<NavigationItem> NavigationItems =
         [
-            new("btnNavigationDashboard", "Dashboard", NavigationPage.Dashboard),
             new("btnNavigationBranches", "Branches", NavigationPage.Branches),
             new("btnNavigationStudyYears", "Study Years", NavigationPage.StudyYears),
             new("btnNavigationSections", "Sections", NavigationPage.Sections),
@@ -73,7 +71,6 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             return page switch
             {
-                NavigationPage.Dashboard => new DashboardForm(),
                 NavigationPage.Branches => new BranchesForm(),
                 NavigationPage.StudyYears => new StudyYearsForm(),
                 NavigationPage.Sections => new SectionsForm(),

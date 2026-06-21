@@ -350,7 +350,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationSubjects = new Guna.UI2.WinForms.Guna2Button();
             btnNavigationStudyYears = new Guna.UI2.WinForms.Guna2Button();
             btnNavigationBranches = new Guna.UI2.WinForms.Guna2Button();
-            btnNavigationDashboard = new Guna.UI2.WinForms.Guna2Button();
             separatorSidebar = new Guna.UI2.WinForms.Guna2Separator();
             lblSidebarSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblApplicationName = new Guna.UI2.WinForms.Guna2HtmlLabel();
@@ -400,7 +399,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlSidebar.Controls.Add(btnNavigationSubjects);
             pnlSidebar.Controls.Add(btnNavigationStudyYears);
             pnlSidebar.Controls.Add(btnNavigationBranches);
-            pnlSidebar.Controls.Add(btnNavigationDashboard);
             pnlSidebar.Controls.Add(separatorSidebar);
             pnlSidebar.Controls.Add(lblSidebarSubtitle);
             pnlSidebar.Controls.Add(lblApplicationName);
@@ -512,19 +510,6 @@ namespace University_Timetable_and_Classroom_Management_System
             btnNavigationBranches.Text = "Branches";
             btnNavigationBranches.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             btnNavigationBranches.TextOffset = new System.Drawing.Point(14, 0);
-            btnNavigationDashboard.BorderRadius = 8;
-            btnNavigationDashboard.Cursor = System.Windows.Forms.Cursors.Hand;
-            btnNavigationDashboard.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
-            btnNavigationDashboard.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            btnNavigationDashboard.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            btnNavigationDashboard.HoverState.FillColor = System.Drawing.Color.FromArgb(36, 55, 86);
-            btnNavigationDashboard.Location = new System.Drawing.Point(24, 98);
-            btnNavigationDashboard.Name = "btnNavigationDashboard";
-            btnNavigationDashboard.Size = new System.Drawing.Size(192, 44);
-            btnNavigationDashboard.TabIndex = 3;
-            btnNavigationDashboard.Text = "Dashboard";
-            btnNavigationDashboard.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            btnNavigationDashboard.TextOffset = new System.Drawing.Point(14, 0);
             separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
             separatorSidebar.Location = new System.Drawing.Point(24, 78);
             separatorSidebar.Name = "separatorSidebar";
@@ -897,7 +882,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
         private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
-        private Guna.UI2.WinForms.Guna2Button btnNavigationDashboard = null!;
         private Guna.UI2.WinForms.Guna2Button btnNavigationBranches = null!;
         private Guna.UI2.WinForms.Guna2Button btnNavigationStudyYears = null!;
         private Guna.UI2.WinForms.Guna2Button btnNavigationSubjects = null!;
