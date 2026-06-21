@@ -15,6 +15,7 @@ namespace Data_Access_Layer
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<ScheduleDetailsView> ScheduleDetails { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -267,6 +268,39 @@ namespace Data_Access_Layer
             {
                 entity.HasNoKey();
                 entity.ToView("vw_ScheduleDetails");
+            });
+
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.ToTable("ApplicationUsers");
+                entity.HasKey(e => e.ApplicationUserID);
+                entity.HasIndex(e => e.NormalizedUserName).IsUnique();
+
+                entity.Property(e => e.ApplicationUserID)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.FullName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.Property(e => e.NormalizedUserName)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.Property(e => e.PasswordHash)
+                    .HasMaxLength(128)
+                    .IsRequired();
+
+                entity.Property(e => e.PasswordSalt)
+                    .HasMaxLength(128)
+                    .IsRequired();
+
+                entity.Property(e => e.CreatedAtUtc)
+                    .IsRequired();
             });
         }
     }

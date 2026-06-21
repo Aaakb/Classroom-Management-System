@@ -13,7 +13,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             "[Subjects]",
             "[FacultyMembers]",
             "[Classrooms]",
-            "[TimeSlots]"
+            "[TimeSlots]",
+            "[ApplicationUsers]"
         };
 
         public static async Task SaveWithManualKeyAsync(AppDbContext context, string tableName)

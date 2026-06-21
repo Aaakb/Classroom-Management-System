@@ -16,6 +16,25 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[ApplicationUsers]', N'U') IS NULL
+                BEGIN
+                    CREATE TABLE [ApplicationUsers]
+                    (
+                        [ApplicationUserID] int NOT NULL,
+                        [FullName] nvarchar(150) NOT NULL,
+                        [UserName] nvarchar(50) NOT NULL,
+                        [NormalizedUserName] nvarchar(50) NOT NULL,
+                        [PasswordHash] nvarchar(128) NOT NULL,
+                        [PasswordSalt] nvarchar(128) NOT NULL,
+                        [CreatedAtUtc] datetime2 NOT NULL CONSTRAINT [DF_ApplicationUsers_CreatedAtUtc] DEFAULT SYSUTCDATETIME(),
+                        CONSTRAINT [PK_ApplicationUsers] PRIMARY KEY ([ApplicationUserID])
+                    );
+                END
+
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_ApplicationUsers_NormalizedUserName' AND object_id = OBJECT_ID(N'[ApplicationUsers]'))
+                    CREATE UNIQUE INDEX [IX_ApplicationUsers_NormalizedUserName]
+                    ON [ApplicationUsers] ([NormalizedUserName]);
+
                 IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
                 BEGIN
                     IF COL_LENGTH(N'dbo.Schedules', N'SemesterNumber') IS NULL

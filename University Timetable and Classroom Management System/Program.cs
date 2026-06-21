@@ -12,7 +12,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
             var databaseUpdated = ApplyDatabaseFixes(updateDatabaseOnly);
 
-            if (updateDatabaseOnly && !databaseUpdated)
+            if (!databaseUpdated)
             {
                 Environment.ExitCode = 1;
                 return;
@@ -23,7 +23,12 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            Application.Run(new MainShellForm());
+            using var loginForm = new LoginForm();
+
+            if (loginForm.ShowDialog() == DialogResult.OK)
+            {
+                Application.Run(new MainShellForm());
+            }
         }
 
         private static bool ApplyDatabaseFixes(bool silent)
