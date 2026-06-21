@@ -14,6 +14,8 @@ namespace University_Timetable_and_Classroom_Management_System
         private readonly StudyYearService studyYearService = new();
         private readonly BranchService branchService = new();
         private readonly SectionService sectionService = new();
+        private readonly ScheduleFilterService scheduleFilterService = new();
+        private readonly BindingSource scheduleBindingSource = new();
 
         private List<ScheduleRow> scheduleRows = [];
         private List<Subject> subjectsLookup = [];
@@ -43,9 +45,14 @@ namespace University_Timetable_and_Classroom_Management_System
             ConfigureScheduleEvents();
         }
 
-        protected override async void OnLoad(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            _ = LoadFormAsync();
+        }
+
+        private async Task LoadFormAsync()
+        {
             await RefreshSchedulesAsync();
         }
 
@@ -86,6 +93,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.RowTemplate.Height = 38;
             dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             GridStyle.Apply(dgvSchedules);
+            dgvSchedules.DataSource = scheduleBindingSource;
             colScheduleId.DataPropertyName = nameof(ScheduleRow.ScheduleID);
             colScheduleId.Visible = false;
             EnsureSemesterColumn();
@@ -374,70 +382,6 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbLectureType.SelectedIndexChanged += (_, _) => ApplyLectureTypeSelection();
         }
 
-        private async Task RefreshSchedulesAsync()
-        {
-            SetScheduleActionsEnabled(false);
-
-            try
-            {
-                await LoadLookupsAsync();
-                await LoadSchedulesAsync();
-                ClearScheduleForm();
-            }
-            catch (Exception ex)
-            {
-                ShowError("Unable to refresh schedule data.", ex);
-            }
-            finally
-            {
-                SetScheduleActionsEnabled(true);
-            }
-        }
-
-        private async Task LoadLookupsAsync()
-        {
-            subjectsLookup = await subjectService.GetAllAsync();
-            var facultyMembers = await facultyMemberService.GetAllAsync();
-            var classrooms = await classroomService.GetAllAsync();
-            var timeSlots = await timeSlotService.GetAllAsync();
-            studyYearsLookup = await studyYearService.GetAllAsync();
-            branchesLookup = await branchService.GetAllAsync();
-            sectionsLookup = await sectionService.GetAllAsync();
-
-            BindSubjectsCombo();
-            BindCombo(cmbFacultyMember, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)));
-            BindCombo(cmbClassroom, classrooms.Select(classroom => new ComboOption(classroom.ClassroomID, classroom.ClassroomNumber)));
-            BindCombo(cmbTimeSlot, timeSlots.Select(slot => new ComboOption(slot.TimeSlotID, FormatTimeSlot(slot))));
-            BindCombo(cmbStudyYear, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
-            BindCombo(cmbBranch, branchesLookup.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
-            BindSectionsCombo();
-
-            BindFilterCombo(cmbFacultyFilter, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)), "All faculty");
-            BindFilterCombo(cmbStudyYearFilter, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
-            BindSectionFilterCombo();
-            BindDayCombos();
-            BindSemesterFilterCombo();
-            BindLectureTypeFilterCombo();
-            BindGroupFilterCombo();
-            BindGroupNameCombo();
-        }
-
-        private async Task LoadSchedulesAsync()
-        {
-            var schedules = await scheduleService.GetScheduleDetailsAsync();
-            scheduleRows = schedules
-                .Select(ScheduleRow.FromDetails)
-                .OrderBy(row => row.SemesterNumber)
-                .ThenBy(row => StudyYearOrder(row.StudyYearName))
-                .ThenBy(row => row.BranchName)
-                .ThenBy(row => row.SectionName)
-                .ThenBy(row => DayOrder(row.DayOfWeek))
-                .ThenBy(row => row.TimeSlotName)
-                .ToList();
-
-            ApplyScheduleFilters();
-        }
-
         private async Task GenerateScheduleAsync()
         {
             if (!ConfirmScheduleGeneration())
@@ -637,7 +581,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ApplyScheduleFilters()
         {
-            dgvSchedules.DataSource = GetFilteredRows().ToList();
+            scheduleBindingSource.DataSource = GetFilteredRows().ToList();
             dgvSchedules.ClearSelection();
             StyleScheduleRows();
         }
@@ -731,104 +675,32 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private IEnumerable<ScheduleRow> GetFilteredRows()
         {
-            int? facultyId = GetSelectedOptionalId(cmbFacultyFilter);
-            int? sectionId = GetSelectedOptionalId(cmbSectionFilter);
-            int? studyYearId = GetSelectedOptionalId(cmbStudyYearFilter);
-            int? semesterNumber = GetSelectedOptionalId(cmbSemesterFilter);
-            string? lectureType = cmbLectureTypeFilter.SelectedItem is ComboOption option ? option.Text : null;
-            string? groupName = cmbGroupFilter.SelectedItem is ComboOption groupOption ? groupOption.Text : null;
-            string? day = cmbDayFilter.SelectedItem as string;
-
-            return scheduleRows.Where(row =>
-                (!semesterNumber.HasValue || row.SemesterNumber == semesterNumber.Value) &&
-                (string.IsNullOrWhiteSpace(lectureType) ||
-                    lectureType == "All" ||
-                    row.LectureType == lectureType) &&
-                RowMatchesGroupFilter(row, groupName) &&
-                RowMatchesFacultyFilter(row, facultyId) &&
-                RowMatchesSectionFilter(row, sectionId) &&
-                RowMatchesStudyYearFilter(row, studyYearId) &&
-                (string.IsNullOrWhiteSpace(day) || day == "All days" || row.DayOfWeek == day));
-        }
-
-        private static bool RowMatchesGroupFilter(ScheduleRow row, string? groupName)
-        {
-            if (string.IsNullOrWhiteSpace(groupName) || groupName == "All")
+            var criteria = new ScheduleFilterCriteria
             {
-                return true;
-            }
+                FacultyId = GetSelectedOptionalId(cmbFacultyFilter),
+                SectionId = GetSelectedOptionalId(cmbSectionFilter),
+                StudyYearId = GetSelectedOptionalId(cmbStudyYearFilter),
+                SemesterNumber = GetSelectedOptionalId(cmbSemesterFilter),
+                LectureType = cmbLectureTypeFilter.SelectedItem is ComboOption option ? option.Text : null,
+                GroupName = cmbGroupFilter.SelectedItem is ComboOption groupOption ? groupOption.Text : null,
+                DayOfWeek = cmbDayFilter.SelectedItem as string
+            };
 
-            string normalizedGroup = groupName.Trim().ToUpperInvariant();
-
-            if (string.Equals(row.LectureType, "Practical", StringComparison.OrdinalIgnoreCase))
-            {
-                return string.Equals(row.GroupName, normalizedGroup, StringComparison.OrdinalIgnoreCase);
-            }
-
-            string baseSectionName = AcademicStructureRules.GetBaseSectionName(normalizedGroup);
-            return IsFirstOrSecondYear(row.StudyYearName) &&
-                string.Equals(row.SectionName, baseSectionName, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool RowMatchesFacultyFilter(ScheduleRow row, int? facultyId)
-        {
-            if (!facultyId.HasValue)
-            {
-                return true;
-            }
-
-            var selectedFaculty = cmbFacultyFilter.SelectedItem as ComboOption;
-            return string.Equals(row.FacultyMemberName, selectedFaculty?.Text, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool RowMatchesStudyYearFilter(ScheduleRow row, int? studyYearId)
-        {
-            if (!studyYearId.HasValue)
-            {
-                return true;
-            }
-
-            var studyYear = studyYearsLookup.FirstOrDefault(item => item.StudyYearID == studyYearId.Value);
-            return string.Equals(row.StudyYearName, studyYear?.YearName, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool RowMatchesSectionFilter(ScheduleRow row, int? sectionId)
-        {
-            if (!sectionId.HasValue)
-            {
-                return true;
-            }
-
-            var section = sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId.Value);
-
-            if (section is null ||
-                !string.Equals(row.SectionName, section.SectionName, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            var studyYear = studyYearsLookup.FirstOrDefault(item => item.StudyYearID == section.StudyYearID);
-
-            if (studyYear is not null &&
-                !string.Equals(row.StudyYearName, studyYear.YearName, StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            var branchName = section.BranchID.HasValue
-                ? branchesLookup.FirstOrDefault(item => item.BranchID == section.BranchID.Value)?.BranchName
-                : null;
-
-            return string.IsNullOrWhiteSpace(branchName)
-                ? string.IsNullOrWhiteSpace(row.BranchName) || row.BranchName == "-"
-                : string.Equals(row.BranchName, branchName, StringComparison.OrdinalIgnoreCase);
+            return scheduleFilterService.Apply(scheduleRows, criteria);
         }
 
         private bool TryBuildSchedule(out Schedule schedule)
         {
             ApplySectionSelection();
+            schedule = ReadScheduleFromForm();
 
-            schedule = new Schedule
+            return ValidateRequiredScheduleFields(schedule) &&
+                ValidateScheduleAcademicRules(schedule);
+        }
+
+        private Schedule ReadScheduleFromForm()
+        {
+            return new Schedule
             {
                 DayOfWeek = cmbDayOfWeek.Text.Trim(),
                 SubjectID = GetSelectedRequiredId(cmbSubject),
@@ -841,7 +713,10 @@ namespace University_Timetable_and_Classroom_Management_System
                 BranchID = GetSelectedOptionalId(cmbBranch),
                 SectionID = GetSelectedOptionalId(cmbSection)
             };
+        }
 
+        private bool ValidateRequiredScheduleFields(Schedule schedule)
+        {
             if (string.IsNullOrWhiteSpace(schedule.DayOfWeek))
             {
                 ShowInformation("Select a day.");
@@ -863,18 +738,17 @@ namespace University_Timetable_and_Classroom_Management_System
                 return false;
             }
 
-            int subjectId = schedule.SubjectID;
-            int? sectionId = schedule.SectionID;
-            var subject = subjectsLookup.FirstOrDefault(item => item.SubjectID == subjectId);
-            var section = sectionId.HasValue
-                ? sectionsLookup.FirstOrDefault(item => item.SectionID == sectionId.Value)
+            return true;
+        }
+
+        private bool ValidateScheduleAcademicRules(Schedule schedule)
+        {
+            var subject = subjectsLookup.FirstOrDefault(item => item.SubjectID == schedule.SubjectID);
+            var section = schedule.SectionID.HasValue
+                ? sectionsLookup.FirstOrDefault(item => item.SectionID == schedule.SectionID.Value)
                 : null;
 
-            if (section is not null)
-            {
-                schedule.StudyYearID = section.StudyYearID;
-                schedule.BranchID = section.BranchID;
-            }
+            ApplySectionDetails(schedule, section);
 
             if (subject is not null &&
                 schedule.StudyYearID.HasValue &&
@@ -905,6 +779,17 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             return true;
+        }
+
+        private static void ApplySectionDetails(Schedule schedule, Section? section)
+        {
+            if (section is null)
+            {
+                return;
+            }
+
+            schedule.StudyYearID = section.StudyYearID;
+            schedule.BranchID = section.BranchID;
         }
 
         private bool TryGetSelectedScheduleId(out int scheduleId)
@@ -1366,11 +1251,6 @@ namespace University_Timetable_and_Classroom_Management_System
             return TimeDisplay.FormatRange(timeSlot.StartTime, timeSlot.EndTime);
         }
 
-        private static string FormatTimeSlot(TimeSpan startTime, TimeSpan endTime)
-        {
-            return TimeDisplay.FormatRange(startTime, endTime);
-        }
-
         private static string FormatSection(Section section)
         {
             string year = section.StudyYear?.YearName ?? "Year";
@@ -1405,11 +1285,6 @@ namespace University_Timetable_and_Classroom_Management_System
             };
         }
 
-        private static bool IsFirstOrSecondYear(string studyYearName)
-        {
-            return StudyYearOrder(studyYearName) is 1 or 2;
-        }
-
         private void ShowInformation(string message)
         {
             MessageBox.Show(this, message, "Schedule", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1420,98 +1295,6 @@ namespace University_Timetable_and_Classroom_Management_System
             MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Schedule", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private sealed record ComboOption(int? Id, string Text);
-
-        private sealed class ScheduleRow
-        {
-            public int ScheduleID { get; init; }
-            public int SubjectID { get; init; }
-            public int FacultyMemberID { get; init; }
-            public int ClassroomID { get; init; }
-            public int TimeSlotID { get; init; }
-            public int SemesterNumber { get; init; }
-            public int? StudyYearID { get; init; }
-            public int? BranchID { get; init; }
-            public int? SectionID { get; init; }
-            public string DayOfWeek { get; init; } = string.Empty;
-            public string SubjectName { get; init; } = string.Empty;
-            public string FacultyMemberName { get; init; } = string.Empty;
-            public string ClassroomName { get; init; } = string.Empty;
-            public string TimeSlotName { get; init; } = string.Empty;
-            public string StartTimeText { get; init; } = string.Empty;
-            public string EndTimeText { get; init; } = string.Empty;
-            public string StudyYearName { get; init; } = string.Empty;
-            public string BranchName { get; init; } = string.Empty;
-            public string SectionName { get; init; } = string.Empty;
-            public string GroupName { get; init; } = "All";
-            public string LectureType { get; init; } = "Theory";
-
-            public static ScheduleRow FromSchedule(Schedule schedule)
-            {
-                string timeSlotName = schedule.TimeSlot is null ? "-" : FormatTimeSlot(schedule.TimeSlot);
-
-                return new ScheduleRow
-                {
-                    ScheduleID = schedule.ScheduleID,
-                    SubjectID = schedule.SubjectID,
-                    FacultyMemberID = schedule.FacultyMemberID,
-                    ClassroomID = schedule.ClassroomID,
-                    TimeSlotID = schedule.TimeSlotID,
-                    SemesterNumber = schedule.SemesterNumber,
-                    StudyYearID = schedule.StudyYearID,
-                    BranchID = schedule.BranchID,
-                    SectionID = schedule.SectionID,
-                    DayOfWeek = schedule.DayOfWeek,
-                    SubjectName = schedule.Subject?.SubjectName ?? "-",
-                    FacultyMemberName = schedule.FacultyMember?.FullName ?? "-",
-                    ClassroomName = schedule.Classroom?.ClassroomNumber ?? "-",
-                    TimeSlotName = timeSlotName,
-                    StartTimeText = schedule.TimeSlot is null ? "-" : TimeDisplay.Format(schedule.TimeSlot.StartTime),
-                    EndTimeText = schedule.TimeSlot is null ? "-" : TimeDisplay.Format(schedule.TimeSlot.EndTime),
-                    StudyYearName = schedule.StudyYear?.YearName ?? "-",
-                    BranchName = schedule.Branch?.BranchName ?? "-",
-                    SectionName = FormatScheduleSection(schedule),
-                    GroupName = string.IsNullOrWhiteSpace(schedule.GroupName) ? "All" : schedule.GroupName,
-                    LectureType = schedule.LectureType
-                };
-            }
-
-            public static ScheduleRow FromDetails(ScheduleDetailsView details)
-            {
-                return new ScheduleRow
-                {
-                    ScheduleID = details.ScheduleID,
-                    SemesterNumber = details.SemesterNumber,
-                    DayOfWeek = details.DayOfWeek,
-                    SubjectName = details.SubjectName,
-                    FacultyMemberName = details.FacultyMemberName,
-                    ClassroomName = details.ClassroomNumber,
-                    TimeSlotName = FormatTimeSlot(details.StartTime, details.EndTime),
-                    StartTimeText = TimeDisplay.Format(details.StartTime),
-                    EndTimeText = TimeDisplay.Format(details.EndTime),
-                    StudyYearName = details.YearName,
-                    BranchName = string.IsNullOrWhiteSpace(details.BranchName) ? "-" : details.BranchName,
-                    SectionName = details.SectionName,
-                    GroupName = string.IsNullOrWhiteSpace(details.GroupName) ? "All" : details.GroupName,
-                    LectureType = details.LectureType
-                };
-            }
-        }
-
-        private static string FormatScheduleSection(Schedule schedule)
-        {
-            if (schedule.Section is null)
-            {
-                return "-";
-            }
-
-            string year = schedule.StudyYear?.YearName ?? schedule.Section.StudyYear?.YearName ?? "Year";
-            string? branch = schedule.Branch?.BranchName ?? schedule.Section.Branch?.BranchName;
-
-            return string.IsNullOrWhiteSpace(branch)
-                ? $"{schedule.Section.SectionName} - {year}"
-                : $"{schedule.Section.SectionName} - {year} - {branch}";
-        }
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();

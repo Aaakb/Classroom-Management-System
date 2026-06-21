@@ -33,6 +33,12 @@
     <Compile Update="PresentationLayer\MainShellForm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="PresentationLayer\LoginForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\RegisterForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="PresentationLayer\SchedulesForm.cs">
       <SubType>Code</SubType>
     </Compile>

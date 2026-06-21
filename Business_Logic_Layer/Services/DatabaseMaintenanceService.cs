@@ -174,7 +174,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         AS
                         SELECT
                             schedule.[ScheduleID],
+                            schedule.[SubjectID],
+                            schedule.[FacultyMemberID],
+                            schedule.[ClassroomID],
+                            schedule.[TimeSlotID],
                             schedule.[SemesterNumber],
+                            schedule.[StudyYearID],
+                            schedule.[BranchID],
+                            schedule.[SectionID],
                             studyYear.[YearName],
                             branch.[BranchName],
                             CASE

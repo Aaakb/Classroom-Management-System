@@ -4,7 +4,21 @@ namespace University_Timetable_and_Classroom_Management_System.Models
     {
         public int ScheduleID { get; set; }
 
+        public int SubjectID { get; set; }
+
+        public int FacultyMemberID { get; set; }
+
+        public int ClassroomID { get; set; }
+
+        public int TimeSlotID { get; set; }
+
         public int SemesterNumber { get; set; }
+
+        public int? StudyYearID { get; set; }
+
+        public int? BranchID { get; set; }
+
+        public int? SectionID { get; set; }
 
         public string YearName { get; set; } = string.Empty;
 

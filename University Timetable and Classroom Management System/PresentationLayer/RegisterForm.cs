@@ -15,10 +15,14 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2TextBox txtUserName = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblPassword = null!;
         private Guna.UI2.WinForms.Guna2TextBox txtPassword = null!;
+        private Guna.UI2.WinForms.Guna2Button btnTogglePassword = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblConfirmPassword = null!;
         private Guna.UI2.WinForms.Guna2TextBox txtConfirmPassword = null!;
+        private Guna.UI2.WinForms.Guna2Button btnToggleConfirmPassword = null!;
         private Guna.UI2.WinForms.Guna2Button btnCreateAccount = null!;
         private Guna.UI2.WinForms.Guna2Button btnCancel = null!;
+        private bool passwordVisible;
+        private bool confirmPasswordVisible;
 
         public string CreatedUserName { get; private set; } = string.Empty;
 
@@ -26,12 +30,17 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             InitializeComponent();
             WireEvents();
+            AcceptButton = btnCreateAccount;
+            CancelButton = btnCancel;
+            Shown += (_, _) => txtFullName.Focus();
         }
 
         private void WireEvents()
         {
             btnCreateAccount.Click += async (_, _) => await CreateAccountAsync();
             btnCancel.Click += (_, _) => Close();
+            btnTogglePassword.Click += (_, _) => TogglePasswordVisibility();
+            btnToggleConfirmPassword.Click += (_, _) => ToggleConfirmPasswordVisibility();
             txtConfirmPassword.KeyDown += async (_, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
@@ -82,8 +91,24 @@ namespace University_Timetable_and_Classroom_Management_System
             txtPassword.Enabled = !busy;
             txtConfirmPassword.Enabled = !busy;
             btnCancel.Enabled = !busy;
+            btnTogglePassword.Enabled = !busy;
+            btnToggleConfirmPassword.Enabled = !busy;
             btnCreateAccount.Enabled = !busy;
             btnCreateAccount.Text = busy ? "Creating..." : "Create Account";
+        }
+
+        private void TogglePasswordVisibility()
+        {
+            passwordVisible = !passwordVisible;
+            txtPassword.PasswordChar = passwordVisible ? '\0' : '*';
+            btnTogglePassword.Text = passwordVisible ? "Hide" : "Show";
+        }
+
+        private void ToggleConfirmPasswordVisibility()
+        {
+            confirmPasswordVisible = !confirmPasswordVisible;
+            txtConfirmPassword.PasswordChar = confirmPasswordVisible ? '\0' : '*';
+            btnToggleConfirmPassword.Text = confirmPasswordVisible ? "Hide" : "Show";
         }
 
         private void InitializeComponent()
@@ -97,8 +122,10 @@ namespace University_Timetable_and_Classroom_Management_System
             txtUserName = new Guna.UI2.WinForms.Guna2TextBox();
             lblPassword = new Guna.UI2.WinForms.Guna2HtmlLabel();
             txtPassword = new Guna.UI2.WinForms.Guna2TextBox();
+            btnTogglePassword = new Guna.UI2.WinForms.Guna2Button();
             lblConfirmPassword = new Guna.UI2.WinForms.Guna2HtmlLabel();
             txtConfirmPassword = new Guna.UI2.WinForms.Guna2TextBox();
+            btnToggleConfirmPassword = new Guna.UI2.WinForms.Guna2Button();
             btnCreateAccount = new Guna.UI2.WinForms.Guna2Button();
             btnCancel = new Guna.UI2.WinForms.Guna2Button();
             pnlCard.SuspendLayout();
@@ -119,8 +146,10 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlCard.Controls.Add(txtUserName);
             pnlCard.Controls.Add(lblPassword);
             pnlCard.Controls.Add(txtPassword);
+            pnlCard.Controls.Add(btnTogglePassword);
             pnlCard.Controls.Add(lblConfirmPassword);
             pnlCard.Controls.Add(txtConfirmPassword);
+            pnlCard.Controls.Add(btnToggleConfirmPassword);
             pnlCard.Controls.Add(btnCreateAccount);
             pnlCard.Controls.Add(btnCancel);
 
@@ -177,7 +206,19 @@ namespace University_Timetable_and_Classroom_Management_System
             txtPassword.Location = new Point(32, 306);
             txtPassword.PasswordChar = '*';
             txtPassword.PlaceholderText = "At least 6 characters";
-            txtPassword.Size = new Size(392, 42);
+            txtPassword.Size = new Size(306, 42);
+
+            btnTogglePassword.BorderColor = Color.FromArgb(203, 213, 225);
+            btnTogglePassword.BorderRadius = 8;
+            btnTogglePassword.BorderThickness = 1;
+            btnTogglePassword.Cursor = Cursors.Hand;
+            btnTogglePassword.FillColor = Color.White;
+            btnTogglePassword.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            btnTogglePassword.ForeColor = Color.FromArgb(37, 99, 235);
+            btnTogglePassword.HoverState.FillColor = Color.FromArgb(239, 246, 255);
+            btnTogglePassword.Location = new Point(348, 306);
+            btnTogglePassword.Size = new Size(76, 42);
+            btnTogglePassword.Text = "Show";
 
             lblConfirmPassword.BackColor = Color.Transparent;
             lblConfirmPassword.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
@@ -192,7 +233,19 @@ namespace University_Timetable_and_Classroom_Management_System
             txtConfirmPassword.Location = new Point(32, 388);
             txtConfirmPassword.PasswordChar = '*';
             txtConfirmPassword.PlaceholderText = "Repeat password";
-            txtConfirmPassword.Size = new Size(392, 42);
+            txtConfirmPassword.Size = new Size(306, 42);
+
+            btnToggleConfirmPassword.BorderColor = Color.FromArgb(203, 213, 225);
+            btnToggleConfirmPassword.BorderRadius = 8;
+            btnToggleConfirmPassword.BorderThickness = 1;
+            btnToggleConfirmPassword.Cursor = Cursors.Hand;
+            btnToggleConfirmPassword.FillColor = Color.White;
+            btnToggleConfirmPassword.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            btnToggleConfirmPassword.ForeColor = Color.FromArgb(37, 99, 235);
+            btnToggleConfirmPassword.HoverState.FillColor = Color.FromArgb(239, 246, 255);
+            btnToggleConfirmPassword.Location = new Point(348, 388);
+            btnToggleConfirmPassword.Size = new Size(76, 42);
+            btnToggleConfirmPassword.Text = "Show";
 
             btnCreateAccount.BorderRadius = 8;
             btnCreateAccount.Cursor = Cursors.Hand;
