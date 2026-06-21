@@ -4,29 +4,24 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 {
     public sealed class SchedulePdfExportService
     {
-        private const int RowsPerPage = 24;
+        private const int RowsPerPage = 23;
         private const int PageWidth = 842;
         private const int PageHeight = 595;
         private const int TableLeft = 20;
         private const int TableTop = 558;
-        private const int HeaderHeight = 24;
-        private const int RowHeight = 18;
+        private const int HeaderHeight = 26;
+        private const int RowHeight = 20;
         private const int TableWidth = 802;
 
         private static readonly PdfColumn[] Columns =
         [
-            new("Semester", 38, 8, row => row.SemesterNumber.ToString()),
-            new("Year", 70, 12, row => row.StudyYear),
-            new("Branch", 74, 13, row => row.Branch),
-            new("Section", 58, 12, row => row.Section),
-            new("Group", 46, 8, row => row.GroupName),
-            new("Type", 58, 10, row => row.LectureType),
-            new("Subject", 136, 25, row => row.Subject),
-            new("Faculty", 112, 20, row => row.FacultyMember),
-            new("Room", 60, 10, row => row.Classroom),
-            new("Day", 58, 10, row => row.DayOfWeek),
-            new("Start", 46, 8, row => row.StartTime),
-            new("End", 46, 8, row => row.EndTime)
+            new("Day", 62, 10, row => row.DayOfWeek),
+            new("Time", 124, 22, row => BuildTimeLabel(row)),
+            new("Class", 156, 27, row => BuildClassLabel(row)),
+            new("Type", 82, 14, row => BuildTypeLabel(row)),
+            new("Subject", 180, 32, row => row.Subject),
+            new("Faculty", 132, 23, row => row.FacultyMember),
+            new("Room", 66, 12, row => row.Classroom)
         ];
 
         public async Task ExportAsync(string filePath, IReadOnlyList<SchedulePdfRow> rows)
@@ -111,7 +106,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             foreach (var column in Columns)
             {
-                WriteText(builder, x + 4, TableTop - 15, column.Header, 7, "1 1 1");
+                WriteText(builder, x + 6, TableTop - 16, column.Header, 8, "1 1 1");
                 x += column.Width;
             }
         }
@@ -122,9 +117,38 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             foreach (var column in Columns)
             {
-                WriteText(builder, x + 4, y, Shorten(column.GetValue(row), column.MaxLength), 6, "0.05 0.09 0.18");
+                WriteText(builder, x + 6, y, Shorten(column.GetValue(row), column.MaxLength), 7, "0.05 0.09 0.18");
                 x += column.Width;
             }
+        }
+
+        private static string BuildTimeLabel(SchedulePdfRow row)
+        {
+            return $"{row.StartTime} - {row.EndTime}";
+        }
+
+        private static string BuildClassLabel(SchedulePdfRow row)
+        {
+            string section = row.Section.Split(" - ", StringSplitOptions.TrimEntries)[0];
+            string branch = string.IsNullOrWhiteSpace(row.Branch) ||
+                            row.Branch == "-" ||
+                            string.Equals(row.Branch, "General", StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : $" / {row.Branch}";
+
+            return $"{row.StudyYear}{branch} / {section}";
+        }
+
+        private static string BuildTypeLabel(SchedulePdfRow row)
+        {
+            if (!string.Equals(row.LectureType, "Practical", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Theory";
+            }
+
+            return string.IsNullOrWhiteSpace(row.GroupName) || row.GroupName == "-"
+                ? "Practical"
+                : $"Practical {row.GroupName}";
         }
 
         private static void DrawTableFrame(StringBuilder builder, int tableTop, int rowCount)
