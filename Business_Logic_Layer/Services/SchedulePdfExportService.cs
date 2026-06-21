@@ -5,6 +5,29 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
     public sealed class SchedulePdfExportService
     {
         private const int RowsPerPage = 24;
+        private const int PageWidth = 842;
+        private const int PageHeight = 595;
+        private const int TableLeft = 20;
+        private const int TableTop = 558;
+        private const int HeaderHeight = 24;
+        private const int RowHeight = 18;
+        private const int TableWidth = 802;
+
+        private static readonly PdfColumn[] Columns =
+        [
+            new("Semester", 38, 8, row => row.SemesterNumber.ToString()),
+            new("Year", 70, 12, row => row.StudyYear),
+            new("Branch", 74, 13, row => row.Branch),
+            new("Section", 58, 12, row => row.Section),
+            new("Group", 46, 8, row => row.GroupName),
+            new("Type", 58, 10, row => row.LectureType),
+            new("Subject", 136, 25, row => row.Subject),
+            new("Faculty", 112, 20, row => row.FacultyMember),
+            new("Room", 60, 10, row => row.Classroom),
+            new("Day", 58, 10, row => row.DayOfWeek),
+            new("Start", 46, 8, row => row.StartTime),
+            new("End", 46, 8, row => row.EndTime)
+        ];
 
         public async Task ExportAsync(string filePath, IReadOnlyList<SchedulePdfRow> rows)
         {
@@ -32,7 +55,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 int pageObjectId = objects.Count + 1;
                 pageObjectIds.Add(pageObjectId);
                 AddObject(objects,
-                    $"<< /Type /Page /Parent {pagesObjectId} 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 {fontObjectId} 0 R >> >> /Contents {contentObjectId} 0 R >>");
+                    $"<< /Type /Page /Parent {pagesObjectId} 0 R /MediaBox [0 0 {PageWidth} {PageHeight}] /Resources << /Font << /F1 {fontObjectId} 0 R >> >> /Contents {contentObjectId} 0 R >>");
             }
 
             objects[catalogObjectId - 1] = $"<< /Type /Catalog /Pages {pagesObjectId} 0 R >>";
@@ -44,51 +67,123 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private static string BuildPageContent(IReadOnlyList<SchedulePdfRow> rows)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("BT");
-            builder.AppendLine("/F1 16 Tf");
-            builder.AppendLine("1 0 0 1 36 558 Tm");
-            builder.AppendLine($"({Escape("University Timetable Schedule")}) Tj");
-            builder.AppendLine("/F1 8 Tf");
+            DrawFilledRect(builder, TableLeft, TableTop - HeaderHeight, TableWidth, HeaderHeight, "0.06 0.09 0.16");
 
-            int y = 532;
-            WriteText(builder, 36, y, "Day");
-            WriteText(builder, 100, y, "Time");
-            WriteText(builder, 190, y, "Subject");
-            WriteText(builder, 350, y, "Faculty");
-            WriteText(builder, 500, y, "Room");
-            WriteText(builder, 570, y, "Study Year");
-            WriteText(builder, 665, y, "Branch");
-            WriteText(builder, 745, y, "Section");
-
-            y -= 18;
+            int rowTop = TableTop - HeaderHeight;
 
             foreach (var row in rows)
             {
-                WriteText(builder, 36, y, Shorten(row.DayOfWeek, 10));
-                WriteText(builder, 100, y, Shorten(row.TimeSlot, 16));
-                WriteText(builder, 190, y, Shorten(row.Subject, 28));
-                WriteText(builder, 350, y, Shorten(row.FacultyMember, 26));
-                WriteText(builder, 500, y, Shorten(row.Classroom, 12));
-                WriteText(builder, 570, y, Shorten(row.StudyYear, 16));
-                WriteText(builder, 665, y, Shorten(row.Branch, 14));
-                WriteText(builder, 745, y, Shorten(row.Section, 14));
-                y -= 18;
+                int rowBottom = rowTop - RowHeight;
+
+                if ((TableTop - HeaderHeight - rowTop) / RowHeight % 2 == 1)
+                {
+                    DrawFilledRect(builder, TableLeft, rowBottom, TableWidth, RowHeight, "0.96 0.98 1");
+                }
+
+                rowTop = rowBottom;
+            }
+
+            DrawTableFrame(builder, TableTop, rows.Count);
+            WriteHeader(builder);
+
+            rowTop = TableTop - HeaderHeight;
+
+            foreach (var row in rows)
+            {
+                int rowBottom = rowTop - RowHeight;
+                WriteRow(builder, row, rowBottom + 6);
+                rowTop = rowBottom;
             }
 
             if (rows.Count == 0)
             {
-                WriteText(builder, 36, y, "No schedule records to export.");
+                int rowBottom = rowTop - RowHeight;
+                WriteText(builder, TableLeft + 8, rowBottom + 6, "No schedule records to export.", 8, "0.10 0.12 0.18");
             }
-
-            builder.AppendLine("ET");
 
             string content = builder.ToString();
             return $"<< /Length {Encoding.ASCII.GetByteCount(content)} >>\nstream\n{content}endstream";
         }
 
-        private static void WriteText(StringBuilder builder, int x, int y, string text)
+        private static void WriteHeader(StringBuilder builder)
         {
+            int x = TableLeft;
+
+            foreach (var column in Columns)
+            {
+                WriteText(builder, x + 4, TableTop - 15, column.Header, 7, "1 1 1");
+                x += column.Width;
+            }
+        }
+
+        private static void WriteRow(StringBuilder builder, SchedulePdfRow row, int y)
+        {
+            int x = TableLeft;
+
+            foreach (var column in Columns)
+            {
+                WriteText(builder, x + 4, y, Shorten(column.GetValue(row), column.MaxLength), 6, "0.05 0.09 0.18");
+                x += column.Width;
+            }
+        }
+
+        private static void DrawTableFrame(StringBuilder builder, int tableTop, int rowCount)
+        {
+            int bodyRows = Math.Max(rowCount, 1);
+            int tableBottom = tableTop - HeaderHeight - bodyRows * RowHeight;
+            int x = TableLeft;
+
+            DrawRect(builder, TableLeft, tableBottom, TableWidth, tableTop - tableBottom, "0.78 0.84 0.90");
+            DrawLine(builder, TableLeft, tableTop - HeaderHeight, TableLeft + TableWidth, tableTop - HeaderHeight, "0.78 0.84 0.90");
+
+            for (int row = 1; row <= bodyRows; row++)
+            {
+                int y = tableTop - HeaderHeight - row * RowHeight;
+                DrawLine(builder, TableLeft, y, TableLeft + TableWidth, y, "0.86 0.90 0.95");
+            }
+
+            foreach (var column in Columns)
+            {
+                DrawLine(builder, x, tableBottom, x, tableTop, "0.78 0.84 0.90");
+                x += column.Width;
+            }
+
+            DrawLine(builder, TableLeft + TableWidth, tableBottom, TableLeft + TableWidth, tableTop, "0.78 0.84 0.90");
+        }
+
+        private static void WriteText(StringBuilder builder, int x, int y, string text, int fontSize, string color)
+        {
+            builder.AppendLine("BT");
+            builder.AppendLine($"/F1 {fontSize} Tf");
+            builder.AppendLine($"{color} rg");
             builder.AppendLine($"1 0 0 1 {x} {y} Tm ({Escape(text)}) Tj");
+            builder.AppendLine("ET");
+        }
+
+        private static void DrawFilledRect(StringBuilder builder, int x, int y, int width, int height, string color)
+        {
+            builder.AppendLine("q");
+            builder.AppendLine($"{color} rg");
+            builder.AppendLine($"{x} {y} {width} {height} re f");
+            builder.AppendLine("Q");
+        }
+
+        private static void DrawRect(StringBuilder builder, int x, int y, int width, int height, string color)
+        {
+            builder.AppendLine("q");
+            builder.AppendLine($"{color} RG");
+            builder.AppendLine("0.6 w");
+            builder.AppendLine($"{x} {y} {width} {height} re S");
+            builder.AppendLine("Q");
+        }
+
+        private static void DrawLine(StringBuilder builder, int x1, int y1, int x2, int y2, string color)
+        {
+            builder.AppendLine("q");
+            builder.AppendLine($"{color} RG");
+            builder.AppendLine("0.5 w");
+            builder.AppendLine($"{x1} {y1} m {x2} {y2} l S");
+            builder.AppendLine("Q");
         }
 
         private static string Shorten(string? value, int maxLength)
@@ -149,12 +244,22 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
     }
 
     public sealed record SchedulePdfRow(
-        string DayOfWeek,
-        string TimeSlot,
+        int SemesterNumber,
+        string StudyYear,
+        string Branch,
+        string Section,
+        string GroupName,
+        string LectureType,
         string Subject,
         string FacultyMember,
         string Classroom,
-        string StudyYear,
-        string Branch,
-        string Section);
+        string DayOfWeek,
+        string StartTime,
+        string EndTime);
+
+    internal sealed record PdfColumn(
+        string Header,
+        int Width,
+        int MaxLength,
+        Func<SchedulePdfRow, string> GetValue);
 }

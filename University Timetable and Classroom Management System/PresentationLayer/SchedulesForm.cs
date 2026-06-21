@@ -598,14 +598,18 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             var rows = GetFilteredRows()
                 .Select(row => new SchedulePdfRow(
-                    row.DayOfWeek,
-                    row.TimeSlotName,
+                    row.SemesterNumber,
+                    row.StudyYearName,
+                    row.BranchName,
+                    row.SectionName,
+                    row.GroupName == "All" ? "-" : row.GroupName,
+                    row.LectureType,
                     row.SubjectName,
                     row.FacultyMemberName,
                     row.ClassroomName,
-                    row.StudyYearName,
-                    row.BranchName,
-                    row.SectionName))
+                    row.DayOfWeek,
+                    row.StartTimeText,
+                    row.EndTimeText))
                 .ToList();
 
             using var dialog = new SaveFileDialog
