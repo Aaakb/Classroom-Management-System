@@ -9,6 +9,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2Panel pnlBrand = null!;
         private Guna.UI2.WinForms.Guna2Panel pnlContent = null!;
         private Guna.UI2.WinForms.Guna2Panel pnlCard = null!;
+        private PictureBox picBrandLogo = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblBrandTitle = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblBrandSubtitle = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblTitle = null!;
@@ -120,6 +121,7 @@ namespace University_Timetable_and_Classroom_Management_System
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             pnlBrand = new Guna.UI2.WinForms.Guna2Panel();
+            picBrandLogo = new PictureBox();
             lblBrandTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblBrandSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlContent = new Guna.UI2.WinForms.Guna2Panel();
@@ -134,12 +136,14 @@ namespace University_Timetable_and_Classroom_Management_System
             btnSignIn = new Guna.UI2.WinForms.Guna2Button();
             btnCreateAccount = new Guna.UI2.WinForms.Guna2Button();
             pnlBrand.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picBrandLogo).BeginInit();
             pnlContent.SuspendLayout();
             pnlCard.SuspendLayout();
             SuspendLayout();
             //
             // pnlBrand
             //
+            pnlBrand.Controls.Add(picBrandLogo);
             pnlBrand.Controls.Add(lblBrandTitle);
             pnlBrand.Controls.Add(lblBrandSubtitle);
             pnlBrand.CustomizableEdges = customizableEdges1;
@@ -151,12 +155,23 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlBrand.Size = new Size(360, 620);
             pnlBrand.TabIndex = 1;
             //
+            // picBrandLogo
+            //
+            picBrandLogo.BackColor = Color.Transparent;
+            picBrandLogo.Image = BrandAssets.LoadLogoImage();
+            picBrandLogo.Location = new Point(64, 42);
+            picBrandLogo.Name = "picBrandLogo";
+            picBrandLogo.Size = new Size(232, 232);
+            picBrandLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            picBrandLogo.TabIndex = 2;
+            picBrandLogo.TabStop = false;
+            //
             // lblBrandTitle
             //
             lblBrandTitle.BackColor = Color.Transparent;
             lblBrandTitle.Font = new Font("Segoe UI Semibold", 22F, FontStyle.Bold);
             lblBrandTitle.ForeColor = Color.White;
-            lblBrandTitle.Location = new Point(36, 70);
+            lblBrandTitle.Location = new Point(36, 296);
             lblBrandTitle.Name = "lblBrandTitle";
             lblBrandTitle.Size = new Size(226, 42);
             lblBrandTitle.TabIndex = 0;
@@ -167,9 +182,9 @@ namespace University_Timetable_and_Classroom_Management_System
             lblBrandSubtitle.BackColor = Color.Transparent;
             lblBrandSubtitle.Font = new Font("Segoe UI", 10F);
             lblBrandSubtitle.ForeColor = Color.FromArgb(203, 213, 225);
-            lblBrandSubtitle.Location = new Point(38, 118);
+            lblBrandSubtitle.Location = new Point(38, 344);
             lblBrandSubtitle.Name = "lblBrandSubtitle";
-            lblBrandSubtitle.Size = new Size(428, 19);
+            lblBrandSubtitle.Size = new Size(290, 42);
             lblBrandSubtitle.TabIndex = 1;
             lblBrandSubtitle.Text = "Secure access for classroom, subject, faculty, and schedule management.";
             //
@@ -348,8 +363,10 @@ namespace University_Timetable_and_Classroom_Management_System
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Sign In";
+            Icon = BrandAssets.LoadIcon();
             pnlBrand.ResumeLayout(false);
             pnlBrand.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picBrandLogo).EndInit();
             pnlContent.ResumeLayout(false);
             pnlCard.ResumeLayout(false);
             pnlCard.PerformLayout();

@@ -45,6 +45,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2Separator separatorSidebar = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarSubtitle = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblApplicationName = null!;
+        private PictureBox picSidebarLogo = null!;
         private void InitializeComponent()
         {
             pnlSidebar = new Guna.UI2.WinForms.Guna2Panel();
@@ -53,13 +54,16 @@ namespace University_Timetable_and_Classroom_Management_System
             separatorSidebar = new Guna.UI2.WinForms.Guna2Separator();
             lblSidebarSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblApplicationName = new Guna.UI2.WinForms.Guna2HtmlLabel();
+            picSidebarLogo = new PictureBox();
             pnlSidebar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picSidebarLogo).BeginInit();
             SuspendLayout();
             pnlSidebar.BackColor = System.Drawing.Color.Transparent;
             pnlSidebar.Controls.Add(lblSidebarFooter);
             pnlSidebar.Controls.Add(separatorSidebar);
             pnlSidebar.Controls.Add(lblSidebarSubtitle);
             pnlSidebar.Controls.Add(lblApplicationName);
+            pnlSidebar.Controls.Add(picSidebarLogo);
             pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             pnlSidebar.FillColor = System.Drawing.Color.FromArgb(24, 38, 62);
             pnlSidebar.Location = new System.Drawing.Point(0, 0);
@@ -77,7 +81,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblSidebarFooter.Text = "Academic system";
             lblSidebarFooter.Visible = false;
             separatorSidebar.FillColor = System.Drawing.Color.FromArgb(51, 65, 85);
-            separatorSidebar.Location = new System.Drawing.Point(24, 78);
+            separatorSidebar.Location = new System.Drawing.Point(24, 166);
             separatorSidebar.Name = "separatorSidebar";
             separatorSidebar.Size = new System.Drawing.Size(192, 10);
             separatorSidebar.TabIndex = 2;
@@ -98,6 +102,15 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName.Size = new System.Drawing.Size(188, 32);
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "Timetable Studio";
+            lblApplicationName.Visible = false;
+            picSidebarLogo.BackColor = System.Drawing.Color.Transparent;
+            picSidebarLogo.Image = BrandAssets.LoadLogoImage();
+            picSidebarLogo.Location = new System.Drawing.Point(50, 18);
+            picSidebarLogo.Name = "picSidebarLogo";
+            picSidebarLogo.Size = new System.Drawing.Size(140, 140);
+            picSidebarLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            picSidebarLogo.TabIndex = 4;
+            picSidebarLogo.TabStop = false;
             pnlPageHost.BackColor = System.Drawing.Color.FromArgb(245, 247, 251);
             pnlPageHost.Dock = System.Windows.Forms.DockStyle.Fill;
             pnlPageHost.Location = new System.Drawing.Point(240, 0);
@@ -114,8 +127,10 @@ namespace University_Timetable_and_Classroom_Management_System
             Name = "MainShellForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Timetable Studio";
+            Icon = BrandAssets.LoadIcon();
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picSidebarLogo).EndInit();
             ResumeLayout(false);
         }
 }

@@ -280,6 +280,7 @@ namespace University_Timetable_and_Classroom_Management_System
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Create Account";
+            Icon = BrandAssets.LoadIcon();
             pnlCard.ResumeLayout(false);
             pnlCard.PerformLayout();
             ResumeLayout(false);
