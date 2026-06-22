@@ -45,7 +45,6 @@ namespace University_Timetable_and_Classroom_Management_System
             BindSectionFilterCombo();
             BindDayCombos();
             BindSemesterFilterCombo();
-            BindLectureTypeFilterCombo();
             BindGroupFilterCombo();
             BindGroupNameCombo();
         }
