@@ -33,11 +33,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2HtmlLabel lblLectureType = null!;
         private Guna.UI2.WinForms.Guna2ComboBox cmbGroupName = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblGroupName = null!;
-        private Guna.UI2.WinForms.Guna2TextBox txtScheduleSearch = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTotalSessionsValue = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblTheorySessionsValue = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPracticalSessionsValue = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblConflictSessionsValue = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblConflictStatus = null!;
 
         public SchedulesForm()
@@ -85,7 +80,6 @@ namespace University_Timetable_and_Classroom_Management_System
             toolTip.SetToolTip(btnClearScheduleForm, "Clears the current table view only. Database records are not deleted.");
             toolTip.SetToolTip(cmbLectureType, "Theory uses the whole section. Practical requires a group.");
             toolTip.SetToolTip(cmbGroupName, "Available only for practical sessions in first and second year.");
-            toolTip.SetToolTip(txtScheduleSearch, "Search the currently loaded schedule view.");
             toolTip.SetToolTip(lblConflictStatus, "Shows conflicts found in the currently visible rows.");
         }
 
@@ -405,73 +399,8 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableTitle.Location = new Point(24, 14);
             lblTableSubtitle.Location = new Point(24, 39);
 
-            txtScheduleSearch = new Guna.UI2.WinForms.Guna2TextBox
-            {
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                BorderColor = Color.FromArgb(203, 213, 225),
-                BorderRadius = 8,
-                Cursor = Cursors.IBeam,
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(15, 23, 42),
-                Location = new Point(886, 18),
-                Name = "txtScheduleSearch",
-                PlaceholderForeColor = Color.FromArgb(148, 163, 184),
-                PlaceholderText = "Search schedule...",
-                Size = new Size(294, 36)
-            };
-            txtScheduleSearch.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
-            pnlSchedulesTable.Controls.Add(txtScheduleSearch);
-
-            var totalCard = CreateSummaryCard("Total Sessions", out lblTotalSessionsValue, new Point(24, 68));
-            var theoryCard = CreateSummaryCard("Theory", out lblTheorySessionsValue, new Point(210, 68));
-            var practicalCard = CreateSummaryCard("Practical", out lblPracticalSessionsValue, new Point(396, 68));
-            var conflictsCard = CreateSummaryCard("Conflicts", out lblConflictSessionsValue, new Point(582, 68));
-
-            pnlSchedulesTable.Controls.Add(totalCard);
-            pnlSchedulesTable.Controls.Add(theoryCard);
-            pnlSchedulesTable.Controls.Add(practicalCard);
-            pnlSchedulesTable.Controls.Add(conflictsCard);
-
-            dgvSchedules.Location = new Point(24, 128);
-            dgvSchedules.Size = new Size(1156, 80);
-        }
-
-        private static Guna.UI2.WinForms.Guna2Panel CreateSummaryCard(
-            string title,
-            out Guna.UI2.WinForms.Guna2HtmlLabel valueLabel,
-            Point location)
-        {
-            var panel = new Guna.UI2.WinForms.Guna2Panel
-            {
-                BackColor = Color.Transparent,
-                BorderColor = Color.FromArgb(226, 232, 240),
-                BorderRadius = 8,
-                BorderThickness = 1,
-                FillColor = Color.White,
-                Location = location,
-                Size = new Size(166, 44)
-            };
-
-            valueLabel = new Guna.UI2.WinForms.Guna2HtmlLabel
-            {
-                BackColor = Color.Transparent,
-                Font = new Font("Segoe UI Semibold", 13F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(15, 23, 42),
-                Location = new Point(14, 5),
-                Text = "0"
-            };
-
-            panel.Controls.Add(valueLabel);
-            panel.Controls.Add(new Guna.UI2.WinForms.Guna2HtmlLabel
-            {
-                BackColor = Color.Transparent,
-                Font = new Font("Segoe UI", 8.5F),
-                ForeColor = Color.FromArgb(100, 116, 139),
-                Location = new Point(60, 14),
-                Text = title
-            });
-
-            return panel;
+            dgvSchedules.Location = new Point(24, 68);
+            dgvSchedules.Size = new Size(1156, 140);
         }
 
         private static Guna.UI2.WinForms.Guna2HtmlLabel CreateEditorLabel(
@@ -618,7 +547,6 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbLectureTypeFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbGroupFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbLectureType.SelectedIndexChanged += (_, _) => ApplyLectureTypeSelection();
-            txtScheduleSearch.TextChanged += (_, _) => ApplyScheduleFilters();
         }
 
         private async Task GenerateScheduleAsync()
@@ -934,52 +862,12 @@ namespace University_Timetable_and_Classroom_Management_System
                 DayOfWeek = cmbDayFilter.SelectedItem as string
             };
 
-            var filteredRows = scheduleFilterService.Apply(scheduleRows, criteria);
-            string searchText = txtScheduleSearch?.Text.Trim() ?? string.Empty;
-
-            if (!string.IsNullOrWhiteSpace(searchText))
-            {
-                filteredRows = filteredRows.Where(row => RowMatchesSearch(row, searchText));
-            }
-
-            return filteredRows;
-        }
-
-        private static bool RowMatchesSearch(ScheduleRow row, string searchText)
-        {
-            return ContainsSearch(row.DayOfWeek, searchText) ||
-                ContainsSearch(row.TimeSlotName, searchText) ||
-                ContainsSearch(row.SubjectName, searchText) ||
-                ContainsSearch(row.FacultyMemberName, searchText) ||
-                ContainsSearch(row.ClassroomName, searchText) ||
-                ContainsSearch(row.LectureType, searchText) ||
-                ContainsSearch(row.StudyYearName, searchText) ||
-                ContainsSearch(row.BranchName, searchText) ||
-                ContainsSearch(row.SectionName, searchText) ||
-                ContainsSearch(row.GroupName, searchText) ||
-                row.SemesterNumber.ToString().Contains(searchText, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static bool ContainsSearch(string value, string searchText)
-        {
-            return value.Contains(searchText, StringComparison.OrdinalIgnoreCase);
+            return scheduleFilterService.Apply(scheduleRows, criteria);
         }
 
         private void UpdateScheduleSummary(IReadOnlyCollection<ScheduleRow> visibleRows)
         {
-            int theoryCount = visibleRows.Count(row =>
-                string.Equals(row.LectureType, "Theory", StringComparison.OrdinalIgnoreCase));
-            int practicalCount = visibleRows.Count(row =>
-                string.Equals(row.LectureType, "Practical", StringComparison.OrdinalIgnoreCase));
             int conflictCount = GetConflictingScheduleIds(visibleRows).Count;
-
-            lblTotalSessionsValue.Text = visibleRows.Count.ToString();
-            lblTheorySessionsValue.Text = theoryCount.ToString();
-            lblPracticalSessionsValue.Text = practicalCount.ToString();
-            lblConflictSessionsValue.Text = conflictCount.ToString();
-            lblConflictSessionsValue.ForeColor = conflictCount > 0
-                ? Color.FromArgb(220, 38, 38)
-                : Color.FromArgb(15, 23, 42);
 
             lblConflictStatus.Text = conflictCount > 0
                 ? $"Conflict detected: {conflictCount} visible row(s)."
