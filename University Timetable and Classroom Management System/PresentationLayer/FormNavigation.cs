@@ -46,7 +46,7 @@ namespace University_Timetable_and_Classroom_Management_System
             sidebar.AutoScroll = true;
             sidebar.AutoScrollMinSize = new System.Drawing.Size(0, 670);
 
-            int top = 190;
+            int top = 110;
 
             foreach (var item in NavigationItems)
             {
