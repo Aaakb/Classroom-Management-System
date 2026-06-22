@@ -6,24 +6,30 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 {
     public class TimeSlotService
     {
-        private static readonly TimeSpan LectureGap = TimeSpan.FromMinutes(10);
-
         public async Task<List<TimeSlot>> GetAllAsync()
         {
             await using var context = new AppDbContext();
-            return await context.TimeSlots
+            var timeSlots = await context.TimeSlots
                 .AsNoTracking()
                 .Where(t => !t.IsBreak)
                 .OrderBy(t => t.StartTime)
                 .ToListAsync();
+
+            return timeSlots
+                .Where(ScheduleTimingRules.IsOfficialLectureSlot)
+                .ToList();
         }
 
         public async Task<TimeSlot?> GetByIdAsync(int id)
         {
             await using var context = new AppDbContext();
-            return await context.TimeSlots
+            var timeSlot = await context.TimeSlots
                 .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.TimeSlotID == id && !t.IsBreak);
+
+            return timeSlot is not null && ScheduleTimingRules.IsOfficialLectureSlot(timeSlot)
+                ? timeSlot
+                : null;
         }
 
         public async Task<TimeSlot> AddAsync(TimeSlot timeSlot)
@@ -81,6 +87,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("End time must be after start time.");
             }
 
+            if (!ScheduleTimingRules.IsValidLectureRange(timeSlot.StartTime, timeSlot.EndTime))
+            {
+                throw new ArgumentException("Time slots must be one hour and forty minutes between 08:30 AM and 02:00 PM.");
+            }
+
             var exists = await context.TimeSlots.AnyAsync(t =>
                 t.StartTime == timeSlot.StartTime &&
                 t.EndTime == timeSlot.EndTime &&
@@ -100,12 +111,13 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             var lectureSlots = await context.TimeSlots
                 .AsNoTracking()
                 .Where(t => !t.IsBreak && (!isUpdate || t.TimeSlotID != timeSlot.TimeSlotID))
-                .Select(t => new { t.StartTime, t.EndTime })
                 .ToListAsync();
 
-            bool tooCloseToAnotherLecture = lectureSlots.Any(t =>
-                timeSlot.StartTime < t.EndTime + LectureGap &&
-                timeSlot.EndTime + LectureGap > t.StartTime);
+            bool tooCloseToAnotherLecture = lectureSlots
+                .Where(ScheduleTimingRules.IsOfficialLectureSlot)
+                .Any(t =>
+                    timeSlot.StartTime < t.EndTime + ScheduleTimingRules.LectureGap &&
+                    timeSlot.EndTime + ScheduleTimingRules.LectureGap > t.StartTime);
 
             if (tooCloseToAnotherLecture)
             {

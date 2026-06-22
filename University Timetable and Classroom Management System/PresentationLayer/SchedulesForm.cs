@@ -237,11 +237,11 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureScheduleLayoutEnhancements()
         {
-            pnlScheduleEditor.Size = new Size(pnlScheduleEditor.Width, 292);
-            pnlScheduleFilters.Location = new Point(28, 330);
+            pnlScheduleEditor.Size = new Size(pnlScheduleEditor.Width, 312);
+            pnlScheduleFilters.Location = new Point(28, 350);
             pnlScheduleFilters.Size = new Size(pnlScheduleFilters.Width, 124);
-            pnlSchedulesTable.Location = new Point(28, 472);
-            pnlSchedulesTable.Size = new Size(pnlSchedulesTable.Width, 232);
+            pnlSchedulesTable.Location = new Point(28, 492);
+            pnlSchedulesTable.Size = new Size(pnlSchedulesTable.Width, 212);
 
             lblEditorTitle.Location = new Point(24, 10);
             lblEditorSubtitle.Location = new Point(24, 36);
@@ -256,7 +256,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 new Point(24, 154),
                 new Size(1156, 74));
 
-            var commandGroup = CreateCommandGroupPanel(new Point(24, 236), new Size(1156, 42));
+            var commandGroup = CreateCommandGroupPanel(new Point(24, 232), new Size(1156, 58));
 
             pnlScheduleEditor.Controls.Add(basicGroup);
             pnlScheduleEditor.Controls.Add(timeRoomGroup);
@@ -288,7 +288,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 BackColor = Color.Transparent,
                 Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(22, 101, 52),
-                Location = new Point(970, 14),
+                Location = new Point(970, 25),
                 Name = "lblConflictStatus",
                 Size = new Size(150, 19),
                 Text = "No visible conflicts"
@@ -365,14 +365,14 @@ namespace University_Timetable_and_Classroom_Management_System
                     BackColor = Color.Transparent,
                     Font = new Font("Segoe UI Semibold", 8.5F, FontStyle.Bold),
                     ForeColor = Color.FromArgb(100, 116, 139),
-                    Location = new Point(x, -1),
+                    Location = new Point(x, 2),
                     Text = groupTitle
                 });
             }
 
             button.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            button.Location = new Point(x, 16);
-            button.Size = new Size(width, 30);
+            button.Location = new Point(x, 22);
+            button.Size = new Size(width, 34);
             parent.Controls.Add(button);
         }
 
@@ -666,6 +666,11 @@ namespace University_Timetable_and_Classroom_Management_System
                 $"Required subject-section lessons: {result.RequiredCount}.",
                 $"Available setup: {result.TimeSlotCount} time slots, {result.ClassroomCount} classrooms, {result.SectionCount} sections."
             };
+
+            if (result.AddedTimeSlotCount > 0 || result.AddedClassroomCount > 0)
+            {
+                message.Add($"Auto-added resources: {result.AddedTimeSlotCount} time slot(s), {result.AddedClassroomCount} classroom/lab(s).");
+            }
 
             if (result.SkippedCount == 0 && result.UnassignedSubjectsCount == 0)
             {

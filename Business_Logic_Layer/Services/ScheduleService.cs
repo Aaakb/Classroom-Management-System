@@ -151,6 +151,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public async Task<ScheduleGenerationResult> GenerateAsync()
         {
             await using var context = new AppDbContext();
+            var resourceResult = await SchedulingResourceMaintenance.EnsureOfficialResourcesAsync(context);
 
             var subjects = await context.Subjects
                 .AsNoTracking()
@@ -178,11 +179,13 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .ThenBy(classroom => classroom.ClassroomNumber)
                 .ToListAsync();
 
-            var timeSlots = await context.TimeSlots
+            var timeSlots = (await context.TimeSlots
                 .AsNoTracking()
                 .Where(slot => !slot.IsBreak)
                 .OrderBy(slot => slot.StartTime)
-                .ToListAsync();
+                .ToListAsync())
+                .Where(ScheduleTimingRules.IsOfficialLectureSlot)
+                .ToList();
 
             var existingSchedules = await context.Schedules.ToListAsync();
             var generatedSchedules = new List<Schedule>();
@@ -243,9 +246,10 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 var section = request.Section;
 
                 int requiredCapacity = GetRequiredCapacity(section, request.GroupName);
-                var targetClassrooms = classrooms
-                    .Where(classroom => classroom.Capacity >= requiredCapacity)
-                    .ToList();
+                var targetClassrooms = GetTargetClassrooms(
+                    classrooms,
+                    requiredCapacity,
+                    request.LectureType);
 
                 if (targetClassrooms.Count == 0)
                 {
@@ -297,6 +301,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         {
                             break;
                         }
+                    }
+
+                    if (created)
+                    {
+                        break;
                     }
                 }
 
@@ -373,7 +382,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 duplicateAssignmentCount,
                 timeSlots.Count,
                 classrooms.Count,
-                sections.Count);
+                sections.Count,
+                resourceResult.AddedTimeSlots,
+                resourceResult.AddedClassrooms);
         }
 
         private static async Task ValidateAsync(AppDbContext context, Schedule schedule, bool isUpdate)
@@ -728,7 +739,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         {
             if (subject.TheoreticalHours > 0)
             {
-                return (int)Math.Ceiling(subject.TheoreticalHours);
+                return 1;
             }
 
             if (subject.PracticalHours > 0)
@@ -737,14 +748,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             var fallbackHours = subject.CreditUnits > 0 ? subject.CreditUnits : 1;
-            return Math.Max(1, (int)Math.Ceiling(fallbackHours));
+            return 1;
         }
 
         private static int CalculatePracticalLessonCount(Subject subject)
         {
-            return subject.PracticalHours > 0
-                ? Math.Max(1, (int)Math.Ceiling(subject.PracticalHours))
-                : 0;
+            return subject.PracticalHours > 0 ? 1 : 0;
         }
 
         private static IReadOnlyList<string> GetPracticalGroupsForSection(Section section)
@@ -760,6 +769,36 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 "B" => ["B1", "B2"],
                 _ => []
             };
+        }
+
+        private static List<Classroom> GetTargetClassrooms(
+            IReadOnlyCollection<Classroom> classrooms,
+            int requiredCapacity,
+            string lectureType)
+        {
+            var capacityMatches = classrooms
+                .Where(classroom => classroom.Capacity >= requiredCapacity)
+                .OrderBy(classroom => classroom.Capacity)
+                .ThenBy(classroom => classroom.ClassroomNumber)
+                .ToList();
+
+            var preferredRooms = capacityMatches
+                .Where(classroom => RoomMatchesLectureType(classroom, lectureType))
+                .ToList();
+
+            return preferredRooms.Count > 0
+                ? preferredRooms
+                : capacityMatches;
+        }
+
+        private static bool RoomMatchesLectureType(Classroom classroom, string lectureType)
+        {
+            bool isLab = string.Equals(classroom.RoomType, "Lab", StringComparison.OrdinalIgnoreCase) ||
+                classroom.ClassroomNumber.Contains("Lab", StringComparison.OrdinalIgnoreCase);
+
+            return string.Equals(lectureType, "Practical", StringComparison.OrdinalIgnoreCase)
+                ? isLab
+                : !isLab;
         }
 
         private static int StudyYearOrder(string yearName)
@@ -799,7 +838,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         int DuplicateAssignmentCount,
         int TimeSlotCount,
         int ClassroomCount,
-        int SectionCount);
+        int SectionCount,
+        int AddedTimeSlotCount,
+        int AddedClassroomCount);
 
     internal sealed record ScheduleGenerationRequest(
         FacultyMemberSubject Assignment,
