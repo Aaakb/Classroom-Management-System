@@ -87,9 +87,9 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.BorderStyle = BorderStyle.None;
             dgvSchedules.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvSchedules.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dgvSchedules.ColumnHeadersHeight = 42;
+            dgvSchedules.ColumnHeadersHeight = 48;
             dgvSchedules.EnableHeadersVisualStyles = false;
-            dgvSchedules.RowTemplate.Height = 38;
+            dgvSchedules.RowTemplate.Height = 46;
             dgvSchedules.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             GridStyle.Apply(dgvSchedules);
             dgvSchedules.DataSource = scheduleBindingSource;
@@ -456,13 +456,14 @@ namespace University_Timetable_and_Classroom_Management_System
 
             dgvSchedules.DefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
             dgvSchedules.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
-            dgvSchedules.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
-            dgvSchedules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            dgvSchedules.DefaultCellStyle.Font = new Font("Segoe UI", 11F);
+            dgvSchedules.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
             dgvSchedules.RowsDefaultCellStyle.BackColor = Color.White;
             dgvSchedules.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
             dgvSchedules.DefaultCellStyle.SelectionBackColor = Color.FromArgb(37, 99, 235);
             dgvSchedules.DefaultCellStyle.SelectionForeColor = Color.White;
-            dgvSchedules.RowTemplate.Height = 40;
+            dgvSchedules.ColumnHeadersHeight = 48;
+            dgvSchedules.RowTemplate.Height = 46;
         }
 
         private static void SetGridColumn(DataGridViewColumn column, string headerText, float fillWeight)
@@ -1522,9 +1523,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblScheduleId = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblEditorSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             lblEditorTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
-            pnlHeader = new Guna.UI2.WinForms.Guna2Panel();
-            lblPageSubtitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
-            lblPageTitle = new Guna.UI2.WinForms.Guna2HtmlLabel();
             pnlSidebar.SuspendLayout();
             pnlMain.SuspendLayout();
             pnlWorkspace.SuspendLayout();
@@ -1532,7 +1530,6 @@ namespace University_Timetable_and_Classroom_Management_System
             ((System.ComponentModel.ISupportInitialize)dgvSchedules).BeginInit();
             pnlScheduleFilters.SuspendLayout();
             pnlScheduleEditor.SuspendLayout();
-            pnlHeader.SuspendLayout();
             SuspendLayout();
             pnlSidebar.BackColor = Color.Transparent;
             pnlSidebar.Controls.Add(lblSidebarFooter);
@@ -1676,7 +1673,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblApplicationName.TabIndex = 0;
             lblApplicationName.Text = "University Timetable";
             pnlMain.Controls.Add(pnlWorkspace);
-            pnlMain.Controls.Add(pnlHeader);
             pnlMain.Dock = DockStyle.Fill;
             pnlMain.FillColor = Color.FromArgb(245, 247, 250);
             pnlMain.Location = new Point(240, 0);
@@ -1688,10 +1684,10 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlWorkspace.Controls.Add(pnlScheduleEditor);
             pnlWorkspace.Dock = DockStyle.Fill;
             pnlWorkspace.FillColor = Color.FromArgb(245, 247, 250);
-            pnlWorkspace.Location = new Point(0, 88);
+            pnlWorkspace.Location = new Point(0, 0);
             pnlWorkspace.Name = "pnlWorkspace";
             pnlWorkspace.Padding = new Padding(28, 24, 28, 28);
-            pnlWorkspace.Size = new Size(1260, 732);
+            pnlWorkspace.Size = new Size(1260, 820);
             pnlWorkspace.TabIndex = 1;
             pnlSchedulesTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             pnlSchedulesTable.BackColor = Color.Transparent;
@@ -1717,17 +1713,17 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.FromArgb(15, 23, 42);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = Color.White;
             dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(15, 23, 42);
             dataGridViewCellStyle2.SelectionForeColor = Color.White;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             dgvSchedules.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dgvSchedules.ColumnHeadersHeight = 44;
+            dgvSchedules.ColumnHeadersHeight = 48;
             dgvSchedules.Columns.AddRange(new DataGridViewColumn[] { colScheduleId, colDayOfWeek, colSubject, colFacultyMember, colClassroom, colTimeSlot, colStudyYear, colBranch, colSection });
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = Color.White;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 11F);
             dataGridViewCellStyle3.ForeColor = Color.FromArgb(30, 41, 59);
             dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(30, 64, 175);
@@ -1739,7 +1735,7 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.Name = "dgvSchedules";
             dgvSchedules.ReadOnly = true;
             dgvSchedules.RowHeadersVisible = false;
-            dgvSchedules.RowTemplate.Height = 42;
+            dgvSchedules.RowTemplate.Height = 46;
             dgvSchedules.Size = new Size(1156, 186);
             dgvSchedules.TabIndex = 2;
             dgvSchedules.ThemeStyle.AlternatingRowsStyle.BackColor = Color.FromArgb(248, 250, 252);
@@ -1748,13 +1744,13 @@ namespace University_Timetable_and_Classroom_Management_System
             dgvSchedules.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.FromArgb(30, 64, 175);
             dgvSchedules.ThemeStyle.GridColor = Color.FromArgb(226, 232, 240);
             dgvSchedules.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(15, 23, 42);
-            dgvSchedules.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            dgvSchedules.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
             dgvSchedules.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvSchedules.ThemeStyle.HeaderStyle.Height = 44;
+            dgvSchedules.ThemeStyle.HeaderStyle.Height = 48;
             dgvSchedules.ThemeStyle.ReadOnly = true;
-            dgvSchedules.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 10F);
+            dgvSchedules.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 11F);
             dgvSchedules.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(30, 41, 59);
-            dgvSchedules.ThemeStyle.RowsStyle.Height = 42;
+            dgvSchedules.ThemeStyle.RowsStyle.Height = 46;
             dgvSchedules.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dgvSchedules.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(30, 64, 175);
             colScheduleId.DataPropertyName = "ScheduleID";
@@ -2230,30 +2226,6 @@ namespace University_Timetable_and_Classroom_Management_System
             lblEditorTitle.Size = new Size(128, 25);
             lblEditorTitle.TabIndex = 0;
             lblEditorTitle.Text = "Schedule Details";
-            pnlHeader.Controls.Add(lblPageSubtitle);
-            pnlHeader.Controls.Add(lblPageTitle);
-            pnlHeader.Dock = DockStyle.Top;
-            pnlHeader.FillColor = Color.White;
-            pnlHeader.Location = new Point(0, 0);
-            pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(1260, 88);
-            pnlHeader.TabIndex = 0;
-            lblPageSubtitle.BackColor = Color.Transparent;
-            lblPageSubtitle.Font = new Font("Segoe UI", 10F);
-            lblPageSubtitle.ForeColor = Color.FromArgb(100, 116, 139);
-            lblPageSubtitle.Location = new Point(32, 50);
-            lblPageSubtitle.Name = "lblPageSubtitle";
-            lblPageSubtitle.Size = new Size(395, 19);
-            lblPageSubtitle.TabIndex = 1;
-            lblPageSubtitle.Text = "Manage final timetable sessions by day, room, instructor, and time.";
-            lblPageTitle.BackColor = Color.Transparent;
-            lblPageTitle.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold);
-            lblPageTitle.ForeColor = Color.FromArgb(15, 23, 42);
-            lblPageTitle.Location = new Point(32, 16);
-            lblPageTitle.Name = "lblPageTitle";
-            lblPageTitle.Size = new Size(264, 34);
-            lblPageTitle.TabIndex = 0;
-            lblPageTitle.Text = "Schedules Management";
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(245, 247, 250);
@@ -2275,8 +2247,6 @@ namespace University_Timetable_and_Classroom_Management_System
             pnlScheduleFilters.PerformLayout();
             pnlScheduleEditor.ResumeLayout(false);
             pnlScheduleEditor.PerformLayout();
-            pnlHeader.ResumeLayout(false);
-            pnlHeader.PerformLayout();
             ResumeLayout(false);
         }
         private Guna.UI2.WinForms.Guna2Panel pnlSidebar = null!;
@@ -2292,9 +2262,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2Button btnNavigationSchedules = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSidebarFooter = null!;
         private Guna.UI2.WinForms.Guna2Panel pnlMain = null!;
-        private Guna.UI2.WinForms.Guna2Panel pnlHeader = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
         private Guna.UI2.WinForms.Guna2Panel pnlWorkspace = null!;
         private Guna.UI2.WinForms.Guna2Panel pnlScheduleFilters = null!;
         private Guna.UI2.WinForms.Guna2ComboBox cmbFacultyFilter = null!;
