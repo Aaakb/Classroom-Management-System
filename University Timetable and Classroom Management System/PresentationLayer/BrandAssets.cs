@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace University_Timetable_and_Classroom_Management_System
 {
     internal static class BrandAssets
@@ -8,19 +10,53 @@ namespace University_Timetable_and_Classroom_Management_System
 
         public static Image? LoadLogoImage()
         {
-            string path = GetAssetPath(LogoFileName);
-            return File.Exists(path) ? Image.FromFile(path) : null;
+            string? path = FindAssetPath(LogoFileName);
+
+            if (path is null)
+            {
+                return null;
+            }
+
+            using var image = Image.FromFile(path);
+            return new Bitmap(image);
         }
 
         public static Icon? LoadIcon()
         {
-            string path = GetAssetPath(IconFileName);
-            return File.Exists(path) ? new Icon(path) : null;
+            string? path = FindAssetPath(IconFileName);
+
+            if (path is null)
+            {
+                return null;
+            }
+
+            using var icon = new Icon(path);
+            return (Icon)icon.Clone();
         }
 
-        private static string GetAssetPath(string fileName)
+        private static string? FindAssetPath(string fileName)
         {
-            return Path.Combine(AppContext.BaseDirectory, AssetsFolder, fileName);
+            var paths = new List<string>
+            {
+                Path.Combine(AppContext.BaseDirectory, AssetsFolder, fileName),
+                Path.Combine(AppContext.BaseDirectory, fileName)
+            };
+
+            DirectoryInfo? current = new(AppContext.BaseDirectory);
+
+            for (int i = 0; i < 8 && current is not null; i++)
+            {
+                paths.Add(Path.Combine(current.FullName, AssetsFolder, fileName));
+                paths.Add(Path.Combine(
+                    current.FullName,
+                    "University Timetable and Classroom Management System",
+                    AssetsFolder,
+                    fileName));
+
+                current = current.Parent;
+            }
+
+            return paths.FirstOrDefault(File.Exists);
         }
     }
 }

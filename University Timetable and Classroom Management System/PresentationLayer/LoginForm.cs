@@ -160,9 +160,10 @@ namespace University_Timetable_and_Classroom_Management_System
             // picBrandLogo
             // 
             picBrandLogo.BackColor = Color.Transparent;
-            picBrandLogo.Location = new Point(64, 42);
+            picBrandLogo.Image = BrandAssets.LoadLogoImage();
+            picBrandLogo.Location = new Point(56, 42);
             picBrandLogo.Name = "picBrandLogo";
-            picBrandLogo.Size = new Size(216, 217);
+            picBrandLogo.Size = new Size(248, 248);
             picBrandLogo.SizeMode = PictureBoxSizeMode.Zoom;
             picBrandLogo.TabIndex = 2;
             picBrandLogo.TabStop = false;
@@ -172,7 +173,7 @@ namespace University_Timetable_and_Classroom_Management_System
             lblBrandTitle.BackColor = Color.Transparent;
             lblBrandTitle.Font = new Font("Segoe UI Semibold", 22F, FontStyle.Bold);
             lblBrandTitle.ForeColor = Color.White;
-            lblBrandTitle.Location = new Point(36, 296);
+            lblBrandTitle.Location = new Point(36, 318);
             lblBrandTitle.Name = "lblBrandTitle";
             lblBrandTitle.Size = new Size(226, 42);
             lblBrandTitle.TabIndex = 0;
@@ -183,11 +184,11 @@ namespace University_Timetable_and_Classroom_Management_System
             lblBrandSubtitle.BackColor = Color.Transparent;
             lblBrandSubtitle.Font = new Font("Segoe UI", 10F);
             lblBrandSubtitle.ForeColor = Color.FromArgb(203, 213, 225);
-            lblBrandSubtitle.Location = new Point(38, 344);
+            lblBrandSubtitle.Location = new Point(38, 368);
             lblBrandSubtitle.Name = "lblBrandSubtitle";
-            lblBrandSubtitle.Size = new Size(428, 19);
+            lblBrandSubtitle.Size = new Size(265, 42);
             lblBrandSubtitle.TabIndex = 1;
-            lblBrandSubtitle.Text = "Secure access for classroom, subject, faculty, and schedule management.";
+            lblBrandSubtitle.Text = "Secure access for classroom, subject,<br>faculty, and schedule management.";
             // 
             // pnlContent
             // 
@@ -366,6 +367,7 @@ namespace University_Timetable_and_Classroom_Management_System
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Sign In";
+            Icon = BrandAssets.LoadIcon();
             pnlBrand.ResumeLayout(false);
             pnlBrand.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picBrandLogo).EndInit();
