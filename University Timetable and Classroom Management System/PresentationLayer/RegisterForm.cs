@@ -29,6 +29,8 @@ namespace University_Timetable_and_Classroom_Management_System
         public RegisterForm()
         {
             InitializeComponent();
+            PasswordToggleIcon.Apply(btnTogglePassword, passwordVisible);
+            PasswordToggleIcon.Apply(btnToggleConfirmPassword, confirmPasswordVisible);
             WireEvents();
             AcceptButton = btnCreateAccount;
             CancelButton = btnCancel;
@@ -101,14 +103,14 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             passwordVisible = !passwordVisible;
             txtPassword.PasswordChar = passwordVisible ? '\0' : '*';
-            btnTogglePassword.Text = passwordVisible ? "Hide" : "Show";
+            PasswordToggleIcon.Apply(btnTogglePassword, passwordVisible);
         }
 
         private void ToggleConfirmPasswordVisibility()
         {
             confirmPasswordVisible = !confirmPasswordVisible;
             txtConfirmPassword.PasswordChar = confirmPasswordVisible ? '\0' : '*';
-            btnToggleConfirmPassword.Text = confirmPasswordVisible ? "Hide" : "Show";
+            PasswordToggleIcon.Apply(btnToggleConfirmPassword, confirmPasswordVisible);
         }
 
         private void InitializeComponent()
@@ -218,7 +220,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnTogglePassword.HoverState.FillColor = Color.FromArgb(239, 246, 255);
             btnTogglePassword.Location = new Point(348, 306);
             btnTogglePassword.Size = new Size(76, 42);
-            btnTogglePassword.Text = "Show";
+            btnTogglePassword.Text = "";
 
             lblConfirmPassword.BackColor = Color.Transparent;
             lblConfirmPassword.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
@@ -245,7 +247,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnToggleConfirmPassword.HoverState.FillColor = Color.FromArgb(239, 246, 255);
             btnToggleConfirmPassword.Location = new Point(348, 388);
             btnToggleConfirmPassword.Size = new Size(76, 42);
-            btnToggleConfirmPassword.Text = "Show";
+            btnToggleConfirmPassword.Text = "";
 
             btnCreateAccount.BorderRadius = 8;
             btnCreateAccount.Cursor = Cursors.Hand;

@@ -26,6 +26,7 @@ namespace University_Timetable_and_Classroom_Management_System
         public LoginForm()
         {
             InitializeComponent();
+            PasswordToggleIcon.Apply(btnTogglePassword, passwordVisible);
             WireEvents();
             AcceptButton = btnSignIn;
             Shown += (_, _) => txtUserName.Focus();
@@ -101,7 +102,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             passwordVisible = !passwordVisible;
             txtPassword.PasswordChar = passwordVisible ? '\0' : '*';
-            btnTogglePassword.Text = passwordVisible ? "Hide" : "Show";
+            PasswordToggleIcon.Apply(btnTogglePassword, passwordVisible);
         }
 
         private void InitializeComponent()
@@ -318,7 +319,7 @@ namespace University_Timetable_and_Classroom_Management_System
             btnTogglePassword.ShadowDecoration.CustomizableEdges = customizableEdges8;
             btnTogglePassword.Size = new Size(68, 44);
             btnTogglePassword.TabIndex = 6;
-            btnTogglePassword.Text = "Show";
+            btnTogglePassword.Text = "";
             // 
             // btnSignIn
             // 
