@@ -476,17 +476,17 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         {
             if (await HasClassroomConflictAsync(context, schedule, isUpdate))
             {
-                throw new ArgumentException("This classroom is already booked for the selected day and time slot.");
+                throw new ArgumentException("This classroom is already booked in the selected semester, day, and time slot.");
             }
 
             if (await HasFacultyConflictAsync(context, schedule, isUpdate))
             {
-                throw new ArgumentException("This faculty member is already booked for the selected day and time slot.");
+                throw new ArgumentException("This faculty member is already booked in the selected semester, day, and time slot.");
             }
 
             if (await HasSectionOrGroupConflictAsync(context, schedule, isUpdate))
             {
-                throw new ArgumentException("This study year, branch, or section already has a schedule in the selected slot.");
+                throw new ArgumentException("This section or group already has a schedule in the selected semester, day, and time slot.");
             }
         }
 

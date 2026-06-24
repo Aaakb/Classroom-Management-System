@@ -187,6 +187,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     IF @dropConstraintSql <> N''
                         EXEC sp_executesql @dropConstraintSql;
 
+                    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_Classroom_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
+                        DROP INDEX [UQ_Classroom_Time] ON [Schedules];
+
+                    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_Faculty_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
+                        DROP INDEX [UQ_Faculty_Time] ON [Schedules];
+
+                    IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'UQ_Section_Time' AND object_id = OBJECT_ID(N'[Schedules]'))
+                        DROP INDEX [UQ_Section_Time] ON [Schedules];
+
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_ClassroomID_TimeSlotID' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_ClassroomID_TimeSlotID] ON [Schedules];
 

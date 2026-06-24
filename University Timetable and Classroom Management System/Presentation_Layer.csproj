@@ -77,11 +77,4 @@
     <EmbeddedResource Remove="PresentationLayer\*.resx" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="PresentationLayer\RegisterForm.resx" />
-    <EmbeddedResource Include="PresentationLayer\SchedulesForm.Loading.resx" />
-    <EmbeddedResource Include="PresentationLayer\SchedulesForm.resx" />
-    <EmbeddedResource Include="PresentationLayer\StudyYearsForm.resx" />
-  </ItemGroup>
-
 </Project>
