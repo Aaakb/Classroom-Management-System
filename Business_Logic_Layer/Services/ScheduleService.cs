@@ -277,7 +277,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 classrooms.Count,
                 sections.Count,
                 resourceResult.AddedTimeSlots,
-                resourceResult.AddedClassrooms);
+                resourceResult.AddedClassrooms,
+                resourceResult.AddedFacultyMembers,
+                resourceResult.AddedFacultySubjectAssignments);
         }
 
         private static async Task ValidateAsync(AppDbContext context, Schedule schedule, bool isUpdate)
@@ -1010,7 +1012,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         int ClassroomCount,
         int SectionCount,
         int AddedTimeSlotCount,
-        int AddedClassroomCount);
+        int AddedClassroomCount,
+        int AddedFacultyMemberCount,
+        int AddedFacultySubjectAssignmentCount);
 
     internal sealed record SubjectTeachingAssignment(
         Subject Subject,
