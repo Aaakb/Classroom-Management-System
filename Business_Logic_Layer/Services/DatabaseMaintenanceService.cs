@@ -15,6 +15,17 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 return;
             }
 
+            await EnsureApplicationUsersTableAsync(context);
+            await EnsureSubjectsSchemaAsync(context);
+            await EnsureSchedulesSchemaAsync(context);
+            await NormalizeScheduleDataAsync(context);
+            await RebuildScheduleIndexesAsync(context);
+            await RecreateScheduleDetailsViewAsync(context);
+            await SchedulingResourceMaintenance.EnsureOfficialResourcesAsync(context);
+        }
+
+        private static async Task EnsureApplicationUsersTableAsync(AppDbContext context)
+        {
             await context.Database.ExecuteSqlRawAsync("""
                 IF OBJECT_ID(N'[ApplicationUsers]', N'U') IS NULL
                 BEGIN
@@ -34,31 +45,71 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_ApplicationUsers_NormalizedUserName' AND object_id = OBJECT_ID(N'[ApplicationUsers]'))
                     CREATE UNIQUE INDEX [IX_ApplicationUsers_NormalizedUserName]
                     ON [ApplicationUsers] ([NormalizedUserName]);
+                """);
+        }
 
+        private static async Task EnsureSubjectsSchemaAsync(AppDbContext context)
+        {
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Subjects]', N'U') IS NOT NULL
+                   AND COL_LENGTH(N'dbo.Subjects', N'SemesterNumber') IS NULL
+                    ALTER TABLE [Subjects]
+                    ADD [SemesterNumber] int NOT NULL
+                    CONSTRAINT [DF_Subjects_SemesterNumber] DEFAULT 1;
+                """);
+
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Subjects]', N'U') IS NOT NULL
+                BEGIN
+                    UPDATE [Subjects]
+                    SET [SemesterNumber] = 1
+                    WHERE [SemesterNumber] IS NULL OR [SemesterNumber] NOT IN (1, 2);
+                END
+                """);
+        }
+
+        private static async Task EnsureSchedulesSchemaAsync(AppDbContext context)
+        {
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
+                   AND COL_LENGTH(N'dbo.Schedules', N'SemesterNumber') IS NULL
+                    ALTER TABLE [Schedules]
+                    ADD [SemesterNumber] int NOT NULL
+                    CONSTRAINT [DF_Schedules_SemesterNumber] DEFAULT 1;
+                """);
+
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
+                   AND COL_LENGTH(N'dbo.Schedules', N'LectureType') IS NULL
+                    ALTER TABLE [Schedules] ADD [LectureType] nvarchar(20) NULL;
+                """);
+
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
+                   AND COL_LENGTH(N'dbo.Schedules', N'GroupName') IS NULL
+                    ALTER TABLE [Schedules] ADD [GroupName] nvarchar(20) NULL;
+                """);
+
+            await context.Database.ExecuteSqlRawAsync("""
                 IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
                 BEGIN
-                    IF COL_LENGTH(N'dbo.Schedules', N'SemesterNumber') IS NULL
-                    BEGIN
-                        ALTER TABLE [Schedules] ADD [SemesterNumber] int NULL;
+                    UPDATE schedule
+                    SET [SemesterNumber] = subject.[SemesterNumber]
+                    FROM [Schedules] schedule
+                    INNER JOIN [Subjects] subject ON subject.[SubjectID] = schedule.[SubjectID];
 
-                        UPDATE schedule
-                        SET [SemesterNumber] = subject.[SemesterNumber]
-                        FROM [Schedules] schedule
-                        INNER JOIN [Subjects] subject ON subject.[SubjectID] = schedule.[SubjectID];
+                    UPDATE [Schedules]
+                    SET [SemesterNumber] = 1
+                    WHERE [SemesterNumber] IS NULL OR [SemesterNumber] NOT IN (1, 2);
+                END
+                """);
+        }
 
-                        UPDATE [Schedules]
-                        SET [SemesterNumber] = 1
-                        WHERE [SemesterNumber] IS NULL;
-
-                        ALTER TABLE [Schedules] ALTER COLUMN [SemesterNumber] int NOT NULL;
-                    END
-
-                    IF COL_LENGTH(N'dbo.Schedules', N'LectureType') IS NULL
-                        ALTER TABLE [Schedules] ADD [LectureType] nvarchar(20) NULL;
-
-                    IF COL_LENGTH(N'dbo.Schedules', N'GroupName') IS NULL
-                        ALTER TABLE [Schedules] ADD [GroupName] nvarchar(20) NULL;
-
+        private static async Task NormalizeScheduleDataAsync(AppDbContext context)
+        {
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
+                BEGIN
                     UPDATE [Schedules]
                     SET [LectureType] = N'Theory'
                     WHERE [LectureType] IS NULL OR LTRIM(RTRIM([LectureType])) = N'';
@@ -108,7 +159,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                           SELECT 1
                           FROM [Schedules] schedule
                           WHERE schedule.[SectionID] = practicalSection.[SectionID]);
+                END
+                """);
+        }
 
+        private static async Task RebuildScheduleIndexesAsync(AppDbContext context)
+        {
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
+                BEGIN
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_ClassroomID_TimeSlotID' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_ClassroomID_TimeSlotID] ON [Schedules];
 
@@ -168,7 +227,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                             HAVING COUNT(*) > 1)
                         CREATE UNIQUE INDEX [IX_Schedules_Year_Branch_Section_Semester_Time]
                         ON [Schedules] ([StudyYearID], [BranchID], [SectionID], [SemesterNumber], [DayOfWeek], [TimeSlotID], [GroupName]);
+                END
+                """);
+        }
 
+        private static async Task RecreateScheduleDetailsViewAsync(AppDbContext context)
+        {
+            await context.Database.ExecuteSqlRawAsync("""
+                IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
+                BEGIN
                     EXEC(N'
                         CREATE OR ALTER VIEW [dbo].[vw_ScheduleDetails]
                         AS
@@ -218,8 +285,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     ');
                 END
                 """);
-
-            await SchedulingResourceMaintenance.EnsureOfficialResourcesAsync(context);
         }
     }
 }

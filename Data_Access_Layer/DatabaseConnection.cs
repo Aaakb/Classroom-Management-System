@@ -6,6 +6,6 @@ namespace Data_Access_Layer
 
         public static string ConnectionString =>
             Environment.GetEnvironmentVariable(EnvironmentVariableName)
-            ?? @"Server=.\SQLEXPRESS;Database=UniversityTimetableDB;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+            ?? @"Server=.\SQLEXPRESS;Database=UniversityTimetable;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
     }
 }
