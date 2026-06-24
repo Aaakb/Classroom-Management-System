@@ -78,9 +78,24 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            await ExecuteFacultyMemberActionAsync(
-                async () => await facultyMemberService.AddAsync(facultyMember),
-                UiMessages.RecordAdded);
+            SetFacultyMemberActionsEnabled(false);
+
+            try
+            {
+                var addedFacultyMember = await facultyMemberService.AddAsync(facultyMember);
+                await LoadFacultyMembersAsync();
+                ClearFacultyMemberForm();
+                ShowInformation($"{UiMessages.RecordAdded}\nPlease assign this faculty member to a subject.");
+                MainShellForm.Current?.ShowFacultyAssignments(addedFacultyMember.FacultyMemberID);
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to complete the faculty member operation.", ex);
+            }
+            finally
+            {
+                SetFacultyMemberActionsEnabled(true);
+            }
         }
 
         private async Task UpdateFacultyMemberAsync()

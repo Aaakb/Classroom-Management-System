@@ -15,7 +15,16 @@ namespace University_Timetable_and_Classroom_Management_System
 
         internal void ShowPage(NavigationPage page)
         {
-            var nextPage = FormNavigation.CreatePage(page);
+            ShowPage(page, FormNavigation.CreatePage(page));
+        }
+
+        internal void ShowFacultyAssignments(int facultyMemberId)
+        {
+            ShowPage(NavigationPage.FacultyAssignments, new FacultyMemberSubjectsForm(facultyMemberId));
+        }
+
+        private void ShowPage(NavigationPage page, System.Windows.Forms.UserControl nextPage)
+        {
             nextPage.Dock = System.Windows.Forms.DockStyle.Fill;
 
             pnlPageHost.SuspendLayout();

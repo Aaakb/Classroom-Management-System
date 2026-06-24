@@ -9,11 +9,19 @@ namespace University_Timetable_and_Classroom_Management_System
         private readonly FacultyMemberService facultyMemberService = new();
         private readonly SubjectService subjectService = new();
 
+        private readonly int? initialFacultyMemberId;
         private int? selectedFacultyMemberId;
         private int? selectedSubjectId;
+        private bool initialFacultyMemberHandled;
 
         public FacultyMemberSubjectsForm()
+            : this(null)
         {
+        }
+
+        public FacultyMemberSubjectsForm(int? initialFacultyMemberId)
+        {
+            this.initialFacultyMemberId = initialFacultyMemberId;
             InitializeComponent();
             ConfigureNavigation();
             ConfigureAssignmentsGrid();
@@ -59,6 +67,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 await LoadLookupsAsync();
                 await LoadAssignmentsAsync();
                 ClearAssignmentForm();
+                SelectInitialFacultyMember();
             }
             catch (Exception ex)
             {
@@ -225,6 +234,18 @@ namespace University_Timetable_and_Classroom_Management_System
             ClearCombo(cmbFacultyMember);
             ClearCombo(cmbSubject);
             dgvFacultyMemberSubjects.ClearSelection();
+        }
+
+        private void SelectInitialFacultyMember()
+        {
+            if (initialFacultyMemberHandled || !initialFacultyMemberId.HasValue)
+            {
+                return;
+            }
+
+            SelectComboValue(cmbFacultyMember, initialFacultyMemberId.Value);
+            cmbSubject.Focus();
+            initialFacultyMemberHandled = true;
         }
 
         private void SetAssignmentActionsEnabled(bool enabled)

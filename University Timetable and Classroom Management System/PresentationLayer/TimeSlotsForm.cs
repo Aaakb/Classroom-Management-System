@@ -235,8 +235,8 @@ namespace University_Timetable_and_Classroom_Management_System
         private void ClearTimeSlotForm()
         {
             txtTimeSlotId.Text = "Auto";
-            dtpStartTime.Value = DateTime.Today.AddHours(8);
-            dtpEndTime.Value = DateTime.Today.AddHours(9);
+            dtpStartTime.Value = DateTime.Today.AddHours(9);
+            dtpEndTime.Value = DateTime.Today.AddHours(10).AddMinutes(30);
             dgvTimeSlots.ClearSelection();
             dtpStartTime.Focus();
         }
