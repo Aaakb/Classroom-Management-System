@@ -192,7 +192,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             var existingSchedules = await context.Schedules.ToListAsync();
             var generatedSchedules = new List<Schedule>();
-            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday"];
             int skippedCount = 0;
             int missingSectionCount = 0;
             int noClassroomCount = 0;

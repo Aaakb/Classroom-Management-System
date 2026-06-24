@@ -1320,7 +1320,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void BindDayCombos()
         {
-            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday"];
 
             cmbDayOfWeek.Items.Clear();
             cmbDayOfWeek.Items.AddRange(days);
