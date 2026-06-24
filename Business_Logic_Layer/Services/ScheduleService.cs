@@ -6,6 +6,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 {
     public class ScheduleService
     {
+        private const int ScheduleBacktrackingDepth = 1;
+        private const int BacktrackingCandidateLimit = 24;
+
         public async Task<List<Schedule>> GetAllAsync()
         {
             await using var context = new AppDbContext();
@@ -239,128 +242,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .ThenBy(request => request.Section.SectionName)
                 .ToList();
 
-            foreach (var request in scheduleRequests)
-            {
-                var assignment = request.Assignment;
-                var subject = assignment.Subject;
-                var section = request.Section;
+            var planningResult = BuildSchedulePlanWithBacktracking(
+                scheduleRequests,
+                classrooms,
+                timeSlots,
+                days);
 
-                int requiredCapacity = GetRequiredCapacity(section, request.GroupName);
-                var targetClassrooms = GetTargetClassrooms(
-                    classrooms,
-                    requiredCapacity,
-                    request.LectureType);
-
-                if (targetClassrooms.Count == 0)
-                {
-                    skippedCount++;
-                    noClassroomCount++;
-                    continue;
-                }
-
-                bool created = false;
-
-                foreach (string day in days)
-                {
-                    foreach (var timeSlot in timeSlots)
-                    {
-                        foreach (var classroom in targetClassrooms)
-                        {
-                            var candidate = new Schedule
-                            {
-                                SubjectID = subject.SubjectID,
-                                FacultyMemberID = assignment.FacultyMemberID,
-                                ClassroomID = classroom.ClassroomID,
-                                TimeSlotID = timeSlot.TimeSlotID,
-                                SemesterNumber = subject.SemesterNumber,
-                                LectureType = request.LectureType,
-                                GroupName = request.GroupName,
-                                DayOfWeek = day,
-                                StudyYearID = subject.StudyYearID,
-                                BranchID = subject.BranchID ?? section.BranchID,
-                                SectionID = section.SectionID
-                            };
-
-                            if (HasScheduleConflict(generatedSchedules, candidate))
-                            {
-                                continue;
-                            }
-
-                            if (request.RequiredLessons > 1 &&
-                                HasSameSubjectSectionOnDay(generatedSchedules, candidate))
-                            {
-                                continue;
-                            }
-
-                            generatedSchedules.Add(candidate);
-                            created = true;
-                            break;
-                        }
-
-                        if (created)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (created)
-                    {
-                        break;
-                    }
-                }
-
-                if (!created && request.RequiredLessons > 1)
-                {
-                    foreach (string day in days)
-                    {
-                        foreach (var timeSlot in timeSlots)
-                        {
-                            foreach (var classroom in targetClassrooms)
-                            {
-                                var candidate = new Schedule
-                                {
-                                    SubjectID = subject.SubjectID,
-                                    FacultyMemberID = assignment.FacultyMemberID,
-                                    ClassroomID = classroom.ClassroomID,
-                                    TimeSlotID = timeSlot.TimeSlotID,
-                                    SemesterNumber = subject.SemesterNumber,
-                                    LectureType = request.LectureType,
-                                    GroupName = request.GroupName,
-                                    DayOfWeek = day,
-                                    StudyYearID = subject.StudyYearID,
-                                    BranchID = subject.BranchID ?? section.BranchID,
-                                    SectionID = section.SectionID
-                                };
-
-                                if (HasScheduleConflict(generatedSchedules, candidate))
-                                {
-                                    continue;
-                                }
-
-                                generatedSchedules.Add(candidate);
-                                created = true;
-                                break;
-                            }
-
-                            if (created)
-                            {
-                                break;
-                            }
-                        }
-
-                        if (created)
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                if (!created)
-                {
-                    skippedCount++;
-                    conflictCount++;
-                }
-            }
+            generatedSchedules.AddRange(planningResult.Schedules);
+            skippedCount += planningResult.NoClassroomCount + planningResult.ConflictCount;
+            noClassroomCount += planningResult.NoClassroomCount;
+            conflictCount += planningResult.ConflictCount;
 
             await using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -677,6 +568,275 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 schedule.DayOfWeek == candidate.DayOfWeek);
         }
 
+        private static SchedulePlanningResult BuildSchedulePlanWithBacktracking(
+            IReadOnlyList<ScheduleGenerationRequest> requests,
+            IReadOnlyCollection<Classroom> classrooms,
+            IReadOnlyCollection<TimeSlot> timeSlots,
+            IReadOnlyList<string> days)
+        {
+            var requestPlans = requests
+                .Select(request => new ScheduleRequestPlan(
+                    request,
+                    CreatePlacementCandidates(request, classrooms, timeSlots, days).ToList(),
+                    CalculateRequestDifficulty(request)))
+                .ToList();
+
+            int noClassroomCount = requestPlans.Count(plan => plan.Candidates.Count == 0);
+            var pendingPlans = requestPlans
+                .Where(plan => plan.Candidates.Count > 0)
+                .ToList();
+
+            var scheduledAssignments = new List<ScheduledAssignment>();
+            int conflictCount = 0;
+
+            while (pendingPlans.Count > 0)
+            {
+                var selection = SelectMostConstrainedPlan(pendingPlans, scheduledAssignments);
+                pendingPlans.Remove(selection.Plan);
+
+                if (TryPlaceWithBacktracking(
+                    selection.Plan,
+                    scheduledAssignments,
+                    ScheduleBacktrackingDepth))
+                {
+                    continue;
+                }
+
+                conflictCount++;
+            }
+
+            return new SchedulePlanningResult(
+                scheduledAssignments.Select(assignment => assignment.Schedule).ToList(),
+                noClassroomCount,
+                conflictCount);
+        }
+
+        private static SchedulePlanSelection SelectMostConstrainedPlan(
+            IReadOnlyList<ScheduleRequestPlan> pendingPlans,
+            IReadOnlyList<ScheduledAssignment> scheduledAssignments)
+        {
+            return pendingPlans
+                .Select(plan => new SchedulePlanSelection(
+                    plan,
+                    CountValidCandidates(plan, scheduledAssignments)))
+                .OrderBy(selection => selection.ValidCandidateCount)
+                .ThenBy(selection => selection.Plan.Candidates.Count)
+                .ThenByDescending(selection => selection.Plan.DifficultyScore)
+                .First();
+        }
+
+        private static int CountValidCandidates(
+            ScheduleRequestPlan plan,
+            IReadOnlyList<ScheduledAssignment> scheduledAssignments)
+        {
+            int validCount = 0;
+
+            foreach (var candidate in plan.Candidates)
+            {
+                var schedule = BuildSchedule(plan.Request, candidate);
+
+                if (!HasScheduleConflict(
+                    scheduledAssignments.Select(assignment => assignment.Schedule),
+                    schedule))
+                {
+                    validCount++;
+                }
+            }
+
+            return validCount;
+        }
+
+        private static bool TryPlaceWithBacktracking(
+            ScheduleRequestPlan plan,
+            List<ScheduledAssignment> scheduledAssignments,
+            int remainingDepth)
+        {
+            var orderedCandidates = plan.Candidates
+                .OrderBy(candidate => ScorePlacement(plan.Request, candidate, scheduledAssignments))
+                .ThenBy(candidate => DayOrder(candidate.DayOfWeek))
+                .ThenBy(candidate => candidate.TimeSlot.StartTime)
+                .ThenBy(candidate => candidate.Classroom.ClassroomNumber)
+                .ToList();
+
+            foreach (var candidate in orderedCandidates)
+            {
+                var schedule = BuildSchedule(plan.Request, candidate);
+                var conflicts = scheduledAssignments
+                    .Where(assignment => HasScheduleConflict([assignment.Schedule], schedule))
+                    .ToList();
+
+                if (conflicts.Count == 0)
+                {
+                    scheduledAssignments.Add(new ScheduledAssignment(plan, schedule));
+                    return true;
+                }
+            }
+
+            if (remainingDepth <= 0)
+            {
+                return false;
+            }
+
+            foreach (var candidate in orderedCandidates.Take(BacktrackingCandidateLimit))
+            {
+                var schedule = BuildSchedule(plan.Request, candidate);
+                var conflicts = scheduledAssignments
+                    .Where(assignment => HasScheduleConflict([assignment.Schedule], schedule))
+                    .ToList();
+
+                if (conflicts.Count != 1)
+                {
+                    continue;
+                }
+
+                var snapshot = scheduledAssignments.ToList();
+
+                foreach (var conflict in conflicts)
+                {
+                    scheduledAssignments.Remove(conflict);
+                }
+
+                scheduledAssignments.Add(new ScheduledAssignment(plan, schedule));
+
+                bool conflictsMoved = true;
+
+                foreach (var conflict in conflicts.OrderByDescending(item => item.Plan.DifficultyScore))
+                {
+                    if (TryPlaceWithBacktracking(
+                        conflict.Plan,
+                        scheduledAssignments,
+                        remainingDepth - 1))
+                    {
+                        continue;
+                    }
+
+                    conflictsMoved = false;
+                    break;
+                }
+
+                if (conflictsMoved)
+                {
+                    return true;
+                }
+
+                scheduledAssignments.Clear();
+                scheduledAssignments.AddRange(snapshot);
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<SchedulePlacementCandidate> CreatePlacementCandidates(
+            ScheduleGenerationRequest request,
+            IReadOnlyCollection<Classroom> classrooms,
+            IReadOnlyCollection<TimeSlot> timeSlots,
+            IReadOnlyList<string> days)
+        {
+            int requiredCapacity = GetRequiredCapacity(request.Section, request.GroupName);
+            var targetClassrooms = GetTargetClassrooms(
+                classrooms,
+                requiredCapacity,
+                request.LectureType);
+
+            foreach (string day in days)
+            {
+                foreach (var timeSlot in timeSlots)
+                {
+                    foreach (var classroom in targetClassrooms)
+                    {
+                        yield return new SchedulePlacementCandidate(
+                            day,
+                            timeSlot,
+                            classroom,
+                            requiredCapacity);
+                    }
+                }
+            }
+        }
+
+        private static Schedule BuildSchedule(
+            ScheduleGenerationRequest request,
+            SchedulePlacementCandidate candidate)
+        {
+            var assignment = request.Assignment;
+            var subject = assignment.Subject;
+            var section = request.Section;
+
+            return new Schedule
+            {
+                SubjectID = subject.SubjectID,
+                FacultyMemberID = assignment.FacultyMemberID,
+                ClassroomID = candidate.Classroom.ClassroomID,
+                TimeSlotID = candidate.TimeSlot.TimeSlotID,
+                SemesterNumber = subject.SemesterNumber,
+                LectureType = request.LectureType,
+                GroupName = request.GroupName,
+                DayOfWeek = candidate.DayOfWeek,
+                StudyYearID = subject.StudyYearID,
+                BranchID = subject.BranchID ?? section.BranchID,
+                SectionID = section.SectionID
+            };
+        }
+
+        private static int ScorePlacement(
+            ScheduleGenerationRequest request,
+            SchedulePlacementCandidate candidate,
+            IReadOnlyList<ScheduledAssignment> scheduledAssignments)
+        {
+            var schedule = BuildSchedule(request, candidate);
+            var schedules = scheduledAssignments
+                .Select(assignment => assignment.Schedule)
+                .ToList();
+
+            int facultyDayLoad = schedules.Count(item =>
+                item.SemesterNumber == schedule.SemesterNumber &&
+                item.FacultyMemberID == schedule.FacultyMemberID &&
+                string.Equals(item.DayOfWeek, schedule.DayOfWeek, StringComparison.OrdinalIgnoreCase));
+
+            int sectionDayLoad = schedules.Count(item =>
+                item.SemesterNumber == schedule.SemesterNumber &&
+                item.SectionID == schedule.SectionID &&
+                string.Equals(item.DayOfWeek, schedule.DayOfWeek, StringComparison.OrdinalIgnoreCase) &&
+                (schedule.GroupName == null ||
+                    item.GroupName == null ||
+                    item.GroupName == schedule.GroupName));
+
+            int slotLoad = schedules.Count(item =>
+                item.SemesterNumber == schedule.SemesterNumber &&
+                item.TimeSlotID == schedule.TimeSlotID &&
+                string.Equals(item.DayOfWeek, schedule.DayOfWeek, StringComparison.OrdinalIgnoreCase));
+
+            int roomWaste = Math.Max(0, candidate.Classroom.Capacity - candidate.RequiredCapacity);
+            int sameSubjectDayPenalty = HasSameSubjectSectionOnDay(schedules, schedule) ? 200 : 0;
+
+            return
+                facultyDayLoad * 30 +
+                sectionDayLoad * 24 +
+                slotLoad * 2 +
+                roomWaste +
+                sameSubjectDayPenalty +
+                DayOrder(candidate.DayOfWeek);
+        }
+
+        private static int CalculateRequestDifficulty(ScheduleGenerationRequest request)
+        {
+            int difficulty = GetRequiredCapacity(request.Section, request.GroupName);
+
+            if (string.Equals(request.LectureType, "Practical", StringComparison.OrdinalIgnoreCase))
+            {
+                difficulty += 40;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.GroupName))
+            {
+                difficulty += 20;
+            }
+
+            difficulty += request.Assignment.Subject.StudyYearID * 10;
+
+            return difficulty;
+        }
+
         private static IEnumerable<ScheduleGenerationRequest> CreateScheduleRequests(
             FacultyMemberSubject assignment,
             Section section)
@@ -849,4 +1009,28 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         int RequiredLessons,
         string LectureType,
         string? GroupName);
+
+    internal sealed record SchedulePlanningResult(
+        List<Schedule> Schedules,
+        int NoClassroomCount,
+        int ConflictCount);
+
+    internal sealed record ScheduleRequestPlan(
+        ScheduleGenerationRequest Request,
+        List<SchedulePlacementCandidate> Candidates,
+        int DifficultyScore);
+
+    internal sealed record SchedulePlanSelection(
+        ScheduleRequestPlan Plan,
+        int ValidCandidateCount);
+
+    internal sealed record SchedulePlacementCandidate(
+        string DayOfWeek,
+        TimeSlot TimeSlot,
+        Classroom Classroom,
+        int RequiredCapacity);
+
+    internal sealed record ScheduledAssignment(
+        ScheduleRequestPlan Plan,
+        Schedule Schedule);
 }
