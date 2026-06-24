@@ -13,6 +13,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         public static async Task<SchedulingResourceMaintenanceResult> EnsureOfficialResourcesAsync(AppDbContext context)
         {
             int addedTimeSlots = await EnsureOfficialTimeSlotsAsync(context);
+            await NormalizeClassroomsAsync(context);
             int addedClassrooms = await EnsureMinimumClassroomsAsync(context);
 
             return new SchedulingResourceMaintenanceResult(addedTimeSlots, addedClassrooms);
@@ -109,6 +110,79 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             return addedCount;
+        }
+
+        private static async Task NormalizeClassroomsAsync(AppDbContext context)
+        {
+            var classrooms = await context.Classrooms
+                .OrderBy(classroom => classroom.ClassroomID)
+                .ToListAsync();
+
+            if (classrooms.Count == 0)
+            {
+                return;
+            }
+
+            var lectureRooms = classrooms
+                .Where(classroom => !IsLab(classroom))
+                .OrderBy(classroom => classroom.ClassroomID)
+                .ToList();
+
+            var labs = classrooms
+                .Where(IsLab)
+                .OrderBy(classroom => classroom.ClassroomID)
+                .ToList();
+
+            bool needsRename = NeedsClassroomNormalization(lectureRooms, "Lecture Hall", "Lecture") ||
+                NeedsClassroomNormalization(labs, "Lab", "Lab");
+
+            if (!needsRename)
+            {
+                return;
+            }
+
+            foreach (var classroom in classrooms)
+            {
+                classroom.ClassroomNumber = $"__RoomTemp_{classroom.ClassroomID}";
+            }
+
+            await context.SaveChangesAsync();
+
+            RenameClassroomGroup(lectureRooms, "Lecture Hall", "Lecture");
+            RenameClassroomGroup(labs, "Lab", "Lab");
+
+            await context.SaveChangesAsync();
+        }
+
+        private static bool NeedsClassroomNormalization(
+            IReadOnlyList<Classroom> classrooms,
+            string namePrefix,
+            string roomType)
+        {
+            for (int index = 0; index < classrooms.Count; index++)
+            {
+                string expectedName = $"{namePrefix} {index + 1:00}";
+
+                if (!string.Equals(classrooms[index].ClassroomNumber, expectedName, StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(classrooms[index].RoomType, roomType, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static void RenameClassroomGroup(
+            IReadOnlyList<Classroom> classrooms,
+            string namePrefix,
+            string roomType)
+        {
+            for (int index = 0; index < classrooms.Count; index++)
+            {
+                classrooms[index].ClassroomNumber = $"{namePrefix} {index + 1:00}";
+                classrooms[index].RoomType = roomType;
+            }
         }
 
         private static Classroom CreateClassroom(

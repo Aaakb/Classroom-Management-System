@@ -168,6 +168,25 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             await context.Database.ExecuteSqlRawAsync("""
                 IF OBJECT_ID(N'[Schedules]', N'U') IS NOT NULL
                 BEGIN
+                    DECLARE @dropConstraintSql nvarchar(max) = N'';
+
+                    SELECT @dropConstraintSql +=
+                        N'ALTER TABLE [Schedules] DROP CONSTRAINT [' + constraintItem.[name] + N'];'
+                    FROM sys.key_constraints constraintItem
+                    WHERE constraintItem.[parent_object_id] = OBJECT_ID(N'[Schedules]')
+                      AND constraintItem.[name] IN
+                      (
+                          N'UQ_Classroom_Time',
+                          N'UQ_Faculty_Time',
+                          N'UQ_Section_Time',
+                          N'UQ_Classroom_Semester_Time',
+                          N'UQ_Faculty_Semester_Time',
+                          N'UQ_Section_Semester_Time'
+                      );
+
+                    IF @dropConstraintSql <> N''
+                        EXEC sp_executesql @dropConstraintSql;
+
                     IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Schedules_ClassroomID_TimeSlotID' AND object_id = OBJECT_ID(N'[Schedules]'))
                         DROP INDEX [IX_Schedules_ClassroomID_TimeSlotID] ON [Schedules];
 

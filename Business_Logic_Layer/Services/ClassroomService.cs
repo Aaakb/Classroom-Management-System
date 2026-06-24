@@ -77,9 +77,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             classroom.ClassroomNumber = classroom.ClassroomNumber.Trim();
-            classroom.RoomType = string.IsNullOrWhiteSpace(classroom.RoomType)
-                ? null
-                : classroom.RoomType.Trim();
+            classroom.RoomType = NormalizeRoomType(classroom.RoomType, classroom.ClassroomNumber);
 
             var exists = await context.Classrooms.AnyAsync(c =>
                 c.ClassroomNumber == classroom.ClassroomNumber &&
@@ -89,6 +87,20 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             {
                 throw new ArgumentException("Classroom number already exists.");
             }
+        }
+
+        private static string NormalizeRoomType(string? roomType, string classroomNumber)
+        {
+            string value = roomType?.Trim() ?? string.Empty;
+
+            if (value.Contains("Lab", StringComparison.OrdinalIgnoreCase) ||
+                value.Contains("Laboratory", StringComparison.OrdinalIgnoreCase) ||
+                classroomNumber.Contains("Lab", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Lab";
+            }
+
+            return "Lecture";
         }
     }
 }

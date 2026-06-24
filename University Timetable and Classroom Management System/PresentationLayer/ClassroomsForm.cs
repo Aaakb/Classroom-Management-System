@@ -670,7 +670,7 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbRoomType.ForeColor = Color.FromArgb(15, 23, 42);
             cmbRoomType.HoverState.BorderColor = Color.FromArgb(59, 130, 246);
             cmbRoomType.ItemHeight = 36;
-            cmbRoomType.Items.AddRange(new object[] { "Lecture Hall", "Laboratory", "Computer Lab", "Seminar Room" });
+            cmbRoomType.Items.AddRange(new object[] { "Lecture", "Lab" });
             cmbRoomType.Location = new Point(402, 112);
             cmbRoomType.Name = "cmbRoomType";
             cmbRoomType.Size = new Size(190, 42);
