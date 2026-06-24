@@ -463,8 +463,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static int GetRequiredCapacity(Section section, string? groupName)
         {
-            if (!string.IsNullOrWhiteSpace(groupName) &&
-                AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            if (!string.IsNullOrWhiteSpace(groupName))
             {
                 return Math.Max(1, (int)Math.Ceiling(section.StudentCount / 2.0));
             }
@@ -486,23 +485,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 ? null
                 : schedule.GroupName.Trim().ToUpperInvariant();
 
-            if (AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            if (!IsValidGroupForSection(section, normalizedGroupName))
             {
-                if (!IsValidGroupForSection(section, normalizedGroupName))
-                {
-                    throw new ArgumentException("Practical sessions for first and second year must use A1/A2 for section A or B1/B2 for section B.");
-                }
-
-                schedule.GroupName = normalizedGroupName;
-                return;
+                throw new ArgumentException("Practical sessions must use A1/A2 for section A or B1/B2 for section B.");
             }
 
-            if (!string.IsNullOrWhiteSpace(normalizedGroupName))
-            {
-                throw new ArgumentException("Practical group names A1, A2, B1, and B2 are only valid for first and second year sections.");
-            }
-
-            schedule.GroupName = null;
+            schedule.GroupName = normalizedGroupName;
         }
 
         private static bool IsValidGroupForSection(Section section, string? groupName)
@@ -514,7 +502,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             string normalizedGroupName = groupName.Trim().ToUpperInvariant();
 
-            if (!AcademicStructureRules.GetAllowedPracticalGroupNames(section.StudyYearID)
+            if (!AcademicStructureRules.GetAllowedPracticalGroupNames(section.SectionName)
                 .Contains(normalizedGroupName, StringComparer.OrdinalIgnoreCase))
             {
                 return false;
@@ -918,17 +906,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         private static IReadOnlyList<string> GetPracticalGroupsForSection(Section section)
         {
-            if (!AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
-            {
-                return [];
-            }
-
-            return AcademicStructureRules.GetBaseSectionName(section.SectionName).ToUpperInvariant() switch
-            {
-                "A" => ["A1", "A2"],
-                "B" => ["B1", "B2"],
-                _ => []
-            };
+            return AcademicStructureRules.GetAllowedPracticalGroupNames(section.SectionName);
         }
 
         private static List<Classroom> GetTargetClassrooms(

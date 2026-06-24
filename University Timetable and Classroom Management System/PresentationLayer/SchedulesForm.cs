@@ -76,7 +76,7 @@ namespace University_Timetable_and_Classroom_Management_System
             toolTip.SetToolTip(btnGenerateSchedule, "Builds a new generated timetable and replaces the current generated records.");
             toolTip.SetToolTip(btnClearScheduleForm, "Clears the current table view only. Database records are not deleted.");
             toolTip.SetToolTip(cmbLectureType, "Theory uses the whole section. Practical requires a group.");
-            toolTip.SetToolTip(cmbGroupName, "Available only for practical sessions in first and second year.");
+            toolTip.SetToolTip(cmbGroupName, "Available for practical sessions. Section A uses A1/A2, section B uses B1/B2.");
         }
 
         private void ConfigureScheduleGrid()
@@ -1390,17 +1390,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private static IReadOnlyList<string> GetAllowedGroupsForSection(Section? section)
         {
-            if (section is null || !AcademicStructureRules.UsesGeneralSections(section.StudyYearID))
+            if (section is null)
             {
                 return [];
             }
 
-            return AcademicStructureRules.GetBaseSectionName(section.SectionName).ToUpperInvariant() switch
-            {
-                "A" => ["A1", "A2"],
-                "B" => ["B1", "B2"],
-                _ => []
-            };
+            return AcademicStructureRules.GetAllowedPracticalGroupNames(section.SectionName);
         }
 
         private static IReadOnlyList<string> GetPracticalGroupNames()

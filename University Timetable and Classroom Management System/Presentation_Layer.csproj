@@ -79,4 +79,8 @@
     <None Remove="PresentationLayer\*.resx" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="PresentationLayer\SchedulesForm.resx" />
+  </ItemGroup>
+
 </Project>

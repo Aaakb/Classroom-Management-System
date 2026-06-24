@@ -35,9 +35,17 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
         public static IReadOnlyList<string> GetAllowedPracticalGroupNames(int studyYearId)
         {
-            return studyYearId is 1 or 2
-                ? ["A1", "A2", "B1", "B2"]
-                : [];
+            return ["A1", "A2", "B1", "B2"];
+        }
+
+        public static IReadOnlyList<string> GetAllowedPracticalGroupNames(string sectionName)
+        {
+            return GetBaseSectionName(sectionName).ToUpperInvariant() switch
+            {
+                "A" => ["A1", "A2"],
+                "B" => ["B1", "B2"],
+                _ => []
+            };
         }
 
         public static string GetBaseSectionName(string sectionOrGroupName)

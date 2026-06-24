@@ -280,8 +280,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                             studyYear.[YearName],
                             branch.[BranchName],
                             CASE
-                                WHEN schedule.[StudyYearID] IN (1, 2) AND section.[SectionName] IN (N''A1'', N''A2'') THEN N''A''
-                                WHEN schedule.[StudyYearID] IN (1, 2) AND section.[SectionName] IN (N''B1'', N''B2'') THEN N''B''
+                                WHEN section.[SectionName] IN (N''A1'', N''A2'') THEN N''A''
+                                WHEN section.[SectionName] IN (N''B1'', N''B2'') THEN N''B''
                                 ELSE section.[SectionName]
                             END AS [SectionName],
                             CASE
@@ -289,7 +289,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                                     THEN COALESCE(
                                         schedule.[GroupName],
                                         CASE
-                                            WHEN schedule.[StudyYearID] IN (1, 2) AND section.[SectionName] IN (N''A1'', N''A2'', N''B1'', N''B2'')
+                                            WHEN section.[SectionName] IN (N''A1'', N''A2'', N''B1'', N''B2'')
                                                 THEN section.[SectionName]
                                         END)
                                 ELSE NULL

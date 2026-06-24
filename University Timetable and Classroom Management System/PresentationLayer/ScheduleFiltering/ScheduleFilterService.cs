@@ -45,9 +45,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             string baseSectionName = AcademicStructureRules.GetBaseSectionName(normalizedGroup);
-            return row.StudyYearID.HasValue &&
-                AcademicStructureRules.UsesGeneralSections(row.StudyYearID.Value) &&
-                string.Equals(row.SectionName, baseSectionName, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(row.SectionName, baseSectionName, StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool MatchesFaculty(ScheduleRow row, int? facultyId)
