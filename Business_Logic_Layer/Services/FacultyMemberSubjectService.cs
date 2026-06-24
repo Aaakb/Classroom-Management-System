@@ -102,7 +102,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 throw new ArgumentException("This faculty member is already assigned to the subject.");
             }
 
-            // A subject may have more than one faculty member so the timetable generator has backup options.
+            var subjectAlreadyAssigned = await context.FacultyMemberSubjects.AnyAsync(fms =>
+                fms.SubjectID == entity.SubjectID &&
+                (!currentFacultyMemberId.HasValue ||
+                    fms.FacultyMemberID != currentFacultyMemberId.Value ||
+                    fms.SubjectID != currentSubjectId!.Value));
+
+            if (subjectAlreadyAssigned)
+            {
+                throw new ArgumentException("This subject already has a faculty assignment.");
+            }
         }
     }
 }

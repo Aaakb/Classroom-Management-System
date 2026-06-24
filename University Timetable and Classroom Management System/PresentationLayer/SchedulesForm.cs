@@ -546,11 +546,6 @@ namespace University_Timetable_and_Classroom_Management_System
                 message.Add($"Auto-added resources: {result.AddedTimeSlotCount} time slot(s), {result.AddedClassroomCount} classroom/lab(s).");
             }
 
-            if (result.AddedFacultyMemberCount > 0 || result.AddedFacultySubjectAssignmentCount > 0)
-            {
-                message.Add($"Auto-added teaching coverage: {result.AddedFacultyMemberCount} faculty member(s), {result.AddedFacultySubjectAssignmentCount} subject assignment(s).");
-            }
-
             if (result.SkippedCount == 0 && result.UnassignedSubjectsCount == 0)
             {
                 message.Add("The generated schedule is complete.");
