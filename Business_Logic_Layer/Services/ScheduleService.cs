@@ -881,6 +881,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 int slotLoad = Count(slotLoads, (schedule.SemesterNumber, schedule.DayOfWeek, schedule.TimeSlotID));
                 int roomWaste = Math.Max(0, candidate.Classroom.Capacity - candidate.RequiredCapacity);
                 int sameSubjectDayPenalty = HasSameSubjectSectionOnDay(schedule) ? 180 : 0;
+                int practicalPairingScore = GetPracticalPairingScore(schedule);
 
                 return
                     facultyDayLoad * 45 +
@@ -889,6 +890,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     slotLoad * 3 +
                     roomWaste +
                     sameSubjectDayPenalty +
+                    practicalPairingScore +
                     DayOrder(schedule.DayOfWeek);
             }
 
@@ -954,6 +956,37 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             private static (int SubjectID, int? SectionID, int SemesterNumber, string DayOfWeek, string GroupName) SubjectGroupDayKey(Schedule schedule)
             {
                 return (schedule.SubjectID, schedule.SectionID, schedule.SemesterNumber, schedule.DayOfWeek, schedule.GroupName ?? string.Empty);
+            }
+
+            private int GetPracticalPairingScore(Schedule schedule)
+            {
+                if (string.IsNullOrWhiteSpace(schedule.GroupName) ||
+                    !string.Equals(schedule.LectureType, "Practical", StringComparison.OrdinalIgnoreCase))
+                {
+                    return 0;
+                }
+
+                var pairedPractical = Schedules
+                    .Where(existing =>
+                        existing.SemesterNumber == schedule.SemesterNumber &&
+                        existing.StudyYearID == schedule.StudyYearID &&
+                        existing.BranchID == schedule.BranchID &&
+                        existing.SectionID == schedule.SectionID &&
+                        existing.DayOfWeek == schedule.DayOfWeek &&
+                        existing.TimeSlotID == schedule.TimeSlotID &&
+                        string.Equals(existing.LectureType, "Practical", StringComparison.OrdinalIgnoreCase) &&
+                        !string.IsNullOrWhiteSpace(existing.GroupName) &&
+                        !string.Equals(existing.GroupName, schedule.GroupName, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (pairedPractical.Count == 0)
+                {
+                    return 18;
+                }
+
+                return pairedPractical.Any(existing => existing.SubjectID != schedule.SubjectID)
+                    ? -220
+                    : 140;
             }
 
             private static int Count<TKey>(Dictionary<TKey, int> values, TKey key)
