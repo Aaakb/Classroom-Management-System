@@ -976,10 +976,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                         existing.TimeSlotID == schedule.TimeSlotID &&
                         string.Equals(existing.LectureType, "Practical", StringComparison.OrdinalIgnoreCase) &&
                         !string.IsNullOrWhiteSpace(existing.GroupName) &&
-                        !string.Equals(existing.GroupName, schedule.GroupName, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                        !string.Equals(existing.GroupName, schedule.GroupName, StringComparison.OrdinalIgnoreCase));
 
-                if (pairedPractical.Count == 0)
+                if (!pairedPractical.Any())
                 {
                     return 18;
                 }
