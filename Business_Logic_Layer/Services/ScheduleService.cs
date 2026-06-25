@@ -194,10 +194,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             int missingSectionCount = 0;
             int noClassroomCount = 0;
             int conflictCount = 0;
-            int duplicateAssignmentCount = assignments.Count - assignments
-                .Select(assignment => assignment.SubjectID)
-                .Distinct()
-                .Count();
+            int duplicateAssignmentCount = assignments
+                .GroupBy(assignment => new { assignment.FacultyMemberID, assignment.SubjectID })
+                .Sum(group => Math.Max(0, group.Count() - 1));
 
             var assignedSubjectIds = assignments
                 .Select(assignment => assignment.SubjectID)
@@ -277,7 +276,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 classrooms.Count,
                 sections.Count,
                 resourceResult.AddedTimeSlots,
-                resourceResult.AddedClassrooms);
+                resourceResult.AddedClassrooms,
+                resourceResult.AddedFacultyMembers,
+                resourceResult.AddedFacultySubjectAssignments);
         }
 
         private static async Task ValidateAsync(AppDbContext context, Schedule schedule, bool isUpdate)
@@ -1010,7 +1011,9 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         int ClassroomCount,
         int SectionCount,
         int AddedTimeSlotCount,
-        int AddedClassroomCount);
+        int AddedClassroomCount,
+        int AddedFacultyMemberCount,
+        int AddedFacultySubjectAssignmentCount);
 
     internal sealed record SubjectTeachingAssignment(
         Subject Subject,

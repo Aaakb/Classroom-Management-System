@@ -8,15 +8,26 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
     {
         private const int MinimumLectureRoomCount = 10;
         private const int MinimumLabCount = 10;
+        private const int MinimumFacultyOptionsPerSubject = 2;
         private const int DefaultCapacity = 40;
+        private static readonly string[] BackupFacultyNames =
+        [
+            "Nadia Kareem",
+            "Yasir Mahmood"
+        ];
 
         public static async Task<SchedulingResourceMaintenanceResult> EnsureOfficialResourcesAsync(AppDbContext context)
         {
             int addedTimeSlots = await EnsureOfficialTimeSlotsAsync(context);
             await NormalizeClassroomsAsync(context);
             int addedClassrooms = await EnsureMinimumClassroomsAsync(context);
+            var facultyCoverage = await EnsureBackupFacultyCoverageAsync(context);
 
-            return new SchedulingResourceMaintenanceResult(addedTimeSlots, addedClassrooms);
+            return new SchedulingResourceMaintenanceResult(
+                addedTimeSlots,
+                addedClassrooms,
+                facultyCoverage.AddedFacultyMembers,
+                facultyCoverage.AddedFacultySubjectAssignments);
         }
 
         private static async Task<int> EnsureOfficialTimeSlotsAsync(AppDbContext context)
@@ -110,6 +121,115 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             return addedCount;
+        }
+
+        private static async Task<FacultyCoverageMaintenanceResult> EnsureBackupFacultyCoverageAsync(AppDbContext context)
+        {
+            var facultyMembers = await context.FacultyMembers
+                .OrderBy(facultyMember => facultyMember.FacultyMemberID)
+                .ToListAsync();
+            var usedIds = facultyMembers
+                .Select(facultyMember => facultyMember.FacultyMemberID)
+                .ToHashSet();
+            var usedNames = facultyMembers
+                .Select(facultyMember => facultyMember.FullName)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var backupFaculty = new List<FacultyMember>();
+            int addedFacultyMembers = 0;
+
+            foreach (string facultyName in BackupFacultyNames)
+            {
+                var facultyMember = facultyMembers.FirstOrDefault(item =>
+                    string.Equals(item.FullName, facultyName, StringComparison.OrdinalIgnoreCase));
+
+                if (facultyMember is null)
+                {
+                    facultyMember = new FacultyMember
+                    {
+                        FacultyMemberID = NextAvailableId(usedIds),
+                        FullName = NextFacultyName(usedNames, facultyName),
+                        AcademicTitle = "Assistant Lecturer"
+                    };
+
+                    await context.FacultyMembers.AddAsync(facultyMember);
+                    facultyMembers.Add(facultyMember);
+                    addedFacultyMembers++;
+                }
+
+                backupFaculty.Add(facultyMember);
+            }
+
+            if (addedFacultyMembers > 0)
+            {
+                await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[FacultyMembers]");
+            }
+
+            int addedAssignments = await EnsureMinimumFacultyOptionsForSubjectsAsync(context, backupFaculty);
+
+            return new FacultyCoverageMaintenanceResult(addedFacultyMembers, addedAssignments);
+        }
+
+        private static async Task<int> EnsureMinimumFacultyOptionsForSubjectsAsync(
+            AppDbContext context,
+            IReadOnlyList<FacultyMember> backupFaculty)
+        {
+            if (backupFaculty.Count == 0)
+            {
+                return 0;
+            }
+
+            var subjectIds = await context.Subjects
+                .Select(subject => subject.SubjectID)
+                .OrderBy(subjectId => subjectId)
+                .ToListAsync();
+            var assignments = await context.FacultyMemberSubjects.ToListAsync();
+            var assignmentSet = assignments
+                .Select(assignment => (assignment.FacultyMemberID, assignment.SubjectID))
+                .ToHashSet();
+            var subjectFacultyCounts = assignments
+                .GroupBy(assignment => assignment.SubjectID)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(item => item.FacultyMemberID).Distinct().Count());
+
+            int addedAssignments = 0;
+            int backupIndex = 0;
+
+            foreach (int subjectId in subjectIds)
+            {
+                int currentCount = subjectFacultyCounts.GetValueOrDefault(subjectId);
+                int attempts = 0;
+
+                while (currentCount < MinimumFacultyOptionsPerSubject &&
+                    attempts < backupFaculty.Count)
+                {
+                    var facultyMember = backupFaculty[backupIndex % backupFaculty.Count];
+                    backupIndex++;
+                    attempts++;
+
+                    if (!assignmentSet.Add((facultyMember.FacultyMemberID, subjectId)))
+                    {
+                        continue;
+                    }
+
+                    await context.FacultyMemberSubjects.AddAsync(new FacultyMemberSubject
+                    {
+                        FacultyMemberID = facultyMember.FacultyMemberID,
+                        SubjectID = subjectId
+                    });
+
+                    currentCount++;
+                    subjectFacultyCounts[subjectId] = currentCount;
+                    addedAssignments++;
+                }
+            }
+
+            if (addedAssignments > 0)
+            {
+                await context.SaveChangesAsync();
+            }
+
+            return addedAssignments;
         }
 
         private static async Task NormalizeClassroomsAsync(AppDbContext context)
@@ -230,6 +350,26 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             return roomName;
         }
 
+        private static string NextFacultyName(HashSet<string> usedNames, string preferredName)
+        {
+            if (usedNames.Add(preferredName))
+            {
+                return preferredName;
+            }
+
+            int suffix = 2;
+            string facultyName;
+
+            do
+            {
+                facultyName = $"{preferredName} {suffix}";
+                suffix++;
+            }
+            while (!usedNames.Add(facultyName));
+
+            return facultyName;
+        }
+
         private static bool IsLab(Classroom classroom)
         {
             return string.Equals(classroom.RoomType, "Lab", StringComparison.OrdinalIgnoreCase) ||
@@ -242,5 +382,13 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         }
     }
 
-    internal sealed record SchedulingResourceMaintenanceResult(int AddedTimeSlots, int AddedClassrooms);
+    internal sealed record SchedulingResourceMaintenanceResult(
+        int AddedTimeSlots,
+        int AddedClassrooms,
+        int AddedFacultyMembers,
+        int AddedFacultySubjectAssignments);
+
+    internal sealed record FacultyCoverageMaintenanceResult(
+        int AddedFacultyMembers,
+        int AddedFacultySubjectAssignments);
 }

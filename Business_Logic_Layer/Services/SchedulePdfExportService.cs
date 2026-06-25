@@ -15,6 +15,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private const int TimeColumnWidth = 92;
         private const int DayColumnWidth = 174;
         private const int TableWidth = TimeColumnWidth + DayColumnWidth * 4;
+        private const string HeaderColor = "0.10 0.18 0.31";
+        private const string HeaderTextColor = "1 1 1";
+        private const string BorderColor = "0.78 0.84 0.90";
+        private const string RowLineColor = "0.86 0.90 0.95";
+        private const string BreakColor = "0.75 0.90 0.58";
+        private const string AlternatingRowColor = "0.97 0.98 1";
+        private const string TextColor = "0.05 0.09 0.18";
+        private const string MutedTextColor = "0.30 0.38 0.50";
 
         private static readonly string[] Days = ["Sunday", "Monday", "Tuesday", "Wednesday"];
 
@@ -88,7 +96,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             var builder = new StringBuilder();
 
             WritePageTitle(builder, page.Key);
-            DrawFilledRect(builder, TableLeft, TableTop - HeaderHeight, TableWidth, HeaderHeight, "0.48 0.68 0.93");
+            DrawFilledRect(builder, TableLeft, TableTop - HeaderHeight, TableWidth, HeaderHeight, HeaderColor);
             DrawTableHeader(builder);
             DrawTimelineRows(builder, page.Rows);
 
@@ -100,20 +108,20 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         {
             string title = key.SemesterNumber == 0
                 ? "Schedule"
-                : $"Semester {key.SemesterNumber} - {key.StudyYear} - {key.Branch} - Section {CleanSection(key.Section)}";
+                : $"Semester {key.SemesterNumber} - {key.Branch} - Section {CleanSection(key.Section)}";
 
-            WriteText(builder, TableLeft, 552, title, 14, "0.05 0.09 0.18");
-            WriteText(builder, TableLeft, 532, "Weekly timetable by day, lecture period, classroom, and instructor.", 8, "0.30 0.38 0.50");
+            WriteText(builder, TableLeft, 552, title, 14, TextColor);
+            WriteText(builder, TableLeft, 532, "Weekly timetable by day, lecture period, classroom, and instructor.", 8, MutedTextColor);
         }
 
         private static void DrawTableHeader(StringBuilder builder)
         {
-            WriteText(builder, TableLeft + 28, TableTop - 21, "Time", 9, "0.05 0.09 0.18");
+            WriteText(builder, TableLeft + 28, TableTop - 21, "Time", 9, HeaderTextColor);
 
             for (int index = 0; index < Days.Length; index++)
             {
                 int x = TableLeft + TimeColumnWidth + index * DayColumnWidth;
-                WriteText(builder, x + 60, TableTop - 21, Days[index], 9, "0.05 0.09 0.18");
+                WriteText(builder, x + 60, TableTop - 21, Days[index], 9, HeaderTextColor);
             }
         }
 
@@ -122,7 +130,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             int rowTop = TableTop - HeaderHeight;
 
             DrawVerticalLines(builder, rowTop - TimelineHeight(), TableTop);
-            DrawLine(builder, TableLeft, rowTop, TableLeft + TableWidth, rowTop, "1 0.36 0.36");
+            DrawLine(builder, TableLeft, rowTop, TableLeft + TableWidth, rowTop, BorderColor);
 
             foreach (var timelineRow in BuildTimeline())
             {
@@ -131,14 +139,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
                 if (timelineRow.IsBreak)
                 {
-                    DrawFilledRect(builder, TableLeft, rowBottom, TableWidth, rowHeight, "0.55 0.82 0.30");
+                    DrawFilledRect(builder, TableLeft, rowBottom, TableWidth, rowHeight, BreakColor);
                 }
                 else if ((TableTop - HeaderHeight - rowTop) / LectureRowHeight % 2 == 1)
                 {
-                    DrawFilledRect(builder, TableLeft, rowBottom, TableWidth, rowHeight, "0.98 0.99 1");
+                    DrawFilledRect(builder, TableLeft, rowBottom, TableWidth, rowHeight, AlternatingRowColor);
                 }
 
-                WriteText(builder, TableLeft + 13, rowBottom + rowHeight / 2 - 3, timelineRow.Label, 8, "0.12 0.15 0.20");
+                WriteText(builder, TableLeft + 13, rowBottom + rowHeight / 2 - 3, timelineRow.Label, 8, TextColor);
 
                 if (timelineRow.IsBreak)
                 {
@@ -149,11 +157,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     DrawLectureCells(builder, rows, timelineRow, rowBottom, rowHeight);
                 }
 
-                DrawLine(builder, TableLeft, rowBottom, TableLeft + TableWidth, rowBottom, "1 0.36 0.36");
+                DrawLine(builder, TableLeft, rowBottom, TableLeft + TableWidth, rowBottom, RowLineColor);
                 rowTop = rowBottom;
             }
 
-            DrawRect(builder, TableLeft, TableTop - HeaderHeight - TimelineHeight(), TableWidth, HeaderHeight + TimelineHeight(), "1 0.36 0.36");
+            DrawRect(builder, TableLeft, TableTop - HeaderHeight - TimelineHeight(), TableWidth, HeaderHeight + TimelineHeight(), BorderColor);
         }
 
         private static void DrawBreakCells(StringBuilder builder, int rowBottom, int rowHeight)
@@ -161,7 +169,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             for (int index = 0; index < Days.Length; index++)
             {
                 int x = TableLeft + TimeColumnWidth + index * DayColumnWidth;
-                WriteText(builder, x + 72, rowBottom + rowHeight / 2 - 3, "Break", 8, "0.05 0.09 0.18");
+                WriteText(builder, x + 72, rowBottom + rowHeight / 2 - 3, "Break", 8, TextColor);
             }
         }
 
@@ -219,7 +227,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             foreach (string line in lines.Take(8))
             {
-                WriteText(builder, x, y, line, string.IsNullOrEmpty(line) ? 4 : 6, "0.05 0.09 0.18");
+                WriteText(builder, x, y, line, string.IsNullOrEmpty(line) ? 4 : 6, TextColor);
                 y -= 8;
             }
         }
@@ -304,7 +312,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             for (int index = 0; index <= Days.Length + 1; index++)
             {
-                DrawLine(builder, x, tableBottom, x, tableTop, "1 0.36 0.36");
+                DrawLine(builder, x, tableBottom, x, tableTop, BorderColor);
                 x += index == 0 ? TimeColumnWidth : DayColumnWidth;
             }
         }
