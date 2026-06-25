@@ -59,7 +59,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 .ThenBy(row => row.BranchName)
                 .ThenBy(row => row.SectionName)
                 .ThenBy(row => DayOrder(row.DayOfWeek))
-                .ThenBy(row => row.TimeSlotName)
+                .ThenBy(row => row.StartTime)
                 .ToList();
 
             ApplyScheduleFilters();

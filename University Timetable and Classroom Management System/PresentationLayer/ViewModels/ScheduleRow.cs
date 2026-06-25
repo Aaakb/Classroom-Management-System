@@ -18,6 +18,8 @@ namespace University_Timetable_and_Classroom_Management_System
         public string FacultyMemberName { get; init; } = string.Empty;
         public string ClassroomName { get; init; } = string.Empty;
         public string TimeSlotName { get; init; } = string.Empty;
+        public TimeSpan StartTime { get; init; }
+        public TimeSpan EndTime { get; init; }
         public string StartTimeText { get; init; } = string.Empty;
         public string EndTimeText { get; init; } = string.Empty;
         public string StudyYearName { get; init; } = string.Empty;
@@ -48,6 +50,8 @@ namespace University_Timetable_and_Classroom_Management_System
                 FacultyMemberName = schedule.FacultyMember?.FullName ?? "-",
                 ClassroomName = schedule.Classroom?.ClassroomNumber ?? "-",
                 TimeSlotName = timeSlotName,
+                StartTime = schedule.TimeSlot?.StartTime ?? TimeSpan.Zero,
+                EndTime = schedule.TimeSlot?.EndTime ?? TimeSpan.Zero,
                 StartTimeText = schedule.TimeSlot is null ? "-" : TimeDisplay.Format(schedule.TimeSlot.StartTime),
                 EndTimeText = schedule.TimeSlot is null ? "-" : TimeDisplay.Format(schedule.TimeSlot.EndTime),
                 StudyYearName = schedule.StudyYear?.YearName ?? "-",
@@ -76,6 +80,8 @@ namespace University_Timetable_and_Classroom_Management_System
                 FacultyMemberName = details.FacultyMemberName,
                 ClassroomName = details.ClassroomNumber,
                 TimeSlotName = TimeDisplay.FormatRange(details.StartTime, details.EndTime),
+                StartTime = details.StartTime,
+                EndTime = details.EndTime,
                 StartTimeText = TimeDisplay.Format(details.StartTime),
                 EndTimeText = TimeDisplay.Format(details.EndTime),
                 StudyYearName = details.YearName,
