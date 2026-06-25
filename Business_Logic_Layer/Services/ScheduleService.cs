@@ -189,7 +189,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             var existingSchedules = await context.Schedules.ToListAsync();
             var generatedSchedules = new List<Schedule>();
-            string[] days = ["Sunday", "Monday", "Tuesday", "Wednesday"];
             int skippedCount = 0;
             int missingSectionCount = 0;
             int noClassroomCount = 0;
@@ -246,8 +245,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             var planningResult = BuildSchedulePlanFast(
                 scheduleRequests,
                 classrooms,
-                timeSlots,
-                days);
+                timeSlots);
 
             generatedSchedules.AddRange(planningResult.Schedules);
             skippedCount += planningResult.NoClassroomCount + planningResult.ConflictCount;
@@ -534,13 +532,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private static SchedulePlanningResult BuildSchedulePlanFast(
             IReadOnlyList<ScheduleGenerationRequest> requests,
             IReadOnlyCollection<Classroom> classrooms,
-            IReadOnlyCollection<TimeSlot> timeSlots,
-            IReadOnlyList<string> days)
+            IReadOnlyCollection<TimeSlot> timeSlots)
         {
             var requestPlans = requests
                 .Select(request => new ScheduleRequestPlan(
                     request,
-                    CreatePlacementCandidates(request, classrooms, timeSlots, days).ToList(),
+                    CreatePlacementCandidates(request, classrooms, timeSlots).ToList(),
                     CalculateRequestDifficulty(request)))
                 .ToList();
 
@@ -627,14 +624,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private static IEnumerable<SchedulePlacementCandidate> CreatePlacementCandidates(
             ScheduleGenerationRequest request,
             IReadOnlyCollection<Classroom> classrooms,
-            IReadOnlyCollection<TimeSlot> timeSlots,
-            IReadOnlyList<string> days)
+            IReadOnlyCollection<TimeSlot> timeSlots)
         {
             int requiredCapacity = GetRequiredCapacity(request.Section, request.GroupName);
             var targetClassrooms = GetTargetClassrooms(
                 classrooms,
                 requiredCapacity,
                 request.LectureType);
+            var days = ScheduleDayRules.GetSchedulingDays(request.Subject.StudyYearID);
 
             foreach (string day in days)
             {

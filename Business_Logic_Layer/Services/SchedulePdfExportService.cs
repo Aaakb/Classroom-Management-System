@@ -24,8 +24,6 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private const string TextColor = "0.05 0.09 0.18";
         private const string MutedTextColor = "0.30 0.38 0.50";
 
-        private static readonly string[] Days = ["Sunday", "Monday", "Tuesday", "Wednesday"];
-
         public async Task ExportAsync(string filePath, IReadOnlyList<SchedulePdfRow> rows)
         {
             byte[] pdfBytes = BuildPdf(rows);
@@ -67,6 +65,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 [
                     new SchedulePdfPage(
                         new SchedulePdfPageKey(0, "No Records", "-", "-", "-"),
+                        ScheduleDayRules.AllDays.Take(4).ToList(),
                         [])
                 ];
             }
@@ -84,6 +83,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .ThenBy(group => group.Key.SemesterNumber)
                 .Select(group => new SchedulePdfPage(
                     group.Key,
+                    ScheduleDayRules.GetSchedulingDays(group.Key.StudyYear),
                     group.OrderBy(row => DayOrder(row.DayOfWeek))
                         .ThenBy(row => row.StartTime)
                         .ThenBy(row => row.Subject)
@@ -97,8 +97,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             WritePageTitle(builder, page.Key);
             DrawFilledRect(builder, TableLeft, TableTop - HeaderHeight, TableWidth, HeaderHeight, HeaderColor);
-            DrawTableHeader(builder);
-            DrawTimelineRows(builder, page.Rows);
+            DrawTableHeader(builder, page.Days);
+            DrawTimelineRows(builder, page.Rows, page.Days);
 
             string content = builder.ToString();
             return $"<< /Length {Encoding.ASCII.GetByteCount(content)} >>\nstream\n{content}endstream";
@@ -114,22 +114,25 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             WriteText(builder, TableLeft, 532, "Weekly timetable by day, lecture period, classroom, and instructor.", 8, MutedTextColor);
         }
 
-        private static void DrawTableHeader(StringBuilder builder)
+        private static void DrawTableHeader(StringBuilder builder, IReadOnlyList<string> days)
         {
             WriteText(builder, TableLeft + 28, TableTop - 21, "Time", 9, HeaderTextColor);
 
-            for (int index = 0; index < Days.Length; index++)
+            for (int index = 0; index < days.Count; index++)
             {
                 int x = TableLeft + TimeColumnWidth + index * DayColumnWidth;
-                WriteText(builder, x + 60, TableTop - 21, Days[index], 9, HeaderTextColor);
+                WriteText(builder, x + 60, TableTop - 21, days[index], 9, HeaderTextColor);
             }
         }
 
-        private static void DrawTimelineRows(StringBuilder builder, IReadOnlyList<SchedulePdfRow> rows)
+        private static void DrawTimelineRows(
+            StringBuilder builder,
+            IReadOnlyList<SchedulePdfRow> rows,
+            IReadOnlyList<string> days)
         {
             int rowTop = TableTop - HeaderHeight;
 
-            DrawVerticalLines(builder, rowTop - TimelineHeight(), TableTop);
+            DrawVerticalLines(builder, rowTop - TimelineHeight(), TableTop, days.Count);
             DrawLine(builder, TableLeft, rowTop, TableLeft + TableWidth, rowTop, BorderColor);
 
             foreach (var timelineRow in BuildTimeline())
@@ -150,11 +153,11 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
                 if (timelineRow.IsBreak)
                 {
-                    DrawBreakCells(builder, rowBottom, rowHeight);
+                    DrawBreakCells(builder, rowBottom, rowHeight, days);
                 }
                 else
                 {
-                    DrawLectureCells(builder, rows, timelineRow, rowBottom, rowHeight);
+                    DrawLectureCells(builder, rows, timelineRow, rowBottom, rowHeight, days);
                 }
 
                 DrawLine(builder, TableLeft, rowBottom, TableLeft + TableWidth, rowBottom, RowLineColor);
@@ -164,9 +167,13 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             DrawRect(builder, TableLeft, TableTop - HeaderHeight - TimelineHeight(), TableWidth, HeaderHeight + TimelineHeight(), BorderColor);
         }
 
-        private static void DrawBreakCells(StringBuilder builder, int rowBottom, int rowHeight)
+        private static void DrawBreakCells(
+            StringBuilder builder,
+            int rowBottom,
+            int rowHeight,
+            IReadOnlyList<string> days)
         {
-            for (int index = 0; index < Days.Length; index++)
+            for (int index = 0; index < days.Count; index++)
             {
                 int x = TableLeft + TimeColumnWidth + index * DayColumnWidth;
                 WriteText(builder, x + 72, rowBottom + rowHeight / 2 - 3, "Break", 8, TextColor);
@@ -178,11 +185,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             IReadOnlyList<SchedulePdfRow> rows,
             TimelineRow timelineRow,
             int rowBottom,
-            int rowHeight)
+            int rowHeight,
+            IReadOnlyList<string> days)
         {
-            for (int index = 0; index < Days.Length; index++)
+            for (int index = 0; index < days.Count; index++)
             {
-                string day = Days[index];
+                string day = days[index];
                 int x = TableLeft + TimeColumnWidth + index * DayColumnWidth;
                 var entries = rows
                     .Where(row =>
@@ -306,11 +314,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             };
         }
 
-        private static void DrawVerticalLines(StringBuilder builder, int tableBottom, int tableTop)
+        private static void DrawVerticalLines(
+            StringBuilder builder,
+            int tableBottom,
+            int tableTop,
+            int dayCount)
         {
             int x = TableLeft;
 
-            for (int index = 0; index <= Days.Length + 1; index++)
+            for (int index = 0; index <= dayCount + 1; index++)
             {
                 DrawLine(builder, x, tableBottom, x, tableTop, BorderColor);
                 x += index == 0 ? TimeColumnWidth : DayColumnWidth;
@@ -425,6 +437,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
     internal sealed record SchedulePdfPage(
         SchedulePdfPageKey Key,
+        IReadOnlyList<string> Days,
         IReadOnlyList<SchedulePdfRow> Rows);
 
     internal sealed record SchedulePdfPageKey(
