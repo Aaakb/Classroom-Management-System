@@ -54,10 +54,10 @@ namespace University_Timetable_and_Classroom_Management_System
             var schedules = await scheduleService.GetScheduleDetailsAsync();
             scheduleRows = schedules
                 .Select(ScheduleRow.FromDetails)
-                .OrderBy(row => row.SemesterNumber)
-                .ThenBy(row => StudyYearOrder(row.StudyYearName))
+                .OrderBy(row => StudyYearOrder(row.StudyYearName))
                 .ThenBy(row => row.BranchName)
                 .ThenBy(row => row.SectionName)
+                .ThenBy(row => row.SemesterNumber)
                 .ThenBy(row => DayOrder(row.DayOfWeek))
                 .ThenBy(row => row.StartTime)
                 .ToList();

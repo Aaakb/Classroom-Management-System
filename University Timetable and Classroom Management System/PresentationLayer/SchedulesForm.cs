@@ -471,6 +471,7 @@ namespace University_Timetable_and_Classroom_Management_System
             column.HeaderText = headerText;
             column.FillWeight = fillWeight;
             column.MinimumWidth = 48;
+            column.SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
         private void ConfigureScheduleEvents()
