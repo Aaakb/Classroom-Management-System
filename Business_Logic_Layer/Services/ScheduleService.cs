@@ -337,6 +337,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             EnsureBaseSectionIsUsed(section);
             NormalizeLectureTypeAndGroup(schedule, section);
+            EnsureClassroomMatchesLectureType(classroom, schedule.LectureType);
 
             if (!IsClassroomCapacityEnough(classroom, section, schedule.GroupName))
             {
@@ -527,6 +528,21 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             }
 
             throw new ArgumentException("Lecture type must be Theory or Practical.");
+        }
+
+        private static void EnsureClassroomMatchesLectureType(Classroom classroom, string lectureType)
+        {
+            if (RoomMatchesLectureType(classroom, lectureType))
+            {
+                return;
+            }
+
+            if (string.Equals(lectureType, "Practical", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("Practical sessions must be assigned to a lab.");
+            }
+
+            throw new ArgumentException("Theory sessions must be assigned to a lecture room.");
         }
 
         private static SchedulePlanningResult BuildSchedulePlanFast(
@@ -795,9 +811,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 .Where(classroom => RoomMatchesLectureType(classroom, lectureType))
                 .ToList();
 
-            return preferredRooms.Count > 0
-                ? preferredRooms
-                : capacityMatches;
+            return preferredRooms;
         }
 
         private static bool RoomMatchesLectureType(Classroom classroom, string lectureType)

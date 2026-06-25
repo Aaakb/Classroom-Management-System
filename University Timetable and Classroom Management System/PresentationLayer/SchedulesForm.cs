@@ -44,10 +44,18 @@ namespace University_Timetable_and_Classroom_Management_System
             ConfigureScheduleEvents();
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override async void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            _ = LoadFormAsync();
+
+            try
+            {
+                await LoadFormAsync();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load schedule form.", ex);
+            }
         }
 
         private async Task LoadFormAsync()
@@ -920,6 +928,14 @@ namespace University_Timetable_and_Classroom_Management_System
             {
                 ShowInformation(UiMessages.RequiredFields);
                 cmbSection.Focus();
+                return false;
+            }
+
+            if (string.Equals(schedule.LectureType, "Practical", StringComparison.OrdinalIgnoreCase) &&
+                string.IsNullOrWhiteSpace(schedule.GroupName))
+            {
+                ShowInformation("Select a group for practical sessions.");
+                cmbGroupName.Focus();
                 return false;
             }
 
