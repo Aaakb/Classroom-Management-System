@@ -70,21 +70,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureScheduleCommands()
         {
-            btnGenerateSchedule.Text = "Generate Timetable";
-            btnClearScheduleForm.Text = "Clear View";
-
-            var toolTip = new ToolTip
-            {
-                AutoPopDelay = 8000,
-                InitialDelay = 500,
-                ReshowDelay = 200,
-                ShowAlways = true
-            };
-
-            toolTip.SetToolTip(btnGenerateSchedule, "Builds a new generated timetable and replaces the current generated records.");
-            toolTip.SetToolTip(btnClearScheduleForm, "Clears the current table view only. Database records are not deleted.");
-            toolTip.SetToolTip(cmbLectureType, "Theory uses the whole section. Practical requires a group.");
-            toolTip.SetToolTip(cmbGroupName, "Available for practical sessions. Section A uses A1/A2, section B uses B1/B2.");
+            btnGenerateSchedule.Text = "Generate";
+            btnClearScheduleForm.Text = "Clear";
         }
 
         private void ConfigureScheduleGrid()
@@ -203,11 +190,15 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureScheduleLayoutEnhancements()
         {
+            int contentWidth = Math.Max(900, pnlWorkspace.ClientSize.Width - 56);
+
             pnlScheduleEditor.Size = new Size(pnlScheduleEditor.Width, 312);
             pnlScheduleFilters.Location = new Point(28, 350);
             pnlScheduleFilters.Size = new Size(pnlScheduleFilters.Width, 84);
             pnlSchedulesTable.Location = new Point(28, 452);
-            pnlSchedulesTable.Size = new Size(pnlSchedulesTable.Width, 252);
+            pnlSchedulesTable.Size = new Size(
+                pnlSchedulesTable.Width,
+                Math.Max(300, pnlWorkspace.ClientSize.Height - pnlSchedulesTable.Top - 28));
 
             lblEditorTitle.Location = new Point(24, 10);
             lblEditorSubtitle.Location = new Point(24, 36);
@@ -215,14 +206,14 @@ namespace University_Timetable_and_Classroom_Management_System
             var basicGroup = CreateScheduleGroupPanel(
                 "Basic Schedule Info",
                 new Point(24, 62),
-                new Size(1156, 84));
+                new Size(contentWidth - 48, 84));
 
             var timeRoomGroup = CreateScheduleGroupPanel(
                 "Time & Room Info",
                 new Point(24, 154),
-                new Size(1156, 74));
+                new Size(contentWidth - 48, 74));
 
-            var commandGroup = CreateCommandGroupPanel(new Point(24, 232), new Size(1156, 58));
+            var commandGroup = CreateCommandGroupPanel(new Point(24, 232), new Size(contentWidth - 48, 58));
 
             pnlScheduleEditor.Controls.Add(basicGroup);
             pnlScheduleEditor.Controls.Add(timeRoomGroup);
@@ -255,6 +246,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             var panel = new Guna.UI2.WinForms.Guna2Panel
             {
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
                 BorderColor = Color.FromArgb(226, 232, 240),
                 BorderRadius = 8,
@@ -280,6 +272,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             return new Guna.UI2.WinForms.Guna2Panel
             {
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
                 FillColor = Color.Transparent,
                 Location = location,
@@ -356,7 +349,9 @@ namespace University_Timetable_and_Classroom_Management_System
             lblTableSubtitle.Location = new Point(24, 39);
 
             dgvSchedules.Location = new Point(24, 68);
-            dgvSchedules.Size = new Size(1156, 140);
+            dgvSchedules.Size = new Size(
+                Math.Max(700, pnlSchedulesTable.Width - 48),
+                Math.Max(180, pnlSchedulesTable.Height - 92));
         }
 
         private static Guna.UI2.WinForms.Guna2HtmlLabel CreateEditorLabel(
@@ -441,26 +436,30 @@ namespace University_Timetable_and_Classroom_Management_System
             colFacultyMember.DisplayIndex = 3;
             colClassroom.DisplayIndex = 4;
             dgvSchedules.Columns["colLectureType"].DisplayIndex = 5;
-            colStudyYear.DisplayIndex = 6;
-            colBranch.DisplayIndex = 7;
-            colSection.DisplayIndex = 8;
-            dgvSchedules.Columns["colGroupName"].DisplayIndex = 9;
+            colSection.DisplayIndex = 6;
+            dgvSchedules.Columns["colGroupName"].DisplayIndex = 7;
+            colStudyYear.DisplayIndex = 8;
+            colBranch.DisplayIndex = 9;
             column.DisplayIndex = 10;
         }
 
         private void ApplyScheduleGridColumnLayout()
         {
-            SetGridColumn(colDayOfWeek, "Day", 76);
-            SetGridColumn(colTimeSlot, "Time", 120);
-            SetGridColumn(colSubject, "Subject", 168);
-            SetGridColumn(colFacultyMember, "Faculty", 140);
-            SetGridColumn(colClassroom, "Room/Lab", 86);
-            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Lecture Type", 86);
+            SetGridColumn(colDayOfWeek, "Day", 78);
+            SetGridColumn(colTimeSlot, "Time", 138);
+            SetGridColumn(colSubject, "Subject", 230);
+            SetGridColumn(colFacultyMember, "Teacher", 170);
+            SetGridColumn(colClassroom, "Room", 110);
+            SetGridColumn(dgvSchedules.Columns["colLectureType"], "Type", 92);
+            SetGridColumn(colSection, "Section", 86);
+            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 64);
             SetGridColumn(colStudyYear, "Year", 90);
             SetGridColumn(colBranch, "Branch", 105);
-            SetGridColumn(colSection, "Section", 82);
-            SetGridColumn(dgvSchedules.Columns["colGroupName"], "Group", 64);
             SetGridColumn(dgvSchedules.Columns["colSemester"], "Semester", 70);
+
+            colStudyYear.Visible = false;
+            colBranch.Visible = false;
+            dgvSchedules.Columns["colSemester"].Visible = false;
 
             dgvSchedules.DefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
             dgvSchedules.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 0, 6, 0);
@@ -713,7 +712,16 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ApplyScheduleFilters()
         {
-            var visibleRows = GetFilteredRows().ToList();
+            var visibleRows = GetFilteredRows()
+                .OrderBy(row => row.SemesterNumber)
+                .ThenBy(row => StudyYearOrder(row.StudyYearName))
+                .ThenBy(row => row.BranchName)
+                .ThenBy(row => row.SectionName)
+                .ThenBy(row => DayOrder(row.DayOfWeek))
+                .ThenBy(row => row.StartTime)
+                .ThenBy(row => row.GroupName)
+                .ToList();
+
             scheduleBindingSource.DataSource = visibleRows;
             dgvSchedules.ClearSelection();
             StyleScheduleRows(visibleRows);
@@ -746,13 +754,6 @@ namespace University_Timetable_and_Classroom_Management_System
                 if (row.Cells["colSubject"] is DataGridViewCell subjectCell)
                 {
                     subjectCell.ToolTipText = scheduleRow.SubjectName;
-                }
-
-                if (row.Cells["colLectureType"] is DataGridViewCell typeCell)
-                {
-                    typeCell.ToolTipText = isPractical
-                        ? "Practical session for the selected group."
-                        : "Theory session for the whole section.";
                 }
             }
         }
