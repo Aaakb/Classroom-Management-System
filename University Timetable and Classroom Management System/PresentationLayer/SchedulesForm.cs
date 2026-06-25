@@ -2310,6 +2310,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYear = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colBranch = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colSection = null!;
-}
+    }
 }
 

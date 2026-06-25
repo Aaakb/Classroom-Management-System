@@ -867,6 +867,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colClassroomNumber = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCapacity = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRoomType = null!;
-}
+    }
 }
 

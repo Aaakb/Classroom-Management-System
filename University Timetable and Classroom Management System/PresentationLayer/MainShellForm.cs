@@ -133,5 +133,5 @@ namespace University_Timetable_and_Classroom_Management_System
             ((System.ComponentModel.ISupportInitialize)picSidebarLogo).EndInit();
             ResumeLayout(false);
         }
-}
+    }
 }

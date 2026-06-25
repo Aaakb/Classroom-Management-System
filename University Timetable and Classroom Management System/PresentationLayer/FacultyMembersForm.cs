@@ -778,6 +778,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colFacultyMemberId = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colFullName = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colAcademicTitle = null!;
-}
+    }
 }
 

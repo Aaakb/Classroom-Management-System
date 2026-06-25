@@ -1410,6 +1410,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private System.Windows.Forms.DataGridViewTextBoxColumn colPracticalHours = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCreditUnits = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRequirementType = null!;
-}
+    }
 }
 

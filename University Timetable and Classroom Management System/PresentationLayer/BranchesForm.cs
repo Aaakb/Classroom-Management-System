@@ -737,6 +737,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2DataGridView dgvBranches = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colBranchId = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colBranchName = null!;
-}
+    }
 }
 

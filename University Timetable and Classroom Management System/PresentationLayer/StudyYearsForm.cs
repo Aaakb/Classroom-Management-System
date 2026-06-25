@@ -732,6 +732,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2DataGridView dgvStudyYears = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colStudyYearId = null!;
         private System.Windows.Forms.DataGridViewTextBoxColumn colYearName = null!;
-}
+    }
 }
 
