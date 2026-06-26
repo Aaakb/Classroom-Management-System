@@ -103,5 +103,6 @@
     <EmbeddedResource Include="PresentationLayer\MainShellForm.resx" />
     <EmbeddedResource Include="PresentationLayer\RegisterForm.resx" />
     <EmbeddedResource Include="PresentationLayer\SchedulesForm.resx" />
+    <EmbeddedResource Include="PresentationLayer\SectionsForm.resx" />
   </ItemGroup>
 </Project>

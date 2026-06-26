@@ -89,7 +89,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             if (!ScheduleTimingRules.IsValidLectureRange(timeSlot.StartTime, timeSlot.EndTime))
             {
-                throw new ArgumentException("Time slots must be 90 minutes and match the official lecture periods.");
+                throw new ArgumentException("Time slots must be 80 minutes and match the official lecture periods.");
             }
 
             var exists = await context.TimeSlots.AnyAsync(t =>
