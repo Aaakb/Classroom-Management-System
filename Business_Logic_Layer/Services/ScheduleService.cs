@@ -564,8 +564,15 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
             var scheduleState = new ScheduleGenerationState();
             int conflictCount = 0;
+            var pairedRequestIds = new HashSet<ScheduleRequestIdentity>();
+
+            PlacePracticalExchangeBlocks(
+                pendingPlans,
+                scheduleState,
+                pairedRequestIds);
 
             foreach (var plan in pendingPlans
+                .Where(plan => !pairedRequestIds.Contains(ScheduleRequestIdentity.From(plan.Request)))
                 .OrderBy(plan => plan.Candidates.Count)
                 .ThenByDescending(plan => plan.DifficultyScore)
                 .ThenBy(plan => plan.Request.Subject.SemesterNumber)
@@ -586,6 +593,287 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 scheduleState.Schedules,
                 noClassroomCount,
                 conflictCount);
+        }
+
+        private static void PlacePracticalExchangeBlocks(
+            IReadOnlyList<ScheduleRequestPlan> pendingPlans,
+            ScheduleGenerationState scheduleState,
+            HashSet<ScheduleRequestIdentity> pairedRequestIds)
+        {
+            var practicalPlans = pendingPlans
+                .Where(plan => IsGroupedPracticalRequest(plan.Request))
+                .OrderBy(plan => plan.Request.Subject.SemesterNumber)
+                .ThenByDescending(plan => plan.Request.Subject.StudyYearID)
+                .ThenBy(plan => plan.Request.Section.SectionID)
+                .ThenBy(plan => plan.Request.Subject.SubjectName)
+                .ThenBy(plan => plan.Request.GroupName)
+                .ToList();
+
+            foreach (var firstPlan in practicalPlans)
+            {
+                var firstIdentity = ScheduleRequestIdentity.From(firstPlan.Request);
+
+                if (pairedRequestIds.Contains(firstIdentity))
+                {
+                    continue;
+                }
+
+                var secondPlan = practicalPlans.FirstOrDefault(candidate =>
+                    !pairedRequestIds.Contains(ScheduleRequestIdentity.From(candidate.Request)) &&
+                    CanExchangePracticals(firstPlan.Request, candidate.Request));
+
+                if (secondPlan is null)
+                {
+                    continue;
+                }
+
+                var thirdPlan = FindExchangeCounterpart(
+                    practicalPlans,
+                    firstPlan.Request,
+                    secondPlan.Request.GroupName,
+                    pairedRequestIds);
+                var fourthPlan = FindExchangeCounterpart(
+                    practicalPlans,
+                    secondPlan.Request,
+                    firstPlan.Request.GroupName,
+                    pairedRequestIds);
+
+                if (thirdPlan is null || fourthPlan is null)
+                {
+                    continue;
+                }
+
+                if (!TryPlacePracticalExchangeBlock(
+                    firstPlan,
+                    secondPlan,
+                    thirdPlan,
+                    fourthPlan,
+                    scheduleState))
+                {
+                    continue;
+                }
+
+                pairedRequestIds.Add(firstIdentity);
+                pairedRequestIds.Add(ScheduleRequestIdentity.From(secondPlan.Request));
+                pairedRequestIds.Add(ScheduleRequestIdentity.From(thirdPlan.Request));
+                pairedRequestIds.Add(ScheduleRequestIdentity.From(fourthPlan.Request));
+            }
+        }
+
+        private static ScheduleRequestPlan? FindExchangeCounterpart(
+            IEnumerable<ScheduleRequestPlan> practicalPlans,
+            ScheduleGenerationRequest sourceRequest,
+            string? targetGroupName,
+            HashSet<ScheduleRequestIdentity> pairedRequestIds)
+        {
+            return practicalPlans.FirstOrDefault(plan =>
+                !pairedRequestIds.Contains(ScheduleRequestIdentity.From(plan.Request)) &&
+                plan.Request.Subject.SubjectID == sourceRequest.Subject.SubjectID &&
+                plan.Request.Section.SectionID == sourceRequest.Section.SectionID &&
+                plan.Request.LessonNumber == sourceRequest.LessonNumber &&
+                string.Equals(plan.Request.LectureType, sourceRequest.LectureType, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(plan.Request.GroupName, targetGroupName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool TryPlacePracticalExchangeBlock(
+            ScheduleRequestPlan firstPlan,
+            ScheduleRequestPlan secondPlan,
+            ScheduleRequestPlan thirdPlan,
+            ScheduleRequestPlan fourthPlan,
+            ScheduleGenerationState scheduleState)
+        {
+            var firstCandidates = firstPlan.Candidates
+                .Where(candidate => RoomMatchesLectureType(candidate.Classroom, firstPlan.Request.LectureType))
+                .OrderBy(candidate => DayOrder(candidate.DayOfWeek))
+                .ThenBy(candidate => candidate.TimeSlot.StartTime)
+                .ThenBy(candidate => candidate.Classroom.Capacity)
+                .ToList();
+
+            foreach (var firstCandidate in firstCandidates)
+            {
+                foreach (var secondCandidate in GetSameSlotExchangeCandidates(firstCandidate, secondPlan.Candidates))
+                {
+                    if (firstCandidate.Classroom.ClassroomID == secondCandidate.Classroom.ClassroomID)
+                    {
+                        continue;
+                    }
+
+                    foreach (var thirdCandidate in GetNextSlotExchangeCandidates(firstCandidate, thirdPlan.Candidates))
+                    {
+                        foreach (var fourthCandidate in GetSameSlotExchangeCandidates(thirdCandidate, fourthPlan.Candidates))
+                        {
+                            if (thirdCandidate.Classroom.ClassroomID == fourthCandidate.Classroom.ClassroomID)
+                            {
+                                continue;
+                            }
+
+                            if (!TryBuildExchangeSchedules(
+                                firstPlan,
+                                secondPlan,
+                                thirdPlan,
+                                fourthPlan,
+                                firstCandidate,
+                                secondCandidate,
+                                thirdCandidate,
+                                fourthCandidate,
+                                scheduleState,
+                                out var schedules))
+                            {
+                                continue;
+                            }
+
+                            foreach (var schedule in schedules)
+                            {
+                                scheduleState.Add(schedule);
+                            }
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<SchedulePlacementCandidate> GetSameSlotExchangeCandidates(
+            SchedulePlacementCandidate firstCandidate,
+            IEnumerable<SchedulePlacementCandidate> secondCandidates)
+        {
+            return secondCandidates
+                .Where(candidate =>
+                    candidate.DayOfWeek == firstCandidate.DayOfWeek &&
+                    candidate.TimeSlot.StartTime == firstCandidate.TimeSlot.StartTime &&
+                    candidate.TimeSlot.TimeSlotID == firstCandidate.TimeSlot.TimeSlotID)
+                .OrderBy(candidate => candidate.Classroom.Capacity)
+                .ThenBy(candidate => candidate.Classroom.ClassroomNumber);
+        }
+
+        private static IEnumerable<SchedulePlacementCandidate> GetNextSlotExchangeCandidates(
+            SchedulePlacementCandidate firstCandidate,
+            IEnumerable<SchedulePlacementCandidate> nextCandidates)
+        {
+            var laterCandidates = nextCandidates
+                .Where(candidate =>
+                    candidate.DayOfWeek == firstCandidate.DayOfWeek &&
+                    candidate.TimeSlot.StartTime > firstCandidate.TimeSlot.StartTime)
+                .ToList();
+
+            if (laterCandidates.Count == 0)
+            {
+                return [];
+            }
+
+            var nextStart = laterCandidates.Min(candidate => candidate.TimeSlot.StartTime);
+
+            return laterCandidates
+                .Where(candidate => candidate.TimeSlot.StartTime == nextStart)
+                .OrderBy(candidate => candidate.Classroom.Capacity)
+                .ThenBy(candidate => candidate.Classroom.ClassroomNumber);
+        }
+
+        private static bool TryBuildExchangeSchedules(
+            ScheduleRequestPlan firstPlan,
+            ScheduleRequestPlan secondPlan,
+            ScheduleRequestPlan thirdPlan,
+            ScheduleRequestPlan fourthPlan,
+            SchedulePlacementCandidate firstCandidate,
+            SchedulePlacementCandidate secondCandidate,
+            SchedulePlacementCandidate thirdCandidate,
+            SchedulePlacementCandidate fourthCandidate,
+            ScheduleGenerationState scheduleState,
+            out List<Schedule> schedules)
+        {
+            schedules = [];
+
+            foreach (int firstFacultyId in scheduleState.GetOrderedFacultyOptions(
+                firstPlan.Request.FacultyMemberIds,
+                firstPlan.Request.Subject.SemesterNumber,
+                firstCandidate.DayOfWeek))
+            {
+                foreach (int secondFacultyId in scheduleState.GetOrderedFacultyOptions(
+                    secondPlan.Request.FacultyMemberIds,
+                    secondPlan.Request.Subject.SemesterNumber,
+                    secondCandidate.DayOfWeek))
+                {
+                    foreach (int thirdFacultyId in scheduleState.GetOrderedFacultyOptions(
+                        thirdPlan.Request.FacultyMemberIds,
+                        thirdPlan.Request.Subject.SemesterNumber,
+                        thirdCandidate.DayOfWeek))
+                    {
+                        foreach (int fourthFacultyId in scheduleState.GetOrderedFacultyOptions(
+                            fourthPlan.Request.FacultyMemberIds,
+                            fourthPlan.Request.Subject.SemesterNumber,
+                            fourthCandidate.DayOfWeek))
+                        {
+                            var proposedSchedules = new List<Schedule>
+                            {
+                                BuildSchedule(firstPlan.Request, firstCandidate, firstFacultyId),
+                                BuildSchedule(secondPlan.Request, secondCandidate, secondFacultyId),
+                                BuildSchedule(thirdPlan.Request, thirdCandidate, thirdFacultyId),
+                                BuildSchedule(fourthPlan.Request, fourthCandidate, fourthFacultyId)
+                            };
+
+                            if (proposedSchedules.Any(schedule => !scheduleState.CanPlace(schedule)) ||
+                                HasAnyPairConflict(proposedSchedules))
+                            {
+                                continue;
+                            }
+
+                            schedules = proposedSchedules;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasAnyPairConflict(IReadOnlyList<Schedule> schedules)
+        {
+            for (int i = 0; i < schedules.Count; i++)
+            {
+                for (int j = i + 1; j < schedules.Count; j++)
+                {
+                    if (HasPairConflict(schedules[i], schedules[j]))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool HasPairConflict(Schedule first, Schedule second)
+        {
+            return first.SemesterNumber == second.SemesterNumber &&
+                first.DayOfWeek == second.DayOfWeek &&
+                first.TimeSlotID == second.TimeSlotID &&
+                (first.ClassroomID == second.ClassroomID ||
+                    first.FacultyMemberID == second.FacultyMemberID ||
+                    (first.SectionID == second.SectionID &&
+                        (string.IsNullOrWhiteSpace(first.GroupName) ||
+                            string.IsNullOrWhiteSpace(second.GroupName) ||
+                            string.Equals(first.GroupName, second.GroupName, StringComparison.OrdinalIgnoreCase))));
+        }
+
+        private static bool IsGroupedPracticalRequest(ScheduleGenerationRequest request)
+        {
+            return string.Equals(request.LectureType, "Practical", StringComparison.OrdinalIgnoreCase) &&
+                !string.IsNullOrWhiteSpace(request.GroupName);
+        }
+
+        private static bool CanExchangePracticals(
+            ScheduleGenerationRequest first,
+            ScheduleGenerationRequest second)
+        {
+            return first.Subject.SubjectID != second.Subject.SubjectID &&
+                first.Subject.SemesterNumber == second.Subject.SemesterNumber &&
+                first.Section.SectionID == second.Section.SectionID &&
+                string.Equals(first.LectureType, second.LectureType, StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(first.GroupName, second.GroupName, StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool TryPlaceFast(
@@ -1080,6 +1368,24 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         ScheduleGenerationRequest Request,
         List<SchedulePlacementCandidate> Candidates,
         int DifficultyScore);
+
+    internal sealed record ScheduleRequestIdentity(
+        int SubjectID,
+        int SectionID,
+        string LectureType,
+        string? GroupName,
+        int LessonNumber)
+    {
+        public static ScheduleRequestIdentity From(ScheduleGenerationRequest request)
+        {
+            return new ScheduleRequestIdentity(
+                request.Subject.SubjectID,
+                request.Section.SectionID,
+                request.LectureType,
+                request.GroupName,
+                request.LessonNumber);
+        }
+    }
 
     internal sealed record SchedulePlacementCandidate(
         string DayOfWeek,
