@@ -9,6 +9,7 @@ namespace University_Timetable_and_Classroom_Management_System
         private readonly SchedulePdfExportService schedulePdfExportService = new();
         private readonly SubjectService subjectService = new();
         private readonly FacultyMemberService facultyMemberService = new();
+        private readonly FacultyMemberSubjectService facultyMemberSubjectService = new();
         private readonly ClassroomService classroomService = new();
         private readonly TimeSlotService timeSlotService = new();
         private readonly StudyYearService studyYearService = new();
@@ -19,6 +20,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private List<ScheduleRow> scheduleRows = [];
         private List<Subject> subjectsLookup = [];
+        private List<FacultyMember> facultyMembersLookup = [];
+        private List<FacultyMemberSubject> facultySubjectAssignmentsLookup = [];
         private List<StudyYear> studyYearsLookup = [];
         private List<Branch> branchesLookup = [];
         private List<Section> sectionsLookup = [];
@@ -841,16 +844,17 @@ namespace University_Timetable_and_Classroom_Management_System
 
                 txtScheduleId.Text = schedule.ScheduleID.ToString();
                 cmbDayOfWeek.SelectedItem = schedule.DayOfWeek;
-                SelectComboValue(cmbSubject, schedule.SubjectID);
-                SelectComboValue(cmbFacultyMember, schedule.FacultyMemberID);
                 SelectComboValue(cmbClassroom, schedule.ClassroomID);
                 SelectComboValue(cmbTimeSlot, schedule.TimeSlotID);
                 SelectComboValue(cmbStudyYear, schedule.StudyYearID);
                 SelectComboValue(cmbBranch, schedule.BranchID);
                 BindSectionsCombo(schedule.StudyYearID, schedule.BranchID, schedule.SectionID);
                 BindSubjectsCombo(schedule.StudyYearID, schedule.BranchID, schedule.SubjectID);
+                BindFacultyMembersForSubject(schedule.SubjectID, schedule.FacultyMemberID);
                 SelectComboValue(cmbSection, schedule.SectionID);
-                SelectComboText(cmbLectureType, schedule.LectureType);
+                ConfigureLectureOptionsForSubject(
+                    subjectsLookup.FirstOrDefault(subject => subject.SubjectID == schedule.SubjectID),
+                    schedule.LectureType);
                 BindGroupNameCombo(schedule.GroupName);
             }
             catch (Exception ex)
@@ -881,7 +885,8 @@ namespace University_Timetable_and_Classroom_Management_System
             BindSectionsCombo();
             BindSubjectsCombo();
             ClearCombo(cmbSection);
-            SelectComboText(cmbLectureType, "Theory");
+            BindFacultyMembersForSubject(null);
+            ConfigureLectureOptionsForSubject(null, "Theory");
             BindGroupNameCombo();
             ClearCombo(cmbGroupName);
             dgvSchedules.ClearSelection();
@@ -983,6 +988,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
             if (subject is null)
             {
+                BindFacultyMembersForSubject(null);
+                ConfigureLectureOptionsForSubject(null);
                 return;
             }
 
@@ -995,6 +1002,8 @@ namespace University_Timetable_and_Classroom_Management_System
             }
 
             BindSectionsCombo(subject.StudyYearID, subject.BranchID);
+            BindFacultyMembersForSubject(subject.SubjectID);
+            ConfigureLectureOptionsForSubject(subject);
             BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
         }
@@ -1024,6 +1033,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
             BindSectionsCombo(studyYearId, branchId);
             BindSubjectsCombo(studyYearId, branchId);
+            BindFacultyMembersForSubject(GetSelectedOptionalId(cmbSubject));
+            ConfigureLectureOptionsForSubject(GetSelectedSubject());
             BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
         }
@@ -1048,6 +1059,8 @@ namespace University_Timetable_and_Classroom_Management_System
 
             BindSectionsCombo(studyYearId, branchId);
             BindSubjectsCombo(studyYearId, branchId);
+            BindFacultyMembersForSubject(GetSelectedOptionalId(cmbSubject));
+            ConfigureLectureOptionsForSubject(GetSelectedSubject());
             BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
         }
@@ -1075,6 +1088,8 @@ namespace University_Timetable_and_Classroom_Management_System
             SelectComboValue(cmbStudyYear, section.StudyYearID);
             SelectComboValue(cmbBranch, section.BranchID);
             BindSubjectsCombo(section.StudyYearID, section.BranchID, selectedSubjectId);
+            BindFacultyMembersForSubject(selectedSubjectId);
+            ConfigureLectureOptionsForSubject(GetSelectedSubject());
             cmbBranch.Enabled = !AcademicStructureRules.UsesGeneralSections(section.StudyYearID);
             BindGroupNameCombo();
             isUpdatingScheduleLookups = false;
@@ -1082,17 +1097,100 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ApplyLectureTypeSelection()
         {
+            var selectedSubject = GetSelectedSubject();
             bool isPractical = string.Equals(
                 GetSelectedPlainText(cmbLectureType),
                 "Practical",
                 StringComparison.OrdinalIgnoreCase);
+            bool canChoosePractical = selectedSubject?.PracticalHours > 0;
+            bool shouldShowLectureType = selectedSubject is null ||
+                (selectedSubject.TheoreticalHours > 0 && selectedSubject.PracticalHours > 0);
 
-            cmbGroupName.Enabled = isPractical && cmbGroupName.Items.Count > 0;
+            lblLectureType.Visible = shouldShowLectureType;
+            cmbLectureType.Visible = shouldShowLectureType;
+            lblGroupName.Visible = isPractical && canChoosePractical;
+            cmbGroupName.Visible = isPractical && canChoosePractical;
+            cmbGroupName.Enabled = isPractical && canChoosePractical && cmbGroupName.Items.Count > 0;
 
-            if (!isPractical)
+            if (!isPractical || !canChoosePractical)
             {
                 ClearCombo(cmbGroupName);
             }
+        }
+
+        private void BindFacultyMembersForSubject(int? subjectId, int? selectedFacultyMemberId = null)
+        {
+            var facultyMembers = subjectId.HasValue
+                ? facultySubjectAssignmentsLookup
+                    .Where(assignment => assignment.SubjectID == subjectId.Value)
+                    .Select(assignment => assignment.FacultyMember)
+                    .Where(faculty => faculty is not null)
+                    .DistinctBy(faculty => faculty.FacultyMemberID)
+                : Enumerable.Empty<FacultyMember>();
+
+            var options = facultyMembers
+                .OrderBy(faculty => faculty.FullName)
+                .Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName))
+                .ToList();
+
+            BindCombo(cmbFacultyMember, options);
+
+            if (selectedFacultyMemberId.HasValue)
+            {
+                SelectComboValue(cmbFacultyMember, selectedFacultyMemberId);
+            }
+            else if (options.Count == 1)
+            {
+                SelectComboValue(cmbFacultyMember, options[0].Id);
+            }
+        }
+
+        private void ConfigureLectureOptionsForSubject(Subject? subject, string? selectedLectureType = null)
+        {
+            var lectureTypes = GetAvailableLectureTypes(subject).ToList();
+            cmbLectureType.Items.Clear();
+            cmbLectureType.Items.AddRange(lectureTypes.Cast<object>().ToArray());
+
+            string lectureType = selectedLectureType is not null && lectureTypes.Contains(selectedLectureType)
+                ? selectedLectureType
+                : lectureTypes.FirstOrDefault() ?? "Theory";
+
+            SelectComboText(cmbLectureType, lectureType);
+            ApplyLectureTypeSelection();
+        }
+
+        private static IEnumerable<string> GetAvailableLectureTypes(Subject? subject)
+        {
+            if (subject is null)
+            {
+                yield return "Theory";
+                yield return "Practical";
+                yield break;
+            }
+
+            if (subject.TheoreticalHours > 0)
+            {
+                yield return "Theory";
+            }
+
+            if (subject.PracticalHours > 0)
+            {
+                yield return "Practical";
+            }
+
+            if (subject.TheoreticalHours <= 0 && subject.PracticalHours <= 0)
+            {
+                yield return "Theory";
+            }
+        }
+
+        private Subject? GetSelectedSubject()
+        {
+            int? subjectId = GetSelectedOptionalId(cmbSubject);
+
+            return subjectId.HasValue
+                ? subjectsLookup.FirstOrDefault(subject => subject.SubjectID == subjectId.Value)
+                : null;
         }
 
         private static bool SubjectMatchesFilter(Subject subject, int? studyYearId, int? branchId)

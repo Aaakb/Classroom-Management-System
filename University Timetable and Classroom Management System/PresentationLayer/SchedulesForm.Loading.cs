@@ -25,7 +25,8 @@ namespace University_Timetable_and_Classroom_Management_System
         private async Task LoadLookupsAsync()
         {
             subjectsLookup = await subjectService.GetAllAsync();
-            var facultyMembers = await facultyMemberService.GetAllAsync();
+            facultyMembersLookup = await facultyMemberService.GetAllAsync();
+            facultySubjectAssignmentsLookup = await facultyMemberSubjectService.GetAllAsync();
             var classrooms = await classroomService.GetAllAsync();
             var timeSlots = await timeSlotService.GetAllAsync();
             studyYearsLookup = await studyYearService.GetAllAsync();
@@ -33,14 +34,14 @@ namespace University_Timetable_and_Classroom_Management_System
             sectionsLookup = await sectionService.GetAllAsync();
 
             BindSubjectsCombo();
-            BindCombo(cmbFacultyMember, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)));
+            BindFacultyMembersForSubject(null);
             BindCombo(cmbClassroom, classrooms.Select(classroom => new ComboOption(classroom.ClassroomID, classroom.ClassroomNumber)));
             BindCombo(cmbTimeSlot, timeSlots.Select(slot => new ComboOption(slot.TimeSlotID, FormatTimeSlot(slot))));
             BindCombo(cmbStudyYear, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)));
             BindCombo(cmbBranch, branchesLookup.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
             BindSectionsCombo();
 
-            BindFilterCombo(cmbFacultyFilter, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)), "All faculty");
+            BindFilterCombo(cmbFacultyFilter, facultyMembersLookup.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)), "All faculty");
             BindFilterCombo(cmbStudyYearFilter, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
             BindSectionFilterCombo();
             BindDayCombos();
