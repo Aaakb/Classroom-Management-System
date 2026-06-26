@@ -55,6 +55,26 @@
     <Compile Update="PresentationLayer\SchedulesForm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="PresentationLayer\SchedulesForm.ComboBinding.cs">
+      <DependentUpon>SchedulesForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SchedulesForm.ConflictView.cs">
+      <DependentUpon>SchedulesForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SchedulesForm.Display.cs">
+      <DependentUpon>SchedulesForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SchedulesForm.Grid.cs">
+      <DependentUpon>SchedulesForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PresentationLayer\SchedulesForm.Loading.cs">
+      <DependentUpon>SchedulesForm.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="PresentationLayer\SectionsForm.cs">
       <SubType>Code</SubType>
     </Compile>
