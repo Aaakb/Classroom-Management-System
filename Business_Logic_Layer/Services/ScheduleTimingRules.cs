@@ -5,7 +5,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
     internal static class ScheduleTimingRules
     {
         public static readonly TimeSpan WorkdayStart = new(8, 30, 0);
-        public static readonly TimeSpan WorkdayEnd = new(15, 0, 0);
+        public static readonly TimeSpan WorkdayEnd = new(13, 20, 0);
         public static readonly TimeSpan LectureDuration = TimeSpan.FromMinutes(90);
         public static readonly TimeSpan LectureGap = TimeSpan.FromMinutes(10);
         public static readonly TimeSpan BreakStart = TimeSpan.Zero;
@@ -15,8 +15,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         [
             (new TimeSpan(8, 30, 0), new TimeSpan(10, 0, 0)),
             (new TimeSpan(10, 10, 0), new TimeSpan(11, 40, 0)),
-            (new TimeSpan(11, 50, 0), new TimeSpan(13, 20, 0)),
-            (new TimeSpan(13, 30, 0), new TimeSpan(15, 0, 0))
+            (new TimeSpan(11, 50, 0), new TimeSpan(13, 20, 0))
         ];
 
         public static bool IsOfficialLectureSlot(TimeSlot timeSlot)

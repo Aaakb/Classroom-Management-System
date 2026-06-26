@@ -4,10 +4,6 @@ namespace University_Timetable_and_Classroom_Management_System
     {
         public int? FacultyId { get; init; }
 
-        public int? SubjectId { get; init; }
-
-        public int? ClassroomId { get; init; }
-
         public int? SectionId { get; init; }
 
         public int? StudyYearId { get; init; }

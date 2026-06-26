@@ -40,13 +40,10 @@ namespace University_Timetable_and_Classroom_Management_System
             BindCombo(cmbBranch, branchesLookup.Select(branch => new ComboOption(branch.BranchID, branch.BranchName)));
             BindSectionsCombo();
 
-            BindFilterCombo(cmbSubjectFilter, subjectsLookup.Select(subject => new ComboOption(subject.SubjectID, subject.SubjectName)), "All subjects");
             BindFilterCombo(cmbFacultyFilter, facultyMembers.Select(faculty => new ComboOption(faculty.FacultyMemberID, faculty.FullName)), "All faculty");
-            BindFilterCombo(cmbClassroomFilter, classrooms.Select(classroom => new ComboOption(classroom.ClassroomID, classroom.ClassroomNumber)), "All classrooms");
             BindFilterCombo(cmbStudyYearFilter, studyYearsLookup.Select(studyYear => new ComboOption(studyYear.StudyYearID, studyYear.YearName)), "All study years");
             BindSectionFilterCombo();
             BindDayCombos();
-            BindDayFilterCombo();
             BindSemesterFilterCombo();
             BindGroupFilterCombo();
             BindGroupNameCombo();

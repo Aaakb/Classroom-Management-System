@@ -12,9 +12,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 MatchesSemester(row, criteria.SemesterNumber) &&
                 MatchesLectureType(row, criteria.LectureType) &&
                 MatchesGroup(row, criteria.GroupName) &&
-                MatchesSubject(row, criteria.SubjectId) &&
                 MatchesFaculty(row, criteria.FacultyId) &&
-                MatchesClassroom(row, criteria.ClassroomId) &&
                 MatchesSection(row, criteria.SectionId) &&
                 MatchesStudyYear(row, criteria.StudyYearId) &&
                 MatchesDay(row, criteria.DayOfWeek));
@@ -53,16 +51,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private static bool MatchesFaculty(ScheduleRow row, int? facultyId)
         {
             return !facultyId.HasValue || row.FacultyMemberID == facultyId.Value;
-        }
-
-        private static bool MatchesSubject(ScheduleRow row, int? subjectId)
-        {
-            return !subjectId.HasValue || row.SubjectID == subjectId.Value;
-        }
-
-        private static bool MatchesClassroom(ScheduleRow row, int? classroomId)
-        {
-            return !classroomId.HasValue || row.ClassroomID == classroomId.Value;
         }
 
         private static bool MatchesSection(ScheduleRow row, int? sectionId)

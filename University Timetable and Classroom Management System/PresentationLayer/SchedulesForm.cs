@@ -27,12 +27,6 @@ namespace University_Timetable_and_Classroom_Management_System
         private Guna.UI2.WinForms.Guna2HtmlLabel lblSemesterFilter = null!;
         private Guna.UI2.WinForms.Guna2ComboBox cmbGroupFilter = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblGroupFilter = null!;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbSubjectFilter = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblSubjectFilter = null!;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbClassroomFilter = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblClassroomFilter = null!;
-        private Guna.UI2.WinForms.Guna2ComboBox cmbDayFilter = null!;
-        private Guna.UI2.WinForms.Guna2HtmlLabel lblDayFilter = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblPageTitle = null!;
         private Guna.UI2.WinForms.Guna2HtmlLabel lblPageSubtitle = null!;
         private Guna.UI2.WinForms.Guna2ComboBox cmbLectureType = null!;
@@ -85,13 +79,6 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureScheduleFilterControls()
         {
-            lblSubjectFilter = CreateFilterLabel("Subject filter", "lblSubjectFilter");
-            cmbSubjectFilter = CreateFilterComboBox("cmbSubjectFilter");
-            lblClassroomFilter = CreateFilterLabel("Classroom filter", "lblClassroomFilter");
-            cmbClassroomFilter = CreateFilterComboBox("cmbClassroomFilter");
-            lblDayFilter = CreateFilterLabel("Day filter", "lblDayFilter");
-            cmbDayFilter = CreateFilterComboBox("cmbDayFilter");
-
             lblSemesterFilter = new Guna.UI2.WinForms.Guna2HtmlLabel
             {
                 BackColor = Color.Transparent,
@@ -150,12 +137,6 @@ namespace University_Timetable_and_Classroom_Management_System
                 TabIndex = 11
             };
 
-            pnlScheduleFilters.Controls.Add(cmbSubjectFilter);
-            pnlScheduleFilters.Controls.Add(lblSubjectFilter);
-            pnlScheduleFilters.Controls.Add(cmbClassroomFilter);
-            pnlScheduleFilters.Controls.Add(lblClassroomFilter);
-            pnlScheduleFilters.Controls.Add(cmbDayFilter);
-            pnlScheduleFilters.Controls.Add(lblDayFilter);
             cmbSemesterFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
             cmbGroupFilter.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
             pnlScheduleFilters.Controls.Add(cmbGroupFilter);
@@ -344,14 +325,11 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ConfigureFilterLayout()
         {
-            MoveFilterField(lblSubjectFilter, cmbSubjectFilter, 24, 12, 260);
-            MoveFilterField(lblFacultyFilter, cmbFacultyFilter, 308, 12, 240);
-            MoveFilterField(lblStudyYearFilter, cmbStudyYearFilter, 572, 12, 190);
-            MoveFilterField(lblSectionFilter, cmbSectionFilter, 786, 12, 260);
-            MoveFilterField(lblClassroomFilter, cmbClassroomFilter, 24, 72, 210);
-            MoveFilterField(lblDayFilter, cmbDayFilter, 258, 72, 160);
-            MoveFilterField(lblSemesterFilter, cmbSemesterFilter, 542, 72, 160);
-            MoveFilterField(lblGroupFilter, cmbGroupFilter, 726, 72, 140);
+            MoveFilterField(lblFacultyFilter, cmbFacultyFilter, 24, 12, 260);
+            MoveFilterField(lblSectionFilter, cmbSectionFilter, 308, 12, 280);
+            MoveFilterField(lblStudyYearFilter, cmbStudyYearFilter, 612, 12, 220);
+            MoveFilterField(lblGroupFilter, cmbGroupFilter, 856, 12, 140);
+            MoveFilterField(lblSemesterFilter, cmbSemesterFilter, 1020, 12, 160);
         }
 
         private static void MoveFilterField(
@@ -365,39 +343,6 @@ namespace University_Timetable_and_Classroom_Management_System
             combo.Location = new Point(x, y + 21);
             combo.Size = new Size(width, 34);
             combo.ItemHeight = 28;
-        }
-
-        private static Guna.UI2.WinForms.Guna2HtmlLabel CreateFilterLabel(string text, string name)
-        {
-            return new Guna.UI2.WinForms.Guna2HtmlLabel
-            {
-                BackColor = Color.Transparent,
-                Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(15, 23, 42),
-                Name = name,
-                Size = new Size(90, 17),
-                Text = text
-            };
-        }
-
-        private static Guna.UI2.WinForms.Guna2ComboBox CreateFilterComboBox(string name)
-        {
-            var combo = new Guna.UI2.WinForms.Guna2ComboBox
-            {
-                BackColor = Color.Transparent,
-                BorderColor = Color.FromArgb(203, 213, 225),
-                BorderRadius = 8,
-                DrawMode = DrawMode.OwnerDrawFixed,
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                FocusedColor = Color.FromArgb(37, 99, 235),
-                Font = new Font("Segoe UI", 10F),
-                ForeColor = Color.FromArgb(15, 23, 42),
-                ItemHeight = 30,
-                Name = name
-            };
-
-            combo.FocusedState.BorderColor = Color.FromArgb(37, 99, 235);
-            return combo;
         }
 
         private void ConfigureScheduleTableHeader()
@@ -468,9 +413,6 @@ namespace University_Timetable_and_Classroom_Management_System
             cmbFacultyFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbSectionFilter.SelectedIndexChanged += (_, _) => ApplySectionFilterSelection();
             cmbStudyYearFilter.SelectedIndexChanged += (_, _) => ApplyStudyYearFilterSelection();
-            cmbSubjectFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
-            cmbClassroomFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
-            cmbDayFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbSemesterFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbGroupFilter.SelectedIndexChanged += (_, _) => ApplyScheduleFilters();
             cmbLectureType.SelectedIndexChanged += (_, _) => ApplyLectureTypeSelection();
@@ -748,13 +690,10 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             var criteria = new ScheduleFilterCriteria
             {
-                SubjectId = GetSelectedOptionalId(cmbSubjectFilter),
                 FacultyId = GetSelectedOptionalId(cmbFacultyFilter),
-                ClassroomId = GetSelectedOptionalId(cmbClassroomFilter),
                 SectionId = GetSelectedOptionalId(cmbSectionFilter),
                 StudyYearId = GetSelectedOptionalId(cmbStudyYearFilter),
                 SemesterNumber = GetSelectedOptionalId(cmbSemesterFilter),
-                DayOfWeek = cmbDayFilter.SelectedItem is ComboOption dayOption ? dayOption.Text : null,
                 GroupName = cmbGroupFilter.SelectedItem is ComboOption groupOption ? groupOption.Text : null
             };
 
@@ -1007,15 +946,6 @@ namespace University_Timetable_and_Classroom_Management_System
                     new ComboOption(2, "Semester 2")
                 ],
                 "All semesters");
-        }
-
-        private void BindDayFilterCombo()
-        {
-            BindFilterCombo(
-                cmbDayFilter,
-                new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday" }
-                    .Select(day => new ComboOption(null, day)),
-                "All days");
         }
 
         private void BindGroupFilterCombo()
