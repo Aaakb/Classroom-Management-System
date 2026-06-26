@@ -67,18 +67,18 @@ namespace University_Timetable_and_Classroom_Management_System
 
                 if (!result.Succeeded)
                 {
-                    MessageBox.Show(this, result.Message, "Create Account", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    UiMessages.ShowWarning(this, result.Message, "Create Account");
                     return;
                 }
 
                 CreatedUserName = result.User?.UserName ?? txtUserName.Text.Trim();
-                MessageBox.Show(this, result.Message, "Create Account", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UiMessages.ShowInformation(this, result.Message, "Create Account");
                 DialogResult = DialogResult.OK;
                 Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Create Account", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UiMessages.ShowError(this, "Unable to create account.", "Create Account", ex);
             }
             finally
             {

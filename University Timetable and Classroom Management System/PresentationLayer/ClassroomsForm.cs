@@ -102,12 +102,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            var confirmation = MessageBox.Show(
-                this,
-                UiMessages.ConfirmDelete,
-                "Delete Classroom",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            var confirmation = UiMessages.ConfirmDeletion(this, "Delete Classroom");
 
             if (confirmation != DialogResult.Yes)
             {
@@ -266,12 +261,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ShowInformation(string message)
         {
-            MessageBox.Show(this, message, "Classrooms", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UiMessages.ShowInformation(this, message, "Classrooms");
         }
 
         private void ShowError(string message, Exception ex)
         {
-            MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Classrooms", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            UiMessages.ShowError(this, message, "Classrooms", ex);
         }
         private void InitializeComponent()
         {

@@ -57,7 +57,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
                 if (!result.Succeeded)
                 {
-                    MessageBox.Show(this, result.Message, "Sign In", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    UiMessages.ShowWarning(this, result.Message, "Sign In");
                     return;
                 }
 
@@ -66,7 +66,7 @@ namespace University_Timetable_and_Classroom_Management_System
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Sign In", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UiMessages.ShowError(this, "Unable to sign in.", "Sign In", ex);
             }
             finally
             {

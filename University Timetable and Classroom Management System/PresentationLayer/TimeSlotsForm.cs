@@ -103,12 +103,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            var confirmation = MessageBox.Show(
-                this,
-                UiMessages.ConfirmDelete,
-                "Delete Time Slot",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            var confirmation = UiMessages.ConfirmDeletion(this, "Delete Time Slot");
 
             if (confirmation != DialogResult.Yes)
             {
@@ -273,12 +268,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ShowInformation(string message)
         {
-            MessageBox.Show(this, message, "Time Slots", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UiMessages.ShowInformation(this, message, "Time Slots");
         }
 
         private void ShowError(string message, Exception ex)
         {
-            MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Time Slots", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            UiMessages.ShowError(this, message, "Time Slots", ex);
         }
         private void InitializeComponent()
         {

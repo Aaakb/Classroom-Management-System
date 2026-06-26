@@ -50,11 +50,10 @@ namespace University_Timetable_and_Classroom_Management_System
                 }
                 else
                 {
-                    MessageBox.Show(
-                        $"Database update could not be completed.\n\n{ex.Message}",
-                        "Database Update",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    UiMessages.ShowError(
+                        null,
+                        $"Database update could not be completed.\n\n{UiMessages.GetUserSafeExceptionMessage(ex)}",
+                        "Database Update");
                 }
 
                 return false;

@@ -33,8 +33,14 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         private static async Task<int> EnsureOfficialTimeSlotsAsync(AppDbContext context)
         {
             var timeSlots = await context.TimeSlots.ToListAsync();
+            var lectureSlots = timeSlots
+                .Where(slot => !slot.IsBreak)
+                .OrderBy(slot => slot.StartTime)
+                .ThenBy(slot => slot.TimeSlotID)
+                .ToList();
             var usedIds = timeSlots.Select(slot => slot.TimeSlotID).ToHashSet();
             int addedCount = 0;
+            int updatedCount = 0;
 
             foreach (var officialSlot in ScheduleTimingRules.OfficialLectureSlots)
             {
@@ -48,6 +54,18 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                     continue;
                 }
 
+                var reusableSlot = lectureSlots.FirstOrDefault(slot =>
+                    !ScheduleTimingRules.IsOfficialLectureSlot(slot));
+
+                if (reusableSlot is not null)
+                {
+                    reusableSlot.StartTime = officialSlot.Start;
+                    reusableSlot.EndTime = officialSlot.End;
+                    reusableSlot.IsBreak = false;
+                    updatedCount++;
+                    continue;
+                }
+
                 var timeSlot = new TimeSlot
                 {
                     TimeSlotID = NextAvailableId(usedIds),
@@ -58,6 +76,7 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
 
                 await context.TimeSlots.AddAsync(timeSlot);
                 timeSlots.Add(timeSlot);
+                lectureSlots.Add(timeSlot);
                 addedCount++;
             }
 
@@ -65,8 +84,12 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             {
                 await ManualKeySaveHelper.SaveWithManualKeyAsync(context, "[TimeSlots]");
             }
+            else if (updatedCount > 0)
+            {
+                await context.SaveChangesAsync();
+            }
 
-            return addedCount;
+            return addedCount + updatedCount;
         }
 
         private static async Task<int> EnsureMinimumClassroomsAsync(AppDbContext context)

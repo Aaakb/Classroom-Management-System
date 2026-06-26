@@ -142,12 +142,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            var confirmation = MessageBox.Show(
-                this,
-                UiMessages.ConfirmDelete,
-                "Delete Teaching Assignment",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            var confirmation = UiMessages.ConfirmDeletion(this, "Delete Teaching Assignment");
 
             if (confirmation != DialogResult.Yes)
             {
@@ -237,35 +232,22 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private static void BindCombo(Guna.UI2.WinForms.Guna2ComboBox combo, IEnumerable<ComboOption> options)
         {
-            combo.DataSource = options.ToList();
-            combo.DisplayMember = nameof(ComboOption.Text);
-            combo.ValueMember = nameof(ComboOption.Id);
-            combo.SelectedIndex = -1;
+            ComboBoxHelper.Bind(combo, options);
         }
 
         private static int GetSelectedRequiredId(Guna.UI2.WinForms.Guna2ComboBox combo)
         {
-            return combo.SelectedItem is ComboOption option ? option.Id : 0;
+            return ComboBoxHelper.GetSelectedRequiredId(combo);
         }
 
         private static void SelectComboValue(Guna.UI2.WinForms.Guna2ComboBox combo, int id)
         {
-            foreach (var item in combo.Items)
-            {
-                if (item is ComboOption option && option.Id == id)
-                {
-                    combo.SelectedItem = item;
-                    return;
-                }
-            }
-
-            combo.SelectedIndex = -1;
+            ComboBoxHelper.SelectValue(combo, id);
         }
 
         private static void ClearCombo(Guna.UI2.WinForms.Guna2ComboBox combo)
         {
-            combo.SelectedIndex = -1;
-            combo.Text = string.Empty;
+            ComboBoxHelper.Clear(combo);
         }
 
         private static string FormatSubject(Subject subject)
@@ -277,15 +259,13 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ShowInformation(string message)
         {
-            MessageBox.Show(this, message, "Teaching Assignments", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UiMessages.ShowInformation(this, message, "Teaching Assignments");
         }
 
         private void ShowError(string message, Exception ex)
         {
-            MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Teaching Assignments", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            UiMessages.ShowError(this, message, "Teaching Assignments", ex);
         }
-
-        private sealed record ComboOption(int Id, string Text);
 
         private sealed class AssignmentRow
         {

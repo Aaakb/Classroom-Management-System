@@ -530,12 +530,10 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private bool ConfirmScheduleGeneration()
         {
-            var confirmation = MessageBox.Show(
+            var confirmation = UiMessages.Confirm(
                 this,
                 "This will generate schedule records automatically. Continue?",
-                "Generate Timetable",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+                "Generate Timetable");
 
             return confirmation == DialogResult.Yes;
         }
@@ -631,12 +629,7 @@ namespace University_Timetable_and_Classroom_Management_System
                 return;
             }
 
-            var confirmation = MessageBox.Show(
-                this,
-                UiMessages.ConfirmDelete,
-                "Delete Schedule",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            var confirmation = UiMessages.ConfirmDeletion(this, "Delete Schedule");
 
             if (confirmation != DialogResult.Yes)
             {
@@ -1083,10 +1076,7 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private static void BindCombo(Guna.UI2.WinForms.Guna2ComboBox combo, IEnumerable<ComboOption> options)
         {
-            combo.DataSource = options.ToList();
-            combo.DisplayMember = nameof(ComboOption.Text);
-            combo.ValueMember = nameof(ComboOption.Id);
-            combo.SelectedIndex = -1;
+            ComboBoxHelper.Bind(combo, options);
         }
 
         private static void BindFilterCombo(
@@ -1096,10 +1086,7 @@ namespace University_Timetable_and_Classroom_Management_System
         {
             var items = new List<ComboOption> { new(null, allText) };
             items.AddRange(options);
-            combo.DataSource = items;
-            combo.DisplayMember = nameof(ComboOption.Text);
-            combo.ValueMember = nameof(ComboOption.Id);
-            combo.SelectedIndex = 0;
+            ComboBoxHelper.Bind(combo, items, selectedIndex: 0);
         }
 
         private void BindSubjectsCombo(int? studyYearId = null, int? branchId = null, int? selectedSubjectId = null)
@@ -1352,63 +1339,32 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private static int GetSelectedRequiredId(Guna.UI2.WinForms.Guna2ComboBox combo)
         {
-            return GetSelectedOptionalId(combo) ?? 0;
+            return ComboBoxHelper.GetSelectedRequiredId(combo);
         }
 
         private static int? GetSelectedOptionalId(Guna.UI2.WinForms.Guna2ComboBox combo)
         {
-            return combo.SelectedItem is ComboOption option ? option.Id : null;
+            return ComboBoxHelper.GetSelectedOptionalId(combo);
         }
 
         private static void SelectComboValue(Guna.UI2.WinForms.Guna2ComboBox combo, int? id)
         {
-            if (!id.HasValue)
-            {
-                combo.SelectedIndex = -1;
-                return;
-            }
-
-            foreach (var item in combo.Items)
-            {
-                if (item is ComboOption option && option.Id == id.Value)
-                {
-                    combo.SelectedItem = item;
-                    return;
-                }
-            }
-
-            combo.SelectedIndex = -1;
+            ComboBoxHelper.SelectValue(combo, id, selectNullOption: false);
         }
 
         private static void ClearCombo(Guna.UI2.WinForms.Guna2ComboBox combo)
         {
-            combo.SelectedIndex = -1;
-            combo.Text = string.Empty;
+            ComboBoxHelper.Clear(combo);
         }
 
         private static string? GetSelectedPlainText(Guna.UI2.WinForms.Guna2ComboBox combo)
         {
-            return combo.SelectedItem?.ToString();
+            return ComboBoxHelper.GetSelectedPlainText(combo);
         }
 
         private static void SelectComboText(Guna.UI2.WinForms.Guna2ComboBox combo, string? text)
         {
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                combo.SelectedIndex = -1;
-                return;
-            }
-
-            foreach (var item in combo.Items)
-            {
-                if (string.Equals(item?.ToString(), text, StringComparison.OrdinalIgnoreCase))
-                {
-                    combo.SelectedItem = item;
-                    return;
-                }
-            }
-
-            combo.SelectedIndex = -1;
+            ComboBoxHelper.SelectText(combo, text);
         }
 
         private static IReadOnlyList<string> GetAllowedGroupsForSection(Section? section)
@@ -1467,12 +1423,12 @@ namespace University_Timetable_and_Classroom_Management_System
 
         private void ShowInformation(string message)
         {
-            MessageBox.Show(this, message, "Schedule", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UiMessages.ShowInformation(this, message, "Schedule");
         }
 
         private void ShowError(string message, Exception ex)
         {
-            MessageBox.Show(this, $"{message}\n\n{ex.Message}", "Schedule", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            UiMessages.ShowError(this, message, "Schedule", ex);
         }
 
         private void InitializeComponent()
