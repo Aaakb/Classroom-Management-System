@@ -95,6 +95,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="PresentationLayer\BranchesForm.resx" />
+    <EmbeddedResource Include="PresentationLayer\ClassroomsForm.resx" />
+    <EmbeddedResource Include="PresentationLayer\FacultyMembersForm.resx" />
+    <EmbeddedResource Include="PresentationLayer\FacultyMemberSubjectsForm.resx" />
+    <EmbeddedResource Include="PresentationLayer\LoginForm.resx" />
+    <EmbeddedResource Include="PresentationLayer\MainShellForm.resx" />
     <EmbeddedResource Include="PresentationLayer\RegisterForm.resx" />
     <EmbeddedResource Include="PresentationLayer\SchedulesForm.resx" />
   </ItemGroup>
