@@ -571,6 +571,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 scheduleState,
                 pairedRequestIds);
 
+            var unresolvedPlans = new List<ScheduleRequestPlan>();
+
             foreach (var plan in pendingPlans
                 .Where(plan => !pairedRequestIds.Contains(ScheduleRequestIdentity.From(plan.Request)))
                 .OrderBy(plan => plan.Candidates.Count)
@@ -582,6 +584,16 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             {
                 if (TryPlaceFast(plan, scheduleState, avoidSameSubjectDay: true) ||
                     TryPlaceFast(plan, scheduleState, avoidSameSubjectDay: false))
+                {
+                    continue;
+                }
+
+                unresolvedPlans.Add(plan);
+            }
+
+            foreach (var plan in unresolvedPlans)
+            {
+                if (TryPlaceWithRepair(plan, pendingPlans, scheduleState, remainingDepth: 3))
                 {
                     continue;
                 }
@@ -881,48 +893,134 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             ScheduleGenerationState scheduleState,
             bool avoidSameSubjectDay)
         {
-            Schedule? bestSchedule = null;
-            int bestScore = int.MaxValue;
-
-            foreach (var candidate in plan.Candidates)
+            foreach (var placement in CreateOrderedPlacements(plan, scheduleState, avoidSameSubjectDay))
             {
-                foreach (int facultyMemberId in scheduleState.GetOrderedFacultyOptions(
-                    plan.Request.FacultyMemberIds,
-                    plan.Request.Subject.SemesterNumber,
-                    candidate.DayOfWeek))
+                if (!scheduleState.CanPlace(placement.Schedule))
                 {
-                    var schedule = BuildSchedule(plan.Request, candidate, facultyMemberId);
-
-                    if (!scheduleState.CanPlace(schedule))
-                    {
-                        continue;
-                    }
-
-                    if (avoidSameSubjectDay &&
-                        scheduleState.HasSameSubjectSectionOnDay(schedule))
-                    {
-                        continue;
-                    }
-
-                    int score = scheduleState.ScorePlacement(schedule, candidate);
-
-                    if (score >= bestScore)
-                    {
-                        continue;
-                    }
-
-                    bestSchedule = schedule;
-                    bestScore = score;
+                    continue;
                 }
+
+                scheduleState.Add(placement.Schedule);
+                return true;
             }
 
-            if (bestSchedule is null)
+            return false;
+        }
+
+        private static bool TryPlaceWithRepair(
+            ScheduleRequestPlan plan,
+            IReadOnlyList<ScheduleRequestPlan> allPlans,
+            ScheduleGenerationState scheduleState,
+            int remainingDepth)
+        {
+            foreach (var placement in CreateOrderedPlacements(plan, scheduleState, avoidSameSubjectDay: false))
             {
-                return false;
+                if (scheduleState.CanPlace(placement.Schedule))
+                {
+                    scheduleState.Add(placement.Schedule);
+                    return true;
+                }
+
+                if (remainingDepth <= 0)
+                {
+                    continue;
+                }
+
+                var conflictingSchedules = scheduleState.GetConflictingSchedules(placement.Schedule)
+                    .Take(2)
+                    .ToList();
+
+                if (conflictingSchedules.Count == 0 ||
+                    scheduleState.GetConflictingSchedules(placement.Schedule).Skip(2).Any())
+                {
+                    continue;
+                }
+
+                var conflictingPlans = conflictingSchedules
+                    .Select(schedule => FindPlanForSchedule(allPlans, schedule))
+                    .ToList();
+
+                if (conflictingPlans.Any(conflictingPlan => conflictingPlan is null))
+                {
+                    continue;
+                }
+
+                var snapshot = scheduleState.Schedules.ToList();
+
+                scheduleState.RemoveRange(conflictingSchedules);
+
+                if (!scheduleState.CanPlace(placement.Schedule))
+                {
+                    scheduleState.ResetTo(snapshot);
+                    continue;
+                }
+
+                scheduleState.Add(placement.Schedule);
+
+                bool replacedConflicts = true;
+                foreach (var conflictingPlan in conflictingPlans
+                    .OfType<ScheduleRequestPlan>()
+                    .OrderBy(item => item.Candidates.Count)
+                    .ThenByDescending(item => item.DifficultyScore))
+                {
+                    if (TryPlaceFast(conflictingPlan, scheduleState, avoidSameSubjectDay: false) ||
+                        TryPlaceWithRepair(conflictingPlan, allPlans, scheduleState, remainingDepth - 1))
+                    {
+                        continue;
+                    }
+
+                    replacedConflicts = false;
+                    break;
+                }
+
+                if (replacedConflicts)
+                {
+                    return true;
+                }
+
+                scheduleState.ResetTo(snapshot);
             }
 
-            scheduleState.Add(bestSchedule);
-            return true;
+            return false;
+        }
+
+        private static IEnumerable<SchedulePlacementOption> CreateOrderedPlacements(
+            ScheduleRequestPlan plan,
+            ScheduleGenerationState scheduleState,
+            bool avoidSameSubjectDay)
+        {
+            return plan.Candidates
+                .SelectMany(candidate => scheduleState.GetOrderedFacultyOptions(
+                        plan.Request.FacultyMemberIds,
+                        plan.Request.Subject.SemesterNumber,
+                        candidate.DayOfWeek)
+                    .Select(facultyMemberId => new
+                    {
+                        Candidate = candidate,
+                        Schedule = BuildSchedule(plan.Request, candidate, facultyMemberId)
+                    }))
+                .Where(placement => !avoidSameSubjectDay ||
+                    !scheduleState.HasSameSubjectSectionOnDay(placement.Schedule))
+                .Select(placement => new SchedulePlacementOption(
+                    placement.Schedule,
+                    scheduleState.ScorePlacement(placement.Schedule, placement.Candidate)))
+                .OrderBy(placement => placement.Score)
+                .ThenBy(placement => DayOrder(placement.Schedule.DayOfWeek))
+                .ThenBy(placement => placement.Schedule.TimeSlotID)
+                .ThenBy(placement => placement.Schedule.ClassroomID)
+                .ThenBy(placement => placement.Schedule.FacultyMemberID);
+        }
+
+        private static ScheduleRequestPlan? FindPlanForSchedule(
+            IEnumerable<ScheduleRequestPlan> plans,
+            Schedule schedule)
+        {
+            return plans.FirstOrDefault(plan =>
+                plan.Request.Subject.SubjectID == schedule.SubjectID &&
+                plan.Request.Section.SectionID == schedule.SectionID &&
+                plan.Request.Subject.SemesterNumber == schedule.SemesterNumber &&
+                string.Equals(plan.Request.LectureType, schedule.LectureType, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(plan.Request.GroupName ?? string.Empty, schedule.GroupName ?? string.Empty, StringComparison.OrdinalIgnoreCase));
         }
 
         private static IEnumerable<SchedulePlacementCandidate> CreatePlacementCandidates(
@@ -1199,7 +1297,30 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
             public void Add(Schedule schedule)
             {
                 Schedules.Add(schedule);
+                AddIndexes(schedule);
+            }
 
+            public void RemoveRange(IEnumerable<Schedule> schedules)
+            {
+                var schedulesToRemove = schedules.ToHashSet();
+                Schedules.RemoveAll(schedulesToRemove.Contains);
+                RebuildIndexes();
+            }
+
+            public void ResetTo(IEnumerable<Schedule> schedules)
+            {
+                Schedules.Clear();
+                Schedules.AddRange(schedules);
+                RebuildIndexes();
+            }
+
+            public IEnumerable<Schedule> GetConflictingSchedules(Schedule schedule)
+            {
+                return Schedules.Where(existing => HasPairConflict(existing, schedule));
+            }
+
+            private void AddIndexes(Schedule schedule)
+            {
                 classroomBusy.Add(ClassroomTimeKey(schedule));
                 facultyBusy.Add(FacultyTimeKey(schedule));
 
@@ -1223,6 +1344,27 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
                 Increment(facultyDayLoads, (schedule.FacultyMemberID, schedule.SemesterNumber, schedule.DayOfWeek));
                 Increment(sectionDayLoads, SectionDayKey(schedule));
                 Increment(slotLoads, (schedule.SemesterNumber, schedule.DayOfWeek, schedule.TimeSlotID));
+            }
+
+            private void RebuildIndexes()
+            {
+                classroomBusy.Clear();
+                facultyBusy.Clear();
+                sectionAnyBusy.Clear();
+                sectionWholeBusy.Clear();
+                sectionGroupBusy.Clear();
+                subjectDayAny.Clear();
+                subjectDayWhole.Clear();
+                subjectDayGroup.Clear();
+                facultyTotalLoads.Clear();
+                facultyDayLoads.Clear();
+                sectionDayLoads.Clear();
+                slotLoads.Clear();
+
+                foreach (var schedule in Schedules)
+                {
+                    AddIndexes(schedule);
+                }
             }
 
             private static (int ClassroomID, int SemesterNumber, string DayOfWeek, int TimeSlotID) ClassroomTimeKey(Schedule schedule)
@@ -1392,4 +1534,8 @@ namespace University_Timetable_and_Classroom_Management_System.BusinessLayer
         TimeSlot TimeSlot,
         Classroom Classroom,
         int RequiredCapacity);
+
+    internal sealed record SchedulePlacementOption(
+        Schedule Schedule,
+        int Score);
 }
